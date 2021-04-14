@@ -1,0 +1,12 @@
+{
+  "name": "commitpool-ui-bare",
+  "displayName": "commitpool-ui-bare",
+  "expo": {
+    "name": "commitpool-ui-bare",
+    "slug": "commitpool-ui-bare",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
