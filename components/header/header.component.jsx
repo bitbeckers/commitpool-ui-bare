@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     fontSize: 42,
     letterSpacing: 0,
     textAlign: "center",
-    fontFamily: "Roboto, sans-serif",
+    fontFamily: "rubik-mono-one, Roboto, sans-serif",
     fontWeight: "bold",
   },
 });

@@ -20,5 +20,4 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 1)"
   },
 });
-
 export default Footer;

@@ -1,9 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import LayoutContainer from "../../components/layout-container/layout-container.component.jsx";
-import Button from "../../components/custom-button/custom-button.component";
-import Text from "../../components/text-box/text-box.component";
-import Footer from "../../components/footer/footer.component";
+import { LayoutContainer, Footer, Text, Button } from "../../components";
 
 const LoginPage = ({ navigation }) => {
   return (
