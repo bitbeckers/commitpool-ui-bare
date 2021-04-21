@@ -32,7 +32,7 @@ const App = () => {
     return (
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Landing"
+          initialRouteName="ActivityGoal"
           screenOptions={{
             headerTitle: (props) => <Header {...props} />,
             headerLeft: () => null,

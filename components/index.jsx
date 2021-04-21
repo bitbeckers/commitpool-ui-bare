@@ -6,5 +6,7 @@ import Text from "./text-box/text-box.component";
 import ProgressBar from "./progress-bar/progress-bar.component";
 import DropDownPicker from "./custom-dropdown/custom-dropdown.component";
 import ActivitySelector from "./activity-selector/activity-selector.component";
+import DatePicker from "./custom-date-picker/custom-date-picker.component";
+import DateBox from "./date-box/date-box.component";
 
-export { Header, Footer, Button, LayoutContainer, Text, ProgressBar, DropDownPicker, ActivitySelector};
+export { Header, Footer, Button, LayoutContainer, Text, ProgressBar, DropDownPicker, DatePicker, DateBox, ActivitySelector};

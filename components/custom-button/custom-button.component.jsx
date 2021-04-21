@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text, Platform, Pressable } from "react-native";
+import { StyleSheet, Text, Platform, Pressable } from "react-native";
 
 const CustomButton = ({ text, ...props }) => {
   return (
@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "stretch",
     color: "rgba(255, 255, 255, 1)",
-    fontSize: 37,
     letterSpacing: 0,
     textAlign: "center",
     fontFamily: 'OpenSans_400Regular',

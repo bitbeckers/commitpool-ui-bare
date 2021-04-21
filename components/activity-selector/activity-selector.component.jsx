@@ -6,7 +6,7 @@ const ActivitySelector = ({}) => {
   return (
     <View style={styles.activitySelector}>
       <Text text={"Select activity"} style={styles.label} />
-      <DropDownPicker/>
+      <DropDownPicker style={styles.dropDownPicker}/>
     </View>
   );
 };
@@ -14,12 +14,14 @@ const ActivitySelector = ({}) => {
 const styles = StyleSheet.create({
   activitySelector: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     alignSelf: "flex-start",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
+    // alignItems: "center",
+    justifyContent: "center",
   },
-  label: { fontSize: 14, textAlign: 'left' },
+  label: { fontSize: 14, textAlign: 'left', alignSelf: "flex-start" },
+  label: { alignSelf: "flex-start" },
+
 });
 
 export default ActivitySelector;
