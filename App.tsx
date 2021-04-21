@@ -1,8 +1,11 @@
 import "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
-import * as Font from "expo-font";
-import { NavigationContainer, StackActions } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+
+import AppLoading from "expo-app-loading";
+import { useFonts, OpenSans_400Regular } from "@expo-google-fonts/open-sans";
+import { Rubik_700Bold } from "@expo-google-fonts/rubik";
 
 import { Header } from "./components/";
 import {
@@ -17,36 +20,37 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [assetsLoaded, setAssetsLoaded] = useState(false);
 
-  //Load fonts
-  useEffect(() => {
-    Font.loadAsync({
-      "rubik-mono-one": require("./assets/fonts/Rubik_Mono_One/RubikMonoOne-Regular.ttf"),
-      "open-sans": require("./assets/fonts/Open_Sans/OpenSans-Regular.ttf"),
-    });
-    setAssetsLoaded(true);
-  }, []);
+  // //Load fonts
+  let [fontsLoaded] = useFonts({
+    OpenSans_400Regular,
+    Rubik_700Bold,
+  });
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Landing"
-        screenOptions={{
-          headerTitle: (props) => <Header {...props} />,
-          headerLeft: () => null,
-        }}
-      >
-        <Stack.Screen
-          name="Landing"
-          component={LandingPage}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="Login" component={LoginPage} />
-        <Stack.Screen name="Intro" component={IntroPage} />
-        <Stack.Screen name="ActivityGoal" component={ActivityGoalPage} />
-        <Stack.Screen name="ActivitySource" component={ActivitySourcePage} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  } else {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Landing"
+          screenOptions={{
+            headerTitle: (props) => <Header {...props} />,
+            headerLeft: () => null,
+          }}
+        >
+          <Stack.Screen
+            name="Landing"
+            component={LandingPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="Login" component={LoginPage} />
+          <Stack.Screen name="Intro" component={IntroPage} />
+          <Stack.Screen name="ActivityGoal" component={ActivityGoalPage} />
+          <Stack.Screen name="ActivitySource" component={ActivitySourcePage} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 };
 
 const Stack = createStackNavigator();

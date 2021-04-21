@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   textStyle: {
-    fontFamily: "open-sans, Roboto, sans-serif",
+    fontFamily: 'OpenSans_400Regular',    
     fontSize: 15 
   }
 });

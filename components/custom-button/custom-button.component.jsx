@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     fontSize: 37,
     letterSpacing: 0,
     textAlign: "center",
-    fontFamily: "open-sans, Rubik One, sans-serif",
+    fontFamily: 'OpenSans_400Regular',
   },
 });
 

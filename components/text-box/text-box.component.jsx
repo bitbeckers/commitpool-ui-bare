@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     letterSpacing: 0,
     textAlign: "left",
-    fontFamily: "open-sans, Roboto, sans-serif",
+    fontFamily: 'OpenSans_400Regular',    
     justifyContent: "center",
     alignItems: "stretch",
     marginTop: 20,

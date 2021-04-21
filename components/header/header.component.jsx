@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 const Header = () => {
   return (
     <View style={styles.header}>
-      <Text style={styles.headerText} >CommitPool</Text>
+      <Text style={styles.headerText}>CommitPool</Text>
     </View>
   );
 };
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     fontSize: 42,
     letterSpacing: 0,
     textAlign: "center",
-    fontFamily: "rubik-mono-one, Roboto, sans-serif",
+    fontFamily: 'Rubik_700Bold',
     fontWeight: "bold",
   },
 });
