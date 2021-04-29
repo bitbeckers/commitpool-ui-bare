@@ -1,33 +1,33 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+
 import { Platform } from "react-native";
 import { StyleSheet, View } from "react-native";
 
 import { DatePicker, Text, Button } from "../../components";
 
-const DateBox = ({ dateInput, text }) => {
+import { DateTime } from 'luxon';
+
+
+const DateBox = ({ dateInput, text, onDateChange }) => {
   const [isPickerShow, setIsPickerShow] = useState(false);
-  const [date, setDate] = useState(undefined);
+  const date = DateTime.fromSeconds(dateInput)
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-
-    setDate(currentDate);
-
-    if (Platform.OS === "android") {
-      setIsPickerShow(false);
-    }
+  const onChange = () => {
+    setIsPickerShow(Platform.OS === 'ios');
   };
 
   return (
     <View style={styles.dateBox}>
-      <Text text={text} />
+      <Text text={text} style={styles.dateBox}/>
       <Button
-        text={dateInput.toLocaleString().split(",")[0]}
-        onPress={() => setIsPickerShow(!isPickerShow)}
+        text={date.toLocaleString({ month: 'long', day: 'numeric', year: 'numeric' })}
+        onPress={() => setIsPickerShow(true)}
       />
       {isPickerShow && (
         <DatePicker
-          dateInput={dateInput}
+          dateInput={date}
+          onDateChange={onDateChange}
           onChange={onChange}
         />
       )}
@@ -39,9 +39,9 @@ const styles = StyleSheet.create({
   dateBox: {
     flex: 1,
     flexDirection: "row",
-    alignSelf: "flex-start",
     justifyContent: "center",
-  },
+    alignItems: "center"
+  }
 });
 
 export default DateBox;

@@ -7,20 +7,13 @@ const TextBox = ({ text }) => {
 
 const styles = StyleSheet.create({
   text: {
-    color: "rgba(255, 255, 255, 1)",
+    color: "white",
     fontSize: 22,
-    letterSpacing: 0,
+    letterSpacing: 1,
     textAlign: "left",
-    fontFamily: 'OpenSans_400Regular',    
-    justifyContent: "center",
-    alignItems: "stretch",
-    marginTop: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
+    fontFamily: "OpenSans_400Regular",
     paddingRight: 10,
     paddingLeft: 10,
-    marginLeft: "auto",
-    marginRight: "auto",
   },
 });
 

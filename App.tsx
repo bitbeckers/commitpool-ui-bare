@@ -1,5 +1,9 @@
 import "react-native-gesture-handler";
-import React, { useEffect, useState } from "react";
+import React from "react";
+
+import { Provider } from "react-redux";
+import store from "./redux/store";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -17,38 +21,40 @@ import {
 } from "./pages";
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [assetsLoaded, setAssetsLoaded] = useState(false);
-
-  // //Load fonts
   let [fontsLoaded] = useFonts({
     OpenSans_400Regular,
     Rubik_700Bold,
   });
 
+  //TODO Do we ever get to the loading screen?
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
     return (
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="ActivityGoal"
-          screenOptions={{
-            headerTitle: (props) => <Header {...props} />,
-            headerLeft: () => null,
-          }}
-        >
-          <Stack.Screen
-            name="Landing"
-            component={LandingPage}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="Login" component={LoginPage} />
-          <Stack.Screen name="Intro" component={IntroPage} />
-          <Stack.Screen name="ActivityGoal" component={ActivityGoalPage} />
-          <Stack.Screen name="ActivitySource" component={ActivitySourcePage} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="ActivityGoal"
+            screenOptions={{
+              headerTitle: (props) => <Header {...props} />,
+              headerLeft: () => null,
+            }}
+          >
+            <Stack.Screen
+              name="Landing"
+              component={LandingPage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="Login" component={LoginPage} />
+            <Stack.Screen name="Intro" component={IntroPage} />
+            <Stack.Screen name="ActivityGoal" component={ActivityGoalPage} />
+            <Stack.Screen
+              name="ActivitySource"
+              component={ActivitySourcePage}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     );
   }
 };

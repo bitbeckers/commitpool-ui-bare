@@ -1,14 +1,18 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { useDispatch } from 'react-redux'
+import { StyleSheet, View} from "react-native";
 
 import DropDownPicker from "react-native-dropdown-picker";
+import { updateActivity } from "../../redux/commitment/commitmentSlice";
 
 const items = [
   { label: "Run  🏃‍♂️", value: "Run" },
   { label: "Ride  🚲", value: "Ride" },
 ];
-const Picker = ({}) => {
+const Picker = () => {
+  const dispatch = useDispatch();
   return (
+    <View style={styles.container}>
     <DropDownPicker
       items={items}
       defaultValue={items[0]}
@@ -18,20 +22,26 @@ const Picker = ({}) => {
       labelStyle={styles.labelStyle}
       itemStyle={styles.itemStyle}
       globalTextStyle={styles.textStyle}
+      onChangeItem={(item) => dispatch(updateActivity(item.value))}
     />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
   arrowStyle: {
     marginRight: 5,
     marginLeft: 5,
   },
   containerStyle: {
-    flex: 1,
     maxHeight: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    minHeight: 50,
+    minWidth: 149,
   },
   itemStyle: {
     justifyContent: "center",
@@ -42,9 +52,9 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   textStyle: {
-    fontFamily: 'OpenSans_400Regular',    
-    fontSize: 15 
-  }
+    fontFamily: "OpenSans_400Regular",
+    fontSize: 15,
+  },
 });
 
 export default Picker;

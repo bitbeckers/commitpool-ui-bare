@@ -4,7 +4,7 @@ import { StyleSheet, Text, Platform, Pressable } from "react-native";
 const CustomButton = ({ text, ...props }) => {
   return (
     <Pressable {...props} style={styles.button}>
-      <Text style={styles.buttonText}>{text}</Text>
+      <Text style={styles.text}>{text}</Text>
     </Pressable>
   );
 };
@@ -16,6 +16,13 @@ const styles = StyleSheet.create({
     maxHeight: 66,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgba(212, 84, 84, 1)",
+    marginLeft: 10,
+    marginRight: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingRight: 10,
+    paddingLeft: 10,
     borderRadius: 12,
     ...Platform.select({
       ios: {
@@ -31,19 +38,10 @@ const styles = StyleSheet.create({
         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
       },
     }),
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingRight: 10,
-    paddingLeft: 10,
-    backgroundColor: "rgba(212, 84, 84, 1)",
-    margin: 10,
+
   },
-  buttonText: {
-    justifyContent: "center",
-    alignItems: "stretch",
-    color: "rgba(255, 255, 255, 1)",
-    letterSpacing: 0,
-    textAlign: "center",
+  text: {
+    color: "white",
     fontFamily: 'OpenSans_400Regular',
   },
 });

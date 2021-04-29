@@ -1,12 +1,13 @@
 import React from "react";
+
 import { StyleSheet, View } from "react-native";
 import { Text, DropDownPicker } from "../../components";
 
-const ActivitySelector = ({}) => {
+const ActivitySelector = ({ text }) => {
   return (
     <View style={styles.activitySelector}>
-      <Text text={"Select activity"} style={styles.label} />
-      <DropDownPicker style={styles.dropDownPicker}/>
+      <Text text={text} />
+      <DropDownPicker />
     </View>
   );
 };
@@ -15,13 +16,9 @@ const styles = StyleSheet.create({
   activitySelector: {
     flex: 1,
     flexDirection: "row",
-    alignSelf: "flex-start",
-    // alignItems: "center",
     justifyContent: "center",
+    alignItems: "center"
   },
-  label: { fontSize: 14, textAlign: 'left', alignSelf: "flex-start" },
-  label: { alignSelf: "flex-start" },
-
 });
 
-export default ActivitySelector;
+export default ActivitySelector
