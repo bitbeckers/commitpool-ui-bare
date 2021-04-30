@@ -20,8 +20,6 @@ const styles = StyleSheet.create({
     maxHeight: 42,
     backgroundColor: "rgba(212, 84, 84, 1)",
     margin: 10,
-    // marginLeft: 10,
-    // marginRight: 10,
     paddingTop: 10,
     paddingBottom: 10,
     paddingRight: 10,

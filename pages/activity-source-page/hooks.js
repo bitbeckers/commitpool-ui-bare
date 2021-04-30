@@ -1,18 +1,23 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 
 export const useStravaLogin = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-    console.log("logging in to Strava")
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  console.log("Loaded Stava Login hook");
 
-    useEffect(() => {
-        const logIn = () => {
-            isLoggedIn ? console.log("Logged in") : () => {setIsLoggedIn(true); console.log("Switched to logged in") }
-        }
+  const handleLogin = () => {
+    isLoggedIn ? logOut() : logIn();
+  };
 
-        logIn();
-    })
+  const logIn = () => {
+    console.log("Please log in to Strava");
+    console.log("Executing log in flow...");
+    setIsLoggedIn(true);
+  };
 
+  const logOut = () => {
+    console.log("Executing log out flow...");
+    setIsLoggedIn(false);
+  };
 
-    return isLoggedIn ? 'Logged in' : 'Not logged in';
-
-}
+  return [isLoggedIn, handleLogin];
+};

@@ -17,13 +17,8 @@ const LoginPage = ({ navigation }) => {
         />
       </View>
       <Footer>
+        <Button text={"Back"} onPress={() => navigation.goBack()} />
         <Button
-          style={styles.button}
-          text={"Back"}
-          onPress={() => navigation.goBack()}
-        />
-        <Button
-          style={styles.button}
           text={"Continue"}
           onPress={() => navigation.navigate("StakingPage")}
         />
@@ -38,12 +33,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  // button: {
-  //   flex: 0,
-  //   // marginTop: 50,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  // },
 });
 
 export default LoginPage;

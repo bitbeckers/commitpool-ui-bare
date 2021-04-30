@@ -22,6 +22,7 @@ const DistanceSelector = ({ text }) => {
     isEnabled ? dispatch(updateUnit("mi")) : dispatch(updateUnit("km"));
   }, [isEnabled]);
 
+  //TODO export switch and labels to toggle component
   return (
     <View style={styles.distanceSelector}>
       <Text text={text} />
