@@ -1,16 +1,18 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { LayoutContainer, Footer, Text, Button, ProgressBar } from "../../components";
+import { LayoutContainer, Footer, Button, ProgressBar } from "../../components";
+import { useStravaLogin } from './hooks';
 
-const IntroPage = ({ navigation }) => {
+const ActivitySourcePage = ({ navigation }) => {
   return (
     <LayoutContainer>
       <ProgressBar size={2 / 6} />
       <View style={styles.intro}>
-        <Text text={"Connect to Strava"} />
+        <Button text={"Connect to Strava"} onPress={() => useStravaLogin()} />
       </View>
       <Footer>
         <Button text={"Back"} onPress={() => navigation.goBack()} />
+        <Button text={"Continue"} onPress={() => navigation.navigate("StakingPage")} />
       </Footer>
     </LayoutContainer>
   );
@@ -24,4 +26,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IntroPage;
+export default ActivitySourcePage;

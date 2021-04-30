@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text } from "react-native";
 
-const TextBox = ({ text }) => {
+const TextBox = ({ text}) => {
   return <Text style={styles.text}>{text}</Text>;
 };
 

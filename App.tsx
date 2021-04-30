@@ -18,6 +18,7 @@ import {
   LoginPage,
   ActivityGoalPage,
   ActivitySourcePage,
+  StakingPage,
 } from "./pages";
 
 const App = () => {
@@ -51,6 +52,10 @@ const App = () => {
             <Stack.Screen
               name="ActivitySource"
               component={ActivitySourcePage}
+            />
+            <Stack.Screen
+              name="StakingPage"
+              component={StakingPage}
             />
           </Stack.Navigator>
         </NavigationContainer>

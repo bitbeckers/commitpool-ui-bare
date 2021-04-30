@@ -9,7 +9,7 @@ import ActivitySelector from "./activity-selector/activity-selector.component";
 import DatePicker from "./custom-date-picker/custom-date-picker.component";
 import DateBox from "./date-box/date-box.component";
 import DistanceSelector from "./distance-selector/distance-selector.component";
-import Modal from "./custom-modal/custom-modal.component";
+import DialogPopUp from "./custom-dialog-popup/custom-dialog-popup.component";
 
 export {
   Header,
@@ -23,5 +23,5 @@ export {
   DateBox,
   ActivitySelector,
   DistanceSelector,
-  Modal,
+  DialogPopUp
 };

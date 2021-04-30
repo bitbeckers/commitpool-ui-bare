@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, View, Modal } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import {
   LayoutContainer,
@@ -11,23 +11,28 @@ import {
   ActivitySelector,
   DateBox,
   DistanceSelector,
+  DialogPopUp,
 } from "../../components";
 
 import {
   updateStartDate,
   updateEndDate,
 } from "../../redux/commitment/commitmentSlice";
-import { setConstantValue } from "typescript";
 
 const ActivityGoalPage = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [popUpVisible, setPopUpVisible] = useState(false);
   const commitment = useSelector((state) => state.commitment);
 
+  //TODO Modal for invalid commitment
   return (
     <LayoutContainer>
+      <DialogPopUp
+        visible={popUpVisible}
+        onTouchOutside={() => setPopUpVisible(false)}
+        text={"Commitment not complete, please check values"}
+      />
       <ProgressBar size={1 / 6} />
       <View style={styles.setUp}>
-      {/* {modalVisible ? < Modal /> : <View />} */}
         <Text text={"Set up your commitment"} />
         <ActivitySelector text={"Activity"} />
         <DistanceSelector text={"Distance"} />
@@ -49,7 +54,7 @@ const ActivityGoalPage = ({ navigation }) => {
           onPress={() =>
             validCommitment(commitment)
               ? navigation.navigate("ActivitySource")
-              : setModalVisible(true)
+              : setPopUpVisible(true)
           }
         />
       </Footer>
@@ -60,10 +65,12 @@ const ActivityGoalPage = ({ navigation }) => {
 const validCommitment = (commitment) => {
   const nowInSeconds = new Date().getTime() / 1000;
 
-  return commitment.activity !== "" &&
+  return (
+    commitment.activity !== "" &&
     commitment.distance > 0 &&
     commitment.endDate > commitment.startDate &&
-    commitment.endDate > nowInSeconds;
+    commitment.endDate > nowInSeconds
+  );
 };
 
 const styles = StyleSheet.create({

@@ -15,6 +15,7 @@ const LoginPage = ({ navigation }) => {
       </View>
       <Footer>
         <Button text={"Back"} onPress={() => navigation.goBack()} />
+        <Button text={"Continue"} onPress={() => navigation.navigate("StakingPage")} />
       </Footer>
     </LayoutContainer>
   );
