@@ -35,7 +35,7 @@ const App = () => {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="ActivityGoal"
+            initialRouteName="Landing"
             screenOptions={{
               headerTitle: (props) => <Header {...props} />,
               headerLeft: () => null,
@@ -53,10 +53,7 @@ const App = () => {
               name="ActivitySource"
               component={ActivitySourcePage}
             />
-            <Stack.Screen
-              name="StakingPage"
-              component={StakingPage}
-            />
+            <Stack.Screen name="StakingPage" component={StakingPage} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

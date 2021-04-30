@@ -29,7 +29,7 @@ const ActivityGoalPage = ({ navigation }) => {
       <DialogPopUp
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
-        text={"Commitment not complete, please check values"}
+        text={"Ooop! There is something wrong with your commitment :( please check values"}
       />
       <ProgressBar size={1 / 6} />
       <View style={styles.setUp}>

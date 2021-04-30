@@ -7,15 +7,26 @@ const LoginPage = ({ navigation }) => {
     <LayoutContainer>
       <View style={styles.loginPage}>
         <Text text={"Select login method"} />
-        <Button text={"Login"} onPress={() => console.log("Log in using Torus")} />
+        <Button
+          text={"Login"}
+          onPress={() => console.log("Log in using Torus")}
+        />
         <Button
           text={"MetaMask"}
           onPress={() => console.log("Log in using MetaMask")}
         />
       </View>
       <Footer>
-        <Button text={"Back"} onPress={() => navigation.goBack()} />
-        <Button text={"Continue"} onPress={() => navigation.navigate("StakingPage")} />
+        <Button
+          style={styles.button}
+          text={"Back"}
+          onPress={() => navigation.goBack()}
+        />
+        <Button
+          style={styles.button}
+          text={"Continue"}
+          onPress={() => navigation.navigate("StakingPage")}
+        />
       </Footer>
     </LayoutContainer>
   );
@@ -27,6 +38,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  // button: {
+  //   flex: 0,
+  //   // marginTop: 50,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
 });
 
 export default LoginPage;

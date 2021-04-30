@@ -1,9 +1,9 @@
 import React from "react";
 import { StyleSheet, Text, Platform, Pressable } from "react-native";
 
-const CustomButton = ({ text, ...props }) => {
+const CustomButton = ({ text, style, ...props }) => {
   return (
-    <Pressable {...props} style={styles.button}>
+    <Pressable {...props} style={style, styles.button}>
       <Text style={styles.text}>{text}</Text>
     </Pressable>
   );
@@ -12,13 +12,16 @@ const CustomButton = ({ text, ...props }) => {
 const styles = StyleSheet.create({
   button: {
     flex: 1,
-    maxWidth: 252,
-    maxHeight: 66,
+    alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
+    width: 250,
+    maxWidth: 300,
+    maxHeight: 42,
     backgroundColor: "rgba(212, 84, 84, 1)",
-    marginLeft: 10,
-    marginRight: 10,
+    margin: 10,
+    // marginLeft: 10,
+    // marginRight: 10,
     paddingTop: 10,
     paddingBottom: 10,
     paddingRight: 10,
