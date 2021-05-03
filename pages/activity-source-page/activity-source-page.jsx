@@ -16,7 +16,6 @@ const ActivitySourcePage = ({ navigation }) => {
   const [popUpVisible, setPopUpVisible] = useState(false);
   const stravaAthlete = useSelector((state) => state.strava.athlete);
 
-
   return (
     <LayoutContainer>
       <ProgressBar size={2 / 6} />
