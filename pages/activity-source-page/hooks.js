@@ -8,12 +8,9 @@ import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import {
   logInStravaUser,
   logOutStravaUser,
-  updateAthlete
 } from "../../redux/strava/stravaSlice";
 
 WebBrowser.maybeCompleteAuthSession();
-
-//TODO Strava account flow to state
 
 //Strava Credentials
 const clientID = "51548&";
@@ -37,8 +34,13 @@ export const useStravaLogin = () => {
 
   console.log("Loaded Stava Login hook");
 
+
   const handleLogin = () => {
-    isLoggedIn ? logOut() : logIn();
+    isLoggedIn ? dispatch(logOutStravaUser()) : stravaOauth();
+  };
+
+  const stravaOauth = () => {
+    promptAsync();
   };
 
   //Strava login
@@ -110,20 +112,6 @@ export const useStravaLogin = () => {
       createUser();
     }
   }, [isLoggedIn]);
-
-  const stravaOauth = () => {
-    promptAsync();
-  };
-
-  const logIn = () => {
-    console.log("Executing log in flow...");
-    stravaOauth();
-  };
-
-  const logOut = () => {
-    console.log("Executing log out flow...");
-    dispatch(logOutStravaUser());
-  };
 
   return [isLoggedIn, handleLogin];
 };

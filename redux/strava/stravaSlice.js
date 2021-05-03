@@ -24,9 +24,6 @@ export const stravaSlice = createSlice({
       state.isLoggedIn = true;
     },
     logOutStravaUser: () => initialState,
-    updateAthlete: (state, action) => {
-        state.athlete = action.payload
-    }
   },
 });
 
@@ -34,7 +31,6 @@ export const stravaSlice = createSlice({
 export const {
   logInStravaUser,
   logOutStravaUser,
-  updateAthlete
 } = stravaSlice.actions;
 
 export default stravaSlice.reducer;

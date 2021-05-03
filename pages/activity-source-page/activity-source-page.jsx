@@ -12,9 +12,8 @@ import {
 import { useStravaLogin } from "./hooks.js";
 
 const ActivitySourcePage = ({ navigation }) => {
-  const [stravaLogin, handleLogin] = useStravaLogin();
+  const [isLoggedIn, handleLogin] = useStravaLogin();
   const [popUpVisible, setPopUpVisible] = useState(false);
-  const isLoggedIn = useSelector((state) => state.strava.isLoggedIn);
   const stravaAthlete = useSelector((state) => state.strava.athlete);
 
 
