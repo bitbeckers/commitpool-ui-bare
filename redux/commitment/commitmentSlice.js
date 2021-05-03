@@ -10,6 +10,7 @@ export const commitmentSlice = createSlice({
     unit: "km",
     startDate: DateTime.now().toSeconds(),
     endDate: DateTime.now().toSeconds(),
+    stake: 0,
   },
   reducers: {
     updateActivity: (state, action) => {
@@ -27,6 +28,9 @@ export const commitmentSlice = createSlice({
     updateEndDate: (state, action) => {
       state.endDate = action.payload;
     },
+    updateStake: (state, action) => {
+      state.stake = action.payload;
+    },
   },
 });
 
@@ -37,6 +41,7 @@ export const {
   updateUnit,
   updateStartDate,
   updateEndDate,
+  updateStake
 } = commitmentSlice.actions;
 
 export default commitmentSlice.reducer;

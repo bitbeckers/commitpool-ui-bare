@@ -10,6 +10,7 @@ import {
 
 import { useTorusLogin } from "./hooks";
 
+//TODO check for open commitments to determine redirect
 const LoginPage = ({ navigation }) => {
   const [isLoggedIn, handleLogin] = useTorusLogin();
   const [popUpVisible, setPopUpVisible] = useState(false);
@@ -35,7 +36,7 @@ const LoginPage = ({ navigation }) => {
           text={"Continue"}
           onPress={() =>
             isLoggedIn
-              ? navigation.navigate("StakingPage")
+              ? navigation.navigate("ActivityGoal")
               : setPopUpVisible(true)
           }
         />

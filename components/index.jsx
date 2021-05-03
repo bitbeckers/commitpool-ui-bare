@@ -10,7 +10,9 @@ import DatePicker from "./custom-date-picker/custom-date-picker.component";
 import DateBox from "./date-box/date-box.component";
 import DistanceSelector from "./distance-selector/distance-selector.component";
 import DialogPopUp from "./custom-dialog-popup/custom-dialog-popup.component";
+import ValueToggle from "./value-toggle/value-toggle.component";
 
+//TODO split atoms and molecules
 export {
   Header,
   Footer,
@@ -23,5 +25,6 @@ export {
   DateBox,
   ActivitySelector,
   DistanceSelector,
-  DialogPopUp
+  DialogPopUp,
+  ValueToggle
 };

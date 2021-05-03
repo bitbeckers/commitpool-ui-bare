@@ -5,8 +5,8 @@ import {
   updateUnit,
 } from "../../redux/commitment/commitmentSlice";
 
-import { StyleSheet, View, TextInput, Switch } from "react-native";
-import { Text } from "..";
+import { StyleSheet, View, TextInput } from "react-native";
+import { Text, ValueToggle } from "..";
 
 const DistanceSelector = ({ text }) => {
   const [isEnabled, setIsEnabled] = useState(true);
@@ -31,15 +31,7 @@ const DistanceSelector = ({ text }) => {
         style={styles.textInput}
         onChangeText={(value) => dispatch(updateDistance(value))}
       />
-      <Text text={toggleOptions[0]} />
-      <Switch
-        trackColor={{ false: "#767577", true: "#81b0ff" }}
-        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-        ios_backgroundColor="#3e3e3e"
-        onValueChange={toggleSwitch}
-        value={isEnabled}
-      />
-      <Text text={toggleOptions[1]} />
+      <ValueToggle toggleOptions={toggleOptions} onToggle={toggleSwitch} />
     </View>
   );
 };

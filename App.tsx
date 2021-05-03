@@ -19,6 +19,7 @@ import {
   ActivityGoalPage,
   ActivitySourcePage,
   StakingPage,
+  ConfirmationPage
 } from "./pages";
 
 const App = () => {
@@ -28,6 +29,7 @@ const App = () => {
   });
 
   //TODO Do we ever get to the loading screen?
+  //TODO Refactor/aggregate screen loading away from app.tsx
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
@@ -35,7 +37,7 @@ const App = () => {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Login"
+            initialRouteName="Landing"
             screenOptions={{
               headerTitle: (props) => <Header {...props} />,
               headerLeft: () => null,
@@ -54,6 +56,8 @@ const App = () => {
               component={ActivitySourcePage}
             />
             <Stack.Screen name="StakingPage" component={StakingPage} />
+            <Stack.Screen name="ConfirmationPage" component={ConfirmationPage} />
+
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
