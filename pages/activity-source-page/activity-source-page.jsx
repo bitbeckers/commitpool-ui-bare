@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useState} from "react";
+import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import {
   LayoutContainer,
@@ -6,17 +7,28 @@ import {
   Button,
   ProgressBar,
   Text,
+  DialogPopUp
 } from "../../components";
-import { useStravaLogin } from "./hooks";
+import { useStravaLogin } from "./hooks.js";
 
 const ActivitySourcePage = ({ navigation }) => {
-  const [isLoggedIn, handleLogin] = useStravaLogin();
+  const [stravaLogin, handleLogin] = useStravaLogin();
+  const [popUpVisible, setPopUpVisible] = useState(false);
+  const isLoggedIn = useSelector((state) => state.strava.isLoggedIn);
+  const stravaAthlete = useSelector((state) => state.strava.athlete);
+
+
   return (
     <LayoutContainer>
       <ProgressBar size={2 / 6} />
+      <DialogPopUp
+        visible={popUpVisible}
+        onTouchOutside={() => setPopUpVisible(false)}
+        text={"Mmmmm... It appears you are not yet connected to Strava"}
+      />
       <View style={styles.intro}>
         {isLoggedIn ? (
-          <Text text={"Hello Frank"} />
+          <Text text={`Hello ${stravaAthlete.firstname}`} />
         ) : (
           <Text text={"Please log in"} />
         )}
@@ -30,7 +42,7 @@ const ActivitySourcePage = ({ navigation }) => {
         <Button text={"Back"} onPress={() => navigation.goBack()} />
         <Button
           text={"Continue"}
-          onPress={() => navigation.navigate("StakingPage")}
+          onPress={() => isLoggedIn ? navigation.navigate("StakingPage") : setPopUpVisible(true)}
         />
       </Footer>
     </LayoutContainer>
