@@ -1,9 +1,14 @@
 import React from "react";
 import { StyleSheet, Text, Platform, Pressable } from "react-native";
 
-const CustomButton = ({ text, style, ...props }) => {
+interface CustomButtonProps {
+  text: string,
+  onPress: () => any 
+}
+
+const CustomButton = ({ text, onPress }: CustomButtonProps) => {
   return (
-    <Pressable {...props} style={style, styles.button}>
+    <Pressable onPress={onPress} style={styles.button}>
       <Text style={styles.text}>{text}</Text>
     </Pressable>
   );

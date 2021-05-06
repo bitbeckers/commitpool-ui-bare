@@ -2,11 +2,17 @@ import React from "react";
 import { StyleSheet, Text } from "react-native";
 import Dialog, { DialogContent } from "react-native-popup-dialog";
 
-const dialogPopUp = ({ visible, text, onTouchOutside }) => {
+interface DialogPopUp {
+  visible: boolean,
+  text: string,
+  onTouchOutside: () => void 
+}
+
+const DialogPopUp = ({ visible, text, onTouchOutside }: DialogPopUp) => {
   return (
     <Dialog visible={visible} onTouchOutside={onTouchOutside}>
       <DialogContent>
-        <Text>{text}</Text>
+        <Text style={styles.text}>{text}</Text>
       </DialogContent>
     </Dialog>
   );
@@ -22,4 +28,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default dialogPopUp;
+export default DialogPopUp;

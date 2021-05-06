@@ -1,5 +1,7 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { RootStackParamList } from "..";
 import {
   LayoutContainer,
   Footer,
@@ -10,8 +12,17 @@ import {
 
 import { useTorusLogin } from "./hooks";
 
+type LoginPageNavigationProps = StackNavigationProp<
+  RootStackParamList,
+  'Login'
+>;
+
+type LoginPageProps = {
+  navigation: LoginPageNavigationProps;
+};
+
 //TODO check for open commitments to determine redirect
-const LoginPage = ({ navigation }) => {
+const LoginPage = ({ navigation }: LoginPageProps) => {
   const [isLoggedIn, handleLogin] = useTorusLogin();
   const [popUpVisible, setPopUpVisible] = useState(false);
 

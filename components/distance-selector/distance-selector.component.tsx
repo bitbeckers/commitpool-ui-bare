@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import {useAppDispatch} from "../../redux/store";
 import {
   updateDistance,
   updateUnit,
@@ -8,21 +8,24 @@ import {
 import { StyleSheet, View, TextInput } from "react-native";
 import { Text, ValueToggle } from "..";
 
-const DistanceSelector = ({ text }) => {
+interface DistanceSelector {
+  text: string
+}
+
+const DistanceSelector = ({ text }: DistanceSelector) => {
   const [isEnabled, setIsEnabled] = useState(true);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const toggleSwitch = () => {
     setIsEnabled((previousState) => !previousState);
   };
-  const toggleOptions = ["km", "mi"];
+  const toggleOptions: string[] = ["km", "mi"];
 
   useEffect(() => {
     isEnabled ? dispatch(updateUnit("mi")) : dispatch(updateUnit("km"));
   }, [isEnabled]);
 
-  //TODO export switch and labels to toggle component
   return (
     <View style={styles.distanceSelector}>
       <Text text={text} />

@@ -3,10 +3,16 @@ import React, { useState } from "react";
 import { StyleSheet, View, Switch } from "react-native";
 import { Text } from "..";
 
-const ValueToggle = ({ toggleOptions, onToggle }) => {
+interface ValueToggle {
+  toggleOptions: string[],
+  onToggle: () => void,
+};
+
+const ValueToggle = ({ toggleOptions, onToggle }: ValueToggle) => {
   const [isEnabled, setIsEnabled] = useState(true);
 
   const toggleSwitch = () => {
+    onToggle();
     setIsEnabled((previousState) => !previousState);
   };
 
@@ -17,7 +23,7 @@ const ValueToggle = ({ toggleOptions, onToggle }) => {
         trackColor={{ false: "#767577", true: "#81b0ff" }}
         thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
         ios_backgroundColor="#3e3e3e"
-        onValueChange={onToggle}
+        onValueChange={toggleSwitch}
         value={isEnabled}
       />
       <Text text={toggleOptions[1]} />
@@ -28,7 +34,7 @@ const ValueToggle = ({ toggleOptions, onToggle }) => {
 const styles = StyleSheet.create({
   toggleRow: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: "row",
   },
 });
 

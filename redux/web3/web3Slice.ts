@@ -1,6 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface Web3State {
+  account: string | undefined,
+  provider: any,
+  wallet: any,
+  isLoggedIn: boolean,
+}
+
+const initialState: Web3State = {
   account: undefined,
   provider: undefined,
   wallet: undefined,

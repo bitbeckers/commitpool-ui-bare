@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { DateTime } from "luxon";
@@ -8,18 +8,37 @@ import {
   Footer,
   Text,
   Button,
-  ProgressBar,
+  ProgressCircle,
+  DialogPopUp
 } from "../../components";
+import { RootState } from "../../redux/store";
+import { RootStackParamList } from "..";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-const ConfirmationPage = ({ navigation }) => {
-  const commitment = useSelector((state) => state.commitment);
+type TrackPageNavigationProps = StackNavigationProp<
+  RootStackParamList,
+  'Track'
+>;
 
-  //TODO Modal for invalid commitment
+type TrackPageProps = {
+  navigation: TrackPageNavigationProps;
+};
+
+const TrackPage = ({ navigation }: TrackPageProps) => {
+  const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
+  const commitment: Commitment = useSelector((state: RootState) => state.commitment);
+
+  const progress: number = (commitment?.progress / commitment?.distance * 100) | 0
+
   return (
     <LayoutContainer>
-      <ProgressBar size={4 / 6} />
+      <DialogPopUp
+        visible={popUpVisible}
+        onTouchOutside={() => setPopUpVisible(false)}
+        text={"Commitment not yet complete, keep it up!"}
+      />
       <View style={styles.commitment}>
-        <Text text={"You set up the following commitment:"} />
+        <Text text={"Tracking the following commitment:"} />
         <View style={styles.commitmentValues}>
           <Text text={`Activity ${commitment.activity}`} />
           <Text text={`Distance ${commitment.distance} ${commitment.unit}`} />
@@ -32,7 +51,7 @@ const ConfirmationPage = ({ navigation }) => {
             text={`End date ${DateTime.fromSeconds(commitment.endDate).toFormat(
               "yyyy MMMM dd"
             )}`}
-          />{" "}
+          />
         </View>
         <View style={styles.commitmentValues}>
           <Text text={"And are staking the following amount:"} />
@@ -40,13 +59,15 @@ const ConfirmationPage = ({ navigation }) => {
           <Text text={`${commitment.stake} DAI`} />
         </View>
       </View>
+      <ProgressCircle progress={progress} />
+
       <Footer>
         <Button text={"Back"} onPress={() => navigation.goBack()} />
         <Button
           text={"Continue"}
           onPress={() =>
-            validCommitment(commitment)
-              ? navigation.navigate("Confirm")
+            processCommitmentProgress(commitment)
+              ? navigation.navigate("Completion")
               : setPopUpVisible(true)
           }
         />
@@ -54,6 +75,11 @@ const ConfirmationPage = ({ navigation }) => {
     </LayoutContainer>
   );
 };
+
+//TODO implement logic to compare against actual Strava data and timebox
+const processCommitmentProgress = (commitment: Commitment) => {
+  return true
+}
 
 const styles = StyleSheet.create({
   commitment: {
@@ -70,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmationPage;
+export default TrackPage;

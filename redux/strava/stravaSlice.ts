@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     isLoggedIn: false,
-    athlete: "",
+    athlete: {} as Athlete,
     refresh_token: "",
     access_token: "",
     expires_at: 0,

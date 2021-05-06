@@ -1,9 +1,13 @@
 import React from "react";
 
 import { StyleSheet, View } from "react-native";
-import { Text, DropDownPicker } from "../../components";
+import { Text, DropDownPicker } from "..";
 
-const ActivitySelector = ({ text }) => {
+interface ActivitySelectorProps {
+  text: string
+}
+
+const ActivitySelector = ({ text }: ActivitySelectorProps) => {
   return (
     <View style={styles.activitySelector}>
       <Text text={text} />

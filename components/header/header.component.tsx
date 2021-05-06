@@ -1,10 +1,15 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const Header = () => {
+interface Header {
+  children?: React.ReactNode;
+}
+
+const Header = ({children}: Header) => {
   return (
     <View style={styles.header}>
       <Text style={styles.headerText}>CommitPool</Text>
+      {children}
     </View>
   );
 };

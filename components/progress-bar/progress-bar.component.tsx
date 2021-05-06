@@ -1,8 +1,12 @@
 import React from "react";
 import ProgressBar from "react-native-progress/Bar";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 
-const Bar = ({ size }) => {
+interface CustomProgressBar {
+  size: number
+}
+
+const CustomProgressBar = ({ size }: CustomProgressBar) => {
   return (
     <ProgressBar
       progress={size}
@@ -26,4 +30,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Bar;
+export default CustomProgressBar;

@@ -1,45 +1,54 @@
 import React, { createElement } from "react";
 import { StyleSheet, Platform } from "react-native";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../redux/store";
 import { DateTime } from "luxon";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, { AndroidEvent } from "@react-native-community/datetimepicker";
 
-const CustomDatePicker = ({ dateInput, label, onDateChange }) => {
-  const date = dateInput.toJSDate();
-  const dispatch = useDispatch();
+//TODO refactor any type away
+interface CustomDatePicker {
+  dateInSeconds: number;
+  onDateChange: (dateInSeconds: number) => any;
+};
 
-  const handleDateChange = (date) => {
-    const dateInSeconds = date.getTime() / 1000;
+const CustomDatePicker = ({
+  dateInSeconds,
+  onDateChange,
+}: CustomDatePicker) => {
+
+  const date: Date = new Date(dateInSeconds * 1000);
+  const dispatch = useAppDispatch();
+
+  const handleDateChange = (date: Date) => {
+    const dateInSeconds: number = date.getTime() / 1000;
 
     dispatch(onDateChange(dateInSeconds));
   };
 
   //TODO timing on Date, currentlight 00:00 start of day
-  const dateToJSDateTime = (dateFromEvent) => {
-    console.log(`Date from event: ${dateFromEvent}`)
+  const dateToJSDateTime = (dateFromEvent: string) => {
+    console.log(`Date from event: ${dateFromEvent}`);
 
-    const date = DateTime.fromFormat(dateFromEvent, "yyyy-MM-dd");
-    console.log(`Date: ${date}`)
-    const datetime = new Date(date);
-    
-    return datetime;
+    const date: Date = DateTime.fromFormat(dateFromEvent, "yyyy-MM-dd").toJSDate();
+    console.log(`Date: ${date}`);
+
+    return date;
   };
 
   return {
     ...Platform.select({
       android: (
         <DateTimePicker
-          testID={label}
+          // testID={label}
           value={date}
           mode={"date"}
           is24Hour={true}
           display="default"
-          onChange={(e, date) => handleDateChange(date)}
+          onChange={(e: Event, date?: Date) => handleDateChange(date)}
         />
       ),
       ios: (
         <DateTimePicker
-          testID={label}
+          // testID={label}
           value={date}
           mode={"date"}
           is24Hour={true}
@@ -52,7 +61,7 @@ const CustomDatePicker = ({ dateInput, label, onDateChange }) => {
         //TODO pretty date picker desktop
         type: "date",
         defaultValue: date,
-        onInput: (e) => handleDateChange(dateToJSDateTime(e.target.value)),
+        onInput: (e: Event) => { console.log("Event ", e.target);handleDateChange(dateToJSDateTime(e.target.value))},
       }),
     }),
   };

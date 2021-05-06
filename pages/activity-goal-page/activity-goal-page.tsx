@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
+import { StackNavigationProp } from '@react-navigation/stack';
 
 import {
   LayoutContainer,
@@ -18,18 +19,29 @@ import {
   updateStartDate,
   updateEndDate,
 } from "../../redux/commitment/commitmentSlice";
+import { RootState } from "../../redux/store";
 
-const ActivityGoalPage = ({ navigation }) => {
-  const [popUpVisible, setPopUpVisible] = useState(false);
-  const commitment = useSelector((state) => state.commitment);
+import {RootStackParamList} from '..'
 
-  //TODO Modal for invalid commitment
+type ActivityGoalPageNavigationProps = StackNavigationProp<
+  RootStackParamList,
+  'ActivityGoal'
+>;
+
+type ActivityGoalPageProps = {
+  navigation: ActivityGoalPageNavigationProps;
+};
+
+const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
+  const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
+  const commitment: Commitment = useSelector((state: RootState) => state.commitment);
+
   return (
     <LayoutContainer>
       <DialogPopUp
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
-        text={"Ooop! There is something wrong with your commitment :( please check values"}
+        text={"Ooops! There is something wrong with your commitment :( please check values"}
       />
       <ProgressBar size={1 / 6} />
       <View style={styles.setUp}>
@@ -37,12 +49,12 @@ const ActivityGoalPage = ({ navigation }) => {
         <ActivitySelector text={"Activity"} />
         <DistanceSelector text={"Distance"} />
         <DateBox
-          dateInput={commitment.startDate}
+          dateInSeconds={commitment.startDate}
           text={"Start date"}
           onDateChange={updateStartDate}
         />
         <DateBox
-          dateInput={commitment.endDate}
+          dateInSeconds={commitment.endDate}
           text={"End date"}
           onDateChange={updateEndDate}
         />
@@ -52,7 +64,7 @@ const ActivityGoalPage = ({ navigation }) => {
         <Button
           text={"Continue"}
           onPress={() =>
-            validCommitment(commitment)
+            validActivity(commitment)
               ? navigation.navigate("ActivitySource")
               : setPopUpVisible(true)
           }
@@ -62,12 +74,12 @@ const ActivityGoalPage = ({ navigation }) => {
   );
 };
 
-const validCommitment = (commitment) => {
+const validActivity = (commitment: Commitment) => {
   const nowInSeconds = new Date().getTime() / 1000;
 
   return (
     commitment.activity !== "" &&
-    commitment.distance > 0 &&
+    commitment.distance > 0  &&
     commitment.endDate > commitment.startDate &&
     commitment.endDate > nowInSeconds
   );

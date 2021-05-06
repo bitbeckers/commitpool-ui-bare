@@ -1,8 +1,19 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { RootStackParamList } from "..";
 import { LayoutContainer, Text, Button } from "../../components";
 
-const LandingPage = ({ navigation }) => {
+type LandingPageNavigationProps = StackNavigationProp<
+  RootStackParamList,
+  'Landing'
+>;
+
+type LandingPageProps = {
+  navigation: LandingPageNavigationProps;
+};
+
+const LandingPage = ({ navigation }: LandingPageProps) => {
   return (
     <LayoutContainer>
       <View style={styles.landingPage}>

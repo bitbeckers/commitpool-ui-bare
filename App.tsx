@@ -19,7 +19,9 @@ import {
   ActivityGoalPage,
   ActivitySourcePage,
   StakingPage,
-  ConfirmationPage
+  ConfirmationPage,
+  TrackPage,
+  CompletionPage
 } from "./pages";
 
 const App = () => {
@@ -39,7 +41,7 @@ const App = () => {
           <Stack.Navigator
             initialRouteName="Landing"
             screenOptions={{
-              headerTitle: (props) => <Header {...props} />,
+              headerTitle: () => <Header  />,
               headerLeft: () => null,
             }}
           >
@@ -55,8 +57,11 @@ const App = () => {
               name="ActivitySource"
               component={ActivitySourcePage}
             />
-            <Stack.Screen name="StakingPage" component={StakingPage} />
-            <Stack.Screen name="ConfirmationPage" component={ConfirmationPage} />
+            <Stack.Screen name="Staking" component={StakingPage} />
+            <Stack.Screen name="Confirmation" component={ConfirmationPage} />
+            <Stack.Screen name="Track" component={TrackPage} />
+            <Stack.Screen name="Completion" component={CompletionPage} />
+
 
           </Stack.Navigator>
         </NavigationContainer>

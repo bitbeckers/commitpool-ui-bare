@@ -1,8 +1,19 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { RootStackParamList } from "..";
 import { LayoutContainer, Footer, Text, Button } from "../../components";
 
-const IntroPage = ({ navigation }) => {
+type IntroPageNavigationProps = StackNavigationProp<
+  RootStackParamList,
+  'Intro'
+>;
+
+type IntroPageProps = {
+  navigation: IntroPageNavigationProps;
+};
+
+const IntroPage = ({ navigation }: IntroPageProps) => {
   return (
     <LayoutContainer>
       <View style={styles.introPage}>

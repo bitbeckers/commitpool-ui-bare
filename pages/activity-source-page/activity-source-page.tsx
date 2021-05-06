@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
+import { StackNavigationProp } from '@react-navigation/stack';
+
 import {
   LayoutContainer,
   Footer,
@@ -9,12 +11,23 @@ import {
   Text,
   DialogPopUp
 } from "../../components";
-import { useStravaLogin } from "./hooks.js";
+import { useStravaLogin } from "./hooks";
+import { RootState } from "../../redux/store";
+import { RootStackParamList } from "..";
 
-const ActivitySourcePage = ({ navigation }) => {
+type ActivitySourcePageNavigationProps = StackNavigationProp<
+  RootStackParamList,
+  'ActivitySource'
+>;
+
+type ActivitySourcePageProps = {
+  navigation: ActivitySourcePageNavigationProps;
+};
+
+const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
   const [isLoggedIn, handleLogin] = useStravaLogin();
-  const [popUpVisible, setPopUpVisible] = useState(false);
-  const stravaAthlete = useSelector((state) => state.strava.athlete);
+  const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
+  const stravaAthlete: Athlete = useSelector((state: RootState) => state.strava.athlete);
 
   return (
     <LayoutContainer>
@@ -26,7 +39,7 @@ const ActivitySourcePage = ({ navigation }) => {
       />
       <View style={styles.intro}>
         {isLoggedIn ? (
-          <Text text={`Hello ${stravaAthlete.firstname}`} />
+          <Text text={`Hello ${stravaAthlete?.firstname}`} />
         ) : (
           <Text text={"Please log in"} />
         )}
@@ -40,7 +53,7 @@ const ActivitySourcePage = ({ navigation }) => {
         <Button text={"Back"} onPress={() => navigation.goBack()} />
         <Button
           text={"Continue"}
-          onPress={() => isLoggedIn ? navigation.navigate("StakingPage") : setPopUpVisible(true)}
+          onPress={() => isLoggedIn ? navigation.navigate("Staking") : setPopUpVisible(true)}
         />
       </Footer>
     </LayoutContainer>

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from '../../redux/store';
 import axios from "axios";
 
 import * as WebBrowser from "expo-web-browser";
@@ -13,8 +14,8 @@ import {
 WebBrowser.maybeCompleteAuthSession();
 
 //Strava Credentials
-const clientID = "51548&";
-const clientSecret = "28d56211b9ca33972055bf61010074fbedc3c7c2";
+const clientID: string = "51548&";
+const clientSecret: string = "28d56211b9ca33972055bf61010074fbedc3c7c2";
 
 // Strava Endpoints
 const discovery = {
@@ -27,13 +28,12 @@ const discovery = {
 // const callActivities = `https://www.strava.com/api/v3/athlete/activities?access_token=`;
 
 export const useStravaLogin = () => {
-  const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.strava.isLoggedIn);
-  const stravaAthlete = useSelector((state) => state.strava.athlete);
-  const refreshToken = useSelector((state) => state.strava.refresh_token);
+  const dispatch = useAppDispatch();
+  const isLoggedIn: boolean = useSelector((state: RootState) => state.strava.isLoggedIn);
+  const stravaAthlete: Athlete= useSelector((state: RootState) => state.strava.athlete);
+  const refreshToken: string = useSelector((state: RootState) => state.strava.refresh_token);
 
   console.log("Loaded Stava Login hook");
-
 
   const handleLogin = () => {
     isLoggedIn ? dispatch(logOutStravaUser()) : stravaOauth();
@@ -59,9 +59,8 @@ export const useStravaLogin = () => {
   );
 
   //Set strava Code from response
-  //TODO TS to check on ?.type
   useEffect(() => {
-    if (response !== null && response.type === "success") {
+    if (response?.type === "success") {
       const executeLogin = async () => {
         await axios({
           method: "post",

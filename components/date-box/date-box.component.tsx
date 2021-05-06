@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
 
 import { Platform } from "react-native";
 import { StyleSheet, View } from "react-native";
 
-import { DatePicker, Text, Button } from "../../components";
+import { DatePicker, Text, Button } from "..";
 
 import { DateTime } from 'luxon';
 
+interface DateBox {
+  dateInSeconds: number,
+  text: string,
+  onDateChange: (dateInput: number) => any;
+}
 
-const DateBox = ({ dateInput, text, onDateChange }) => {
+const DateBox = ({ dateInSeconds, text, onDateChange }: DateBox) => {
   const [isPickerShow, setIsPickerShow] = useState(false);
-  const date = DateTime.fromSeconds(dateInput)
+  const date: DateTime = DateTime.fromSeconds(dateInSeconds)
 
   const onChange = () => {
     setIsPickerShow(Platform.OS === 'ios');
@@ -26,7 +30,7 @@ const DateBox = ({ dateInput, text, onDateChange }) => {
       />
       {isPickerShow && (
         <DatePicker
-          dateInput={date}
+          dateInSeconds={dateInSeconds}
           onDateChange={onDateChange}
           onChange={onChange}
         />

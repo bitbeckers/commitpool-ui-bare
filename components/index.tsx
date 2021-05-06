@@ -4,6 +4,7 @@ import Header from "./header/header.component";
 import LayoutContainer from "./layout-container/layout-container.component";
 import Text from "./text-box/text-box.component";
 import ProgressBar from "./progress-bar/progress-bar.component";
+import ProgressCircle from "./progress-circle/progress-circle.component";
 import DropDownPicker from "./custom-dropdown/custom-dropdown.component";
 import ActivitySelector from "./activity-selector/activity-selector.component";
 import DatePicker from "./custom-date-picker/custom-date-picker.component";
@@ -20,6 +21,7 @@ export {
   LayoutContainer,
   Text,
   ProgressBar,
+  ProgressCircle,
   DropDownPicker,
   DatePicker,
   DateBox,
