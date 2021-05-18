@@ -11,6 +11,7 @@ import {
 } from "../../components";
 
 import { useTorusLogin } from "./hooks";
+import strings from "../../resources/strings";
 
 type LoginPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -31,20 +32,20 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
       <DialogPopUp
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
-        text={"Mmmmm... It appears you are not yet connected to a wallet"}
+        text={strings.login.alert}
       />
       <View style={styles.loginPage}>
-        <Text text={"Select login method"} />
-        <Button text={"Login"} onPress={() => handleLogin()} />
+        <Text text={strings.login.text} />
+        <Button text={strings.login.select.torus} onPress={() => handleLogin()} />
         <Button
-          text={"MetaMask"}
+          text={strings.login.select.metamask}
           onPress={() => console.log("Log in using MetaMask")}
         />
       </View>
       <Footer>
-        <Button text={"Back"} onPress={() => navigation.goBack()} />
+        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
         <Button
-          text={"Continue"}
+          text={strings.footer.next}
           onPress={() =>
             isLoggedIn
               ? navigation.navigate("ActivityGoal")

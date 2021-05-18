@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { RootStackParamList } from "..";
 import { LayoutContainer, Text, Button } from "../../components";
+import strings from "../../resources/strings";
 
 type LandingPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -17,14 +18,14 @@ const LandingPage = ({ navigation }: LandingPageProps) => {
   return (
     <LayoutContainer>
       <View style={styles.landingPage}>
-        <Text text={"New to CommitPool?"} />
+        <Text text={strings.landing.new.text} />
         <Button
-          text={"New User"}
+          text={strings.landing.new.button}
           onPress={() => navigation.navigate("Intro")}
         />
-        <Text text={"Used CommitPool before?"} />
+        <Text text={strings.landing.reconnect.text} />
         <Button
-          text={"Reconnect"}
+          text={strings.landing.reconnect.button}
           onPress={() => navigation.navigate("Login")}
         />
       </View>

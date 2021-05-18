@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { RootStackParamList } from "..";
 import { LayoutContainer, Footer, Text, Button } from "../../components";
+import strings from "../../resources/strings";
 
 type IntroPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -17,12 +18,12 @@ const IntroPage = ({ navigation }: IntroPageProps) => {
   return (
     <LayoutContainer>
       <View style={styles.introPage}>
-        <Text text={"Intropaage"} />
+        <Text text={strings.intro.text} />
       </View>
       <Footer>
-        <Button text={"Back"} onPress={() => navigation.goBack()}/>
+        <Button text={strings.footer.back} onPress={() => navigation.goBack()}/>
         <Button
-          text={"Get Started"}
+          text={strings.footer.start}
           onPress={() => navigation.navigate("ActivityGoal")}
         />
       </Footer>

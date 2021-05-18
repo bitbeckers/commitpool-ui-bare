@@ -15,6 +15,8 @@ import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
+import strings from "../../resources/strings"
+
 type ConfirmationPageNavigationProps = StackNavigationProp<
   RootStackParamList,
   'Confirmation'
@@ -33,35 +35,35 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
       <DialogPopUp
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
-        text={"Something is wrong with your commitment, please check values"}
+        text={strings.confirmation.alert}
       />
       <ProgressBar size={4 / 6} />
       <View style={styles.commitment}>
-        <Text text={"You set up the following commitment:"} />
+        <Text text={strings.confirmation.commitment.text} />
         <View style={styles.commitmentValues}>
-          <Text text={`Activity ${commitment.activity}`} />
-          <Text text={`Distance ${commitment.distance} ${commitment.unit}`} />
+          <Text text={`${strings.confirmation.commitment.activity} ${commitment.activity.toLowerCase()}`} />
+          <Text text={`${strings.confirmation.commitment.distance} ${commitment.distance} ${commitment.unit}`} />
           <Text
-            text={`Starting date ${DateTime.fromSeconds(
+            text={`${strings.confirmation.commitment.startDate} ${DateTime.fromSeconds(
               commitment.startDate
             ).toFormat("yyyy MMMM dd")}`}
           />
           <Text
-            text={`End date ${DateTime.fromSeconds(commitment.endDate).toFormat(
+            text={`${strings.confirmation.commitment.endDate} ${DateTime.fromSeconds(commitment.endDate).toFormat(
               "yyyy MMMM dd"
             )}`}
           />
         </View>
         <View style={styles.commitmentValues}>
-          <Text text={"And are staking the following amount:"} />
+          <Text text={strings.confirmation.commitment.stake} />
 
-          <Text text={`${commitment.stake} DAI`} />
+          <Text text={`${commitment.stake} ${commitment.currency}`} />
         </View>
       </View>
       <Footer>
-        <Button text={"Back"} onPress={() => navigation.goBack()} />
+        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
         <Button
-          text={"Continue"}
+          text={strings.footer.next}
           onPress={() =>
             validCommitment(commitment)
               ? navigation.navigate("Track")

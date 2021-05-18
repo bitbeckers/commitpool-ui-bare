@@ -14,6 +14,7 @@ import {
 import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
+import strings from "../../resources/strings"
 
 type TrackPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -35,28 +36,28 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
       <DialogPopUp
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
-        text={"Commitment not yet complete, keep it up!"}
+        text={strings.track.alert}
       />
       <View style={styles.commitment}>
-        <Text text={"Tracking the following commitment:"} />
+        <Text text={strings.track.tracking.text} />
         <View style={styles.commitmentValues}>
-          <Text text={`Activity ${commitment.activity}`} />
-          <Text text={`Distance ${commitment.distance} ${commitment.unit}`} />
+          <Text text={`${strings.track.tracking.activity} ${commitment.activity.toLowerCase()}`} />
+          <Text text={`${strings.track.tracking.distance} ${commitment.distance} ${commitment.unit}`} />
           <Text
-            text={`Starting date ${DateTime.fromSeconds(
+            text={`${strings.track.tracking.startDate} ${DateTime.fromSeconds(
               commitment.startDate
             ).toFormat("yyyy MMMM dd")}`}
           />
           <Text
-            text={`End date ${DateTime.fromSeconds(commitment.endDate).toFormat(
+            text={`${strings.track.tracking.endDate}  ${DateTime.fromSeconds(commitment.endDate).toFormat(
               "yyyy MMMM dd"
             )}`}
           />
         </View>
         <View style={styles.commitmentValues}>
-          <Text text={"And are staking the following amount:"} />
+          <Text text={strings.track.tracking.stake} />
 
-          <Text text={`${commitment.stake} DAI`} />
+          <Text text={`${commitment.stake} ${commitment.currency}`} />
         </View>
       </View>
       <ProgressCircle progress={progress} />

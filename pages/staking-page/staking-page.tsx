@@ -19,6 +19,8 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "..";
 
+import strings from "../../resources/strings";
+
 type StakingPageNavigationProps = StackNavigationProp<
   RootStackParamList,
   "Staking"
@@ -55,12 +57,12 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
         text={
-          "Wut?! It appears you're not staking?"
+          strings.staking.alert
         }
       />
       <ProgressBar size={3 / 6} />
       <View style={styles.text}>
-        <Text text={"How much to you want to stake?"} />
+        <Text text={strings.staking.text} />
         <View style={styles.valueInput}>
           <TextInput
             keyboardType={"number-pad"}
@@ -71,9 +73,9 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
         </View>
       </View>
       <Footer>
-        <Button text={"Back"} onPress={() => navigation.goBack()} />
+        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
         <Button
-          text={"Continue"}
+          text={strings.footer.next}
           onPress={() => {
             validStake(commitment)
               ? navigation.navigate("Confirmation")

@@ -15,6 +15,8 @@ import { useStravaLogin } from "./hooks";
 import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 
+import strings from "../../resources/strings";
+
 type ActivitySourcePageNavigationProps = StackNavigationProp<
   RootStackParamList,
   'ActivitySource'
@@ -35,24 +37,24 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
       <DialogPopUp
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
-        text={"Mmmmm... It appears you are not yet connected to Strava"}
+        text={strings.activitySource.alert}
       />
       <View style={styles.intro}>
         {isLoggedIn ? (
-          <Text text={`Hello ${stravaAthlete?.firstname}`} />
+          <Text text={`${strings.activitySource.loggedIn.text} ${stravaAthlete?.firstname}`} />
         ) : (
-          <Text text={"Please log in"} />
+          <Text text={strings.activitySource.notLoggedIn.text} />
         )}
         {isLoggedIn ? (
-          <Button text={"Change account"} onPress={() => handleLogin()} />
+          <Button text={strings.activitySource.loggedIn.button} onPress={() => handleLogin()} />
         ) : (
-          <Button text={"Connect to Strava"} onPress={() => handleLogin()} />
+          <Button text={strings.activitySource.notLoggedIn.button} onPress={() => handleLogin()} />
         )}
       </View>
       <Footer>
-        <Button text={"Back"} onPress={() => navigation.goBack()} />
+        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
         <Button
-          text={"Continue"}
+          text={strings.footer.next}
           onPress={() => isLoggedIn ? navigation.navigate("Staking") : setPopUpVisible(true)}
         />
       </Footer>

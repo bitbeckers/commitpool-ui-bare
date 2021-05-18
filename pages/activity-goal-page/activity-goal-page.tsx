@@ -15,6 +15,8 @@ import {
   DialogPopUp,
 } from "../../components";
 
+import strings from "../../resources/strings";
+
 import {
   updateStartDate,
   updateEndDate,
@@ -41,28 +43,28 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
       <DialogPopUp
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
-        text={"Ooops! There is something wrong with your commitment :( please check values"}
+        text={strings.activityGoal.alert}
       />
       <ProgressBar size={1 / 6} />
       <View style={styles.setUp}>
-        <Text text={"Set up your commitment"} />
-        <ActivitySelector text={"Activity"} />
-        <DistanceSelector text={"Distance"} />
+        <Text text={strings.activityGoal.setUp.text} />
+        <ActivitySelector text={strings.activityGoal.setUp.activitySelector} />
+        <DistanceSelector text={strings.activityGoal.setUp.distanceSelector} />
         <DateBox
           dateInSeconds={commitment.startDate}
-          text={"Start date"}
+          text={strings.activityGoal.setUp.startDate}
           onDateChange={updateStartDate}
         />
         <DateBox
           dateInSeconds={commitment.endDate}
-          text={"End date"}
+          text={strings.activityGoal.setUp.endDate}
           onDateChange={updateEndDate}
         />
       </View>
       <Footer>
-        <Button text={"Back"} onPress={() => navigation.goBack()} />
+        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
         <Button
-          text={"Continue"}
+          text={strings.footer.next}
           onPress={() =>
             validActivity(commitment)
               ? navigation.navigate("ActivitySource")

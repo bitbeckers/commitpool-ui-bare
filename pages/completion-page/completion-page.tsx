@@ -7,6 +7,8 @@ import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
+import strings from "../../resources/strings"
+
 type CompletionPageNavigationProps = StackNavigationProp<
   RootStackParamList,
   "Completion"
@@ -25,15 +27,15 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
     <LayoutContainer>
       <View style={styles.completionPage}>
         {commitment.complete ? (
-          <Text text={"Congrats!"} />
+          <Text text={strings.completion.success} />
         ) : (
-          <Text text={"Try again.."} />
+          <Text text={strings.completion.fail} />
         )}
       </View>
       <Footer>
-        <Button text={"Back"} onPress={() => navigation.goBack()} />
+        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
         <Button
-          text={"Restart"}
+          text={strings.footer.restart}
           onPress={() => navigation.navigate("ActivityGoal")}
         />
       </Footer>
