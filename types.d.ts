@@ -1,5 +1,5 @@
 interface Commitment {
-  activity: string;
+  activityKey: string;
   complete: boolean;
   currency: string;
   distance: number;
@@ -16,4 +16,12 @@ interface Athlete {
   lastname?: number;
   profile_medium?: number;
   username?: string;
+}
+
+interface Activity {
+  key: string
+  name: string;
+  oracle: string;
+  allowed: boolean;
+  exists: boolean;
 }

@@ -1,33 +1,54 @@
-import React from "react";
-import { useAppDispatch } from "../../redux/store";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import DropDownPicker from "react-native-dropdown-picker";
-import { updateActivity } from "../../redux/commitment/commitmentSlice";
 
 interface Picker {
+  itemsToSelect: [];
+  onSelect: any;
   children?: React.ReactNode;
 }
 
-const items = [
-  { label: "Run  🏃‍♂️", value: "Run" },
-  { label: "Ride  🚲", value: "Ride" },
-];
+const Picker = ({ itemsToSelect, onSelect, children }: Picker) => {
+  const [items, setItems] = useState([]);
 
-const Picker = ({children}: Picker) => {
-  const dispatch = useAppDispatch();
+  useEffect(() => {
+    console.log("Formatting activities")
+    const formattedActivities = itemsToSelect.map((act: Activity) => {
+      console.log("formatting ", act)
+      if (act.name === "Run") {
+        return {
+          label: "Run 🏃‍♂️",
+          value: act.key,
+        };
+      } else if (act.name === "Ride") {
+        return {
+          label: "Ride 🚲",
+          value: act.key,
+        };
+      } else {
+        return {
+          label: act.name,
+          value: act.key,
+        };
+      }
+    });
+    setItems(formattedActivities);
+  }, [itemsToSelect]);
+
+  console.log(items)
   return (
     <View style={styles.container}>
       <DropDownPicker
         items={items}
-        defaultValue={items[0]}
+        defaultValue={"Loading"}
         placeholder={"Click to select"}
         arrowStyle={styles.arrowStyle}
         containerStyle={styles.containerStyle}
         labelStyle={styles.labelStyle}
         itemStyle={styles.itemStyle}
         globalTextStyle={styles.textStyle}
-        onChangeItem={(item) => dispatch(updateActivity(item.value))}
+        onChangeItem={(item) => onSelect(item.value)}
       />
       {children}
     </View>

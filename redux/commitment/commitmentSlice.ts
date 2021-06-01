@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { DateTime } from "luxon";
 
 const initialState: Commitment =  {
-  activity: "",
+  activityKey: "",
   distance: 0,
   unit: "km",
   startDate: DateTime.now().toSeconds(),
@@ -18,8 +18,8 @@ export const commitmentSlice = createSlice({
   name: "commitment",
   initialState,
   reducers: {
-    updateActivity: (state: Commitment, action) => {
-      state.activity = action.payload;
+    updateActivityKey: (state: Commitment, action) => {
+      state.activityKey = action.payload;
     },
     updateDistance: (state: Commitment, action) => {
       state.distance = action.payload;
@@ -44,7 +44,7 @@ export const commitmentSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  updateActivity,
+  updateActivityKey,
   updateDistance,
   updateUnit,
   updateStartDate,

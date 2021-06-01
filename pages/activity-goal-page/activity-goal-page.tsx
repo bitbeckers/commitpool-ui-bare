@@ -97,7 +97,7 @@ const validActivity = (commitment: Commitment) => {
   const nowInSeconds = new Date().getTime() / 1000;
 
   return (
-    commitment.activity !== "" &&
+    commitment.activityKey !== "" &&
     commitment.distance > 0 &&
     commitment.endDate > commitment.startDate &&
     commitment.endDate > nowInSeconds
