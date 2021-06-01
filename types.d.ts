@@ -1,19 +1,19 @@
 interface Commitment {
-    activity: string,
-    distance: number,
-    unit: string,
-    startDate: number,
-    endDate: number,
-    stake: number,
-    currency: string,
-    progress: number,
-    complete
+  activity: string;
+  complete: boolean;
+  currency: string;
+  distance: number;
+  endDate: number;
+  progress: number;
+  stake: number;
+  startDate: number;
+  unit: string;
 }
 
 interface Athlete {
-    id: number,
-    username?: string,
-    firstname?: string,
-    lastname?: number,
-    profile_medium?: number,
+  firstname?: string;
+  id: number;
+  lastname?: number;
+  profile_medium?: number;
+  username?: string;
 }

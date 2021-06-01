@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
-import { StackNavigationProp } from '@react-navigation/stack';
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import {
   LayoutContainer,
@@ -23,11 +23,11 @@ import {
 } from "../../redux/commitment/commitmentSlice";
 import { RootState } from "../../redux/store";
 
-import {RootStackParamList} from '..'
+import { RootStackParamList } from "..";
 
 type ActivityGoalPageNavigationProps = StackNavigationProp<
   RootStackParamList,
-  'ActivityGoal'
+  "ActivityGoal"
 >;
 
 type ActivityGoalPageProps = {
@@ -35,15 +35,24 @@ type ActivityGoalPageProps = {
 };
 
 const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
-  const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  const commitment: Commitment = useSelector((state: RootState) => state.commitment);
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const [helpVisible, setHelpVisible] = useState<boolean>(false);
+
+  const commitment: Commitment = useSelector(
+    (state: RootState) => state.commitment
+  );
 
   return (
     <LayoutContainer>
       <DialogPopUp
-        visible={popUpVisible}
-        onTouchOutside={() => setPopUpVisible(false)}
+        visible={alertVisible}
+        onTouchOutside={() => setAlertVisible(false)}
         text={strings.activityGoal.alert}
+      />
+      <DialogPopUp
+        visible={helpVisible}
+        onTouchOutside={() => setHelpVisible(false)}
+        text={strings.activityGoal.help}
       />
       <ProgressBar size={1 / 6} />
       <View style={styles.setUp}>
@@ -62,14 +71,22 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         />
       </View>
       <Footer>
-        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
+        <Button
+          text={strings.footer.back}
+          onPress={() => navigation.goBack()}
+        />
         <Button
           text={strings.footer.next}
           onPress={() =>
             validActivity(commitment)
               ? navigation.navigate("ActivitySource")
-              : setPopUpVisible(true)
+              : setAlertVisible(true)
           }
+        />
+        <Button
+          text={strings.footer.help}
+          onPress={() => setHelpVisible(true)}
+          style={styles.helpButton}
         />
       </Footer>
     </LayoutContainer>
@@ -81,7 +98,7 @@ const validActivity = (commitment: Commitment) => {
 
   return (
     commitment.activity !== "" &&
-    commitment.distance > 0  &&
+    commitment.distance > 0 &&
     commitment.endDate > commitment.startDate &&
     commitment.endDate > nowInSeconds
   );
@@ -94,6 +111,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
+  }
 });
 
 export default ActivityGoalPage;

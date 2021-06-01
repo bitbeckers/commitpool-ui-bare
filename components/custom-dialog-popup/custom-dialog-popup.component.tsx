@@ -3,11 +3,12 @@ import { StyleSheet, Text } from "react-native";
 import Dialog, { DialogContent } from "react-native-popup-dialog";
 
 interface DialogPopUp {
-  visible: boolean,
-  text: string,
-  onTouchOutside: () => void 
+  visible: boolean;
+  text: string;
+  onTouchOutside: () => void;
 }
 
+//TODO does this need a button?
 const DialogPopUp = ({ visible, text, onTouchOutside }: DialogPopUp) => {
   return (
     <Dialog visible={visible} onTouchOutside={onTouchOutside}>

@@ -1,9 +1,10 @@
 const strings = {
   footer: {
     back: "Back",
-    start: "Get started",
+    help: "?",
     next: "Continue",
-    restart: "Restart"
+    restart: "Restart",
+    start: "Get started",
   },
   activityGoal: {
     alert:
@@ -15,32 +16,33 @@ const strings = {
       startDate: "Start date",
       endDate: "End date",
     },
+    help: "Define the activity and measurement of success you are committing to. Don't worry, you can always change some values before comfirming.",
   },
   activitySource: {
     alert: "Mmmmm... It appears you are not yet connected to Strava",
     loggedIn: {
-        text: "Hello",
-        button: "Please log in"
+      text: "Hello",
+      button: "Please log in",
     },
     notLoggedIn: {
-        text: "Please log in",
-        button: "Connect to Strava"
-    }
+      text: "Please log in",
+      button: "Connect to Strava",
+    },
   },
   completion: {
-      succes: "Congrats!",
-      fail: "Try again..."
+    succes: "Congrats!",
+    fail: "Try again...",
   },
   confirmation: {
-      alert: "Something is wrong with your commitment, please check values",
-      commitment: {
-          text: "You set up the following commitment",
-          activity: "You're going to",
-          distance: "for",
-          startDate: "starting",
-          endDate: "and completing before",
-          stake: "And you're staking the following amount",
-      }
+    alert: "Something is wrong with your commitment, please check values",
+    commitment: {
+      text: "You set up the following commitment",
+      activity: "You're going to",
+      distance: "for",
+      startDate: "starting",
+      endDate: "and completing before",
+      stake: "And you're staking the following amount",
+    },
   },
   landing: {
     new: {
@@ -53,30 +55,29 @@ const strings = {
     },
   },
   login: {
-      alert: "Mmmmm... It appears you are not yet connected to a wallet",
-      select: {
-          torus: "Login",
-          metamask: "MetaMask"
-      }
-
+    alert: "Mmmmm... It appears you are not yet connected to a wallet",
+    select: {
+      torus: "Login using Torus",
+      metamask: "Connect MetaMask",
+    },
   },
   intro: {
     text: "Intropage",
   },
   staking: {
-      alert: "Wut?! It appears you're not staking?",
-      text: "How much do you want to stake?"
+    alert: "Wut?! It appears you're not staking?",
+    text: "How much do you want to stake?",
   },
   track: {
-      alert: "Commitment not yet complete, keep it up!",
-      tracking: {
-          text: "You've committed to the following:",
-          activity: "You intend to",
-          distance: "for",
-          startDate: "from",
-          stake: "And staked"
-      }
-  }
+    alert: "Commitment not yet complete, keep it up!",
+    tracking: {
+      text: "You've committed to the following:",
+      activity: "You intend to",
+      distance: "for",
+      startDate: "from",
+      stake: "And staked",
+    },
+  },
 };
 
 export default strings;
