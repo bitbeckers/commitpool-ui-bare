@@ -21,6 +21,7 @@ const ActivitySelector = ({ text }: ActivitySelectorProps) => {
     (state: RootState) => state.web3?.contracts?.singlePlayerCommit
   );
 
+  //TODO check on exists
   useEffect(() => {
     if (spcContract) {
       const buildActivityArray = async () => {

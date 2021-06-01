@@ -26,13 +26,22 @@ const DistanceSelector = ({ text }: DistanceSelector) => {
     isEnabled ? dispatch(updateUnit("mi")) : dispatch(updateUnit("km"));
   }, [isEnabled]);
 
+  const checkAndUpdateDistance = (value: string) => {
+    const number = Number(value)
+    if(number > 0) {
+      dispatch(updateDistance(Number(value))) 
+    } else {
+      dispatch(updateDistance(null))
+    }
+  }
+
   return (
     <View style={styles.distanceSelector}>
       <Text text={text} />
       <TextInput
         keyboardType={"number-pad"}
         style={styles.textInput}
-        onChangeText={(value) => dispatch(updateDistance(value))}
+        onChangeText={(value) => checkAndUpdateDistance(value)}
       />
       <ValueToggle toggleOptions={toggleOptions} onToggle={toggleSwitch} />
     </View>
