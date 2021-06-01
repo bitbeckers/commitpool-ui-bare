@@ -1,18 +1,27 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+
 import { useDispatch } from "react-redux";
-import commitmentReducer from "./commitment/commitmentSlice";
-import stravaReducer from "./strava/stravaSlice";
-import web3Reducer from "./web3/web3Slice";
+
+import rootReducer from "./reducer";
+
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
-  reducer: {
-    commitment: commitmentReducer,
-    strava: stravaReducer,
-    web3: web3Reducer,
-  },
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
+      // serializableCheck: {
+      //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      // },
       serializableCheck: false,
     }),
 });

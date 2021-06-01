@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, Slice } from "@reduxjs/toolkit";
 import { ethers, Wallet, Contract } from "ethers";
 import getEnvVars from "../../environment";
 
@@ -32,7 +32,7 @@ const initialState: Web3State = {
   isLoggedIn: false,
 };
 
-export const web3Slice = createSlice({
+export const web3Slice: Slice = createSlice({
   name: "web3",
   initialState,
   reducers: {

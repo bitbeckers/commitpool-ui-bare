@@ -1,10 +1,16 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from '../../redux/store';
+import { RootState, useAppDispatch } from "../../redux/store";
 import axios from "axios";
 
 import * as WebBrowser from "expo-web-browser";
-import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
+import {
+  makeRedirectUri,
+  useAuthRequest,
+  DiscoveryDocument,
+  revokeAsync,
+  RevokeTokenRequestConfig,
+} from "expo-auth-session";
 
 import {
   logInStravaUser,
@@ -18,7 +24,7 @@ const clientID: string = "51548&";
 const clientSecret: string = "28d56211b9ca33972055bf61010074fbedc3c7c2";
 
 // Strava Endpoints
-const discovery = {
+const discovery: DiscoveryDocument = {
   authorizationEndpoint: "https://www.strava.com/oauth/mobile/authorize",
   tokenEndpoint: "https://www.strava.com/oauth/token",
   revocationEndpoint: "https://www.strava.com/oauth/deauthorize",
@@ -29,14 +35,32 @@ const discovery = {
 
 export const useStravaLogin = () => {
   const dispatch = useAppDispatch();
-  const isLoggedIn: boolean = useSelector((state: RootState) => state.strava.isLoggedIn);
-  const stravaAthlete: Athlete= useSelector((state: RootState) => state.strava.athlete);
-  const refreshToken: string = useSelector((state: RootState) => state.strava.refresh_token);
+  const isLoggedIn: boolean = useSelector(
+    (state: RootState) => state.strava.isLoggedIn
+  );
+  const stravaAthlete: Athlete | undefined = useSelector(
+    (state: RootState) => state.strava.athlete
+  );
+  const refreshToken: string | undefined = useSelector(
+    (state: RootState) => state.strava.refresh_token
+  );
+  const accessToken: string | undefined = useSelector(
+    (state: RootState) => state.strava.access_token
+  );
 
-  console.log("Loaded Stava Login hook");
 
   const handleLogin = () => {
-    isLoggedIn ? dispatch(logOutStravaUser()) : stravaOauth();
+    isLoggedIn ? logOutAndClearState() : stravaOauth();
+  };
+
+  const logOutAndClearState = async () => {
+    if(refreshToken){
+      const config: RevokeTokenRequestConfig = {token: refreshToken}
+
+      await revokeAsync(config, discovery);
+  
+      dispatch(logOutStravaUser());
+    }
   };
 
   const stravaOauth = () => {
@@ -60,6 +84,7 @@ export const useStravaLogin = () => {
 
   //Set strava Code from response
   useEffect(() => {
+    console.log("Response: ", response)
     if (response?.type === "success") {
       const executeLogin = async () => {
         await axios({
@@ -73,6 +98,7 @@ export const useStravaLogin = () => {
           },
         })
           .then(async (response) => {
+            console.log("Auth response: ", response)
             console.log("Strava login data: ", response.data);
             dispatch(logInStravaUser(response.data));
           })
@@ -84,7 +110,7 @@ export const useStravaLogin = () => {
     }
   }, [response]);
 
-  //Post strava user
+  //Post strava user to db
   useEffect(() => {
     if (isLoggedIn) {
       const createUser = async () => {
@@ -96,7 +122,7 @@ export const useStravaLogin = () => {
             "Content-Type": "application/json",
           },
           data: {
-            address: stravaAthlete.id,
+            address: stravaAthlete?.id,
             token: refreshToken,
           },
         })

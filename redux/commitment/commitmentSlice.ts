@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, Slice } from "@reduxjs/toolkit";
 
 import { DateTime } from "luxon";
 
@@ -14,7 +14,7 @@ const initialState: Commitment =  {
   complete: false,
  }
 
-export const commitmentSlice = createSlice({
+export const commitmentSlice: Slice = createSlice({
   name: "commitment",
   initialState,
   reducers: {

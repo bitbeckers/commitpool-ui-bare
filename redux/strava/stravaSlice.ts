@@ -1,12 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, Slice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface StravaState {
+  isLoggedIn: boolean,
+  athlete?: Athlete,
+  refresh_token?: string,
+  access_token?: string,
+  expires_at?: number,
+  expires_in?: number,
+}
+
+const initialState: StravaState = {
     isLoggedIn: false,
-    athlete: {} as Athlete,
-    refresh_token: "",
-    access_token: "",
-    expires_at: 0,
-    expires_in: 0,
   }
 
 //TODO persist Strava login state

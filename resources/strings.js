@@ -22,7 +22,7 @@ const strings = {
     alert: "Mmmmm... It appears you are not yet connected to Strava",
     loggedIn: {
       text: "Hello",
-      button: "Please log in",
+      button: "Log out",
     },
     notLoggedIn: {
       text: "Please log in",

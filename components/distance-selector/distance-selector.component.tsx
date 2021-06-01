@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {useAppDispatch} from "../../redux/store";
+import {RootState, useAppDispatch} from "../../redux/store";
 import {
   updateDistance,
   updateUnit,
@@ -7,6 +7,7 @@ import {
 
 import { StyleSheet, View, TextInput } from "react-native";
 import { Text, ValueToggle } from "..";
+import { useSelector } from "react-redux";
 
 interface DistanceSelector {
   text: string
@@ -14,6 +15,7 @@ interface DistanceSelector {
 
 const DistanceSelector = ({ text }: DistanceSelector) => {
   const [isEnabled, setIsEnabled] = useState(true);
+  const distance: number = useSelector((state: RootState) => state.commitment.distance);
 
   const dispatch = useAppDispatch();
 
@@ -39,6 +41,7 @@ const DistanceSelector = ({ text }: DistanceSelector) => {
     <View style={styles.distanceSelector}>
       <Text text={text} />
       <TextInput
+        defaultValue={distance.toString()} 
         keyboardType={"number-pad"}
         style={styles.textInput}
         onChangeText={(value) => checkAndUpdateDistance(value)}
