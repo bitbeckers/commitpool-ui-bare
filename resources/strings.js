@@ -65,8 +65,9 @@ const strings = {
     text: "Intropage",
   },
   staking: {
-    alert: "Wut?! It appears you're not staking?",
+    alert: "Wut?! It appears you're not staking anything?",
     text: "How much do you want to stake?",
+    textHigh: (amount) => {`You're staking ${amount} DAI. That's a big commitment!`}
   },
   track: {
     alert: "Commitment not yet complete, keep it up!",

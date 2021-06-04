@@ -70,7 +70,14 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
           />
           <Text text={`DAI (~ $${stake?.toString()})`} />
         </View>
+        {stake >= 100 ? (
+          <Text
+            style={styles.textHighAlert}
+            text={`You're staking ${stake.toString()} DAI. That's a big commitment!`}
+          />
+        ) : undefined}
       </View>
+
       <Footer>
         <Button
           text={strings.footer.back}
@@ -79,7 +86,7 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
         <Button
           text={strings.footer.next}
           onPress={() => {
-            validStake(commitment)
+            validStake(stake)
               ? navigation.navigate("Confirmation")
               : setPopUpVisible(true);
           }}
@@ -89,8 +96,8 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
   );
 };
 
-const validStake = (commitment: Commitment) => {
-  return commitment.stake > 0;
+const validStake = (stake: number) => {
+  return stake > 0;
 };
 
 const styles = StyleSheet.create({
@@ -111,6 +118,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 20,
   },
+  textHighAlert: {
+    marginTop: 25,
+    fontWeight: "bold"
+  }
 });
 
 export default StakingPage;
