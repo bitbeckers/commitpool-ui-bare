@@ -55,7 +55,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
         <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
         <Button
           text={strings.footer.next}
-          onPress={() => isLoggedIn ? navigation.navigate("Staking") : setPopUpVisible(true)}
+          onPress={() => isLoggedIn ? navigation.navigate("ActivityGoal") : setPopUpVisible(true)}
         />
       </Footer>
     </LayoutContainer>

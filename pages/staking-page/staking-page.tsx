@@ -34,8 +34,8 @@ type StakingPageProps = {
 const StakingPage = ({ navigation }: StakingPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
   const [isEnabled, setIsEnabled] = useState(false);
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
+  const stake: number = useSelector(
+    (state: RootState) => state.commitment.stake
   );
 
   const dispatch = useAppDispatch();
@@ -56,24 +56,26 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
       <DialogPopUp
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
-        text={
-          strings.staking.alert
-        }
+        text={strings.staking.alert}
       />
       <ProgressBar size={3 / 6} />
       <View style={styles.text}>
         <Text text={strings.staking.text} />
         <View style={styles.valueInput}>
           <TextInput
+            defaultValue={stake?.toString()}
             keyboardType={"number-pad"}
             style={styles.textInput}
             onChangeText={(value) => dispatch(updateStake(value))}
           />
-          <ValueToggle toggleOptions={toggleOptions} onToggle={toggleSwitch} />
+          <Text text={`DAI (~ $${stake?.toString()})`} />
         </View>
       </View>
       <Footer>
-        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
+        <Button
+          text={strings.footer.back}
+          onPress={() => navigation.goBack()}
+        />
         <Button
           text={strings.footer.next}
           onPress={() => {
