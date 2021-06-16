@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
-import { StackNavigationProp } from '@react-navigation/stack';
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import {
   LayoutContainer,
@@ -9,7 +9,7 @@ import {
   Button,
   ProgressBar,
   Text,
-  DialogPopUp
+  DialogPopUp,
 } from "../../components";
 import { useStravaLogin } from "./hooks";
 import { RootState } from "../../redux/store";
@@ -19,7 +19,7 @@ import strings from "../../resources/strings";
 
 type ActivitySourcePageNavigationProps = StackNavigationProp<
   RootStackParamList,
-  'ActivitySource'
+  "ActivitySource"
 >;
 
 type ActivitySourcePageProps = {
@@ -29,7 +29,9 @@ type ActivitySourcePageProps = {
 const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
   const [isLoggedIn, handleLogin] = useStravaLogin();
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  const stravaAthlete: Athlete = useSelector((state: RootState) => state.strava.athlete);
+  const stravaAthlete: Athlete = useSelector(
+    (state: RootState) => state.strava.athlete
+  );
 
   return (
     <LayoutContainer>
@@ -41,21 +43,41 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
       />
       <View style={styles.intro}>
         {isLoggedIn ? (
-          <Text text={`${strings.activitySource.loggedIn.text} ${stravaAthlete?.firstname}`} />
+          <Text
+            text={`${strings.activitySource.loggedIn.text} ${stravaAthlete?.firstname}`}
+          />
         ) : (
           <Text text={strings.activitySource.notLoggedIn.text} />
         )}
         {isLoggedIn ? (
-          <Button text={strings.activitySource.loggedIn.button} onPress={() => handleLogin()} />
+          <Button
+            text={strings.activitySource.loggedIn.button}
+            onPress={() => handleLogin()}
+          />
         ) : (
-          <Button text={strings.activitySource.notLoggedIn.button} onPress={() => handleLogin()} />
+          <Button
+            text={strings.activitySource.notLoggedIn.button}
+            onPress={() => handleLogin()}
+          />
         )}
       </View>
       <Footer>
-        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
+        <Button
+          text={strings.footer.back}
+          onPress={() => navigation.goBack()}
+        />
         <Button
           text={strings.footer.next}
-          onPress={() => isLoggedIn ? navigation.navigate("ActivityGoal") : setPopUpVisible(true)}
+          onPress={() =>
+            isLoggedIn
+              ? navigation.navigate("ActivityGoal")
+              : setPopUpVisible(true)
+          }
+        />
+        <Button
+          text={strings.footer.help}
+          onPress={() => navigation.navigate("Faq")}
+          style={styles.helpButton}
         />
       </Footer>
     </LayoutContainer>
@@ -68,6 +90,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
+  }
 });
 
 export default ActivitySourcePage;

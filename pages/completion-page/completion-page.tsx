@@ -38,6 +38,11 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
           text={strings.footer.restart}
           onPress={() => navigation.navigate("ActivityGoal")}
         />
+                <Button
+          text={strings.footer.help}
+          onPress={() => navigation.navigate("Faq")}
+          style={styles.helpButton}
+        />
       </Footer>
     </LayoutContainer>
   );
@@ -50,6 +55,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
+  }
 });
 
 export default CompletionPage;

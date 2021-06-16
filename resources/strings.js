@@ -44,6 +44,11 @@ const strings = {
       stake: "And you're staking the following amount",
     },
   },
+  faq: {
+    strava: "We use Strava to get...",
+    dai: "DAI is a decentralized stablecoin that we use to..",
+    staking: "When you commit DAI to an activity measured via Strava.."
+  },
   landing: {
     new: {
       text: "New to CommitPool?",

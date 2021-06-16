@@ -6,7 +6,8 @@ interface Footer {
 }
 
 const Footer = ({ children }: Footer) => {
-  return <View style={styles.footer}>{children}</View>;
+  return <View style={styles.footer}>{children}
+  </View>;
 };
 
 const styles = StyleSheet.create({

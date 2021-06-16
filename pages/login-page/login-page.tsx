@@ -37,16 +37,16 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
   const [nativeTokenBalance, setNativeTokenBalance] = useState("0");
 
   const provider = useSelector((state: RootState) => state.web3.provider);
-  const  daiContract: Contract = useSelector(
+  const daiContract: Contract = useSelector(
     (state: RootState) => state.web3?.contracts?.dai
   );
-  
+
   const account: string | undefined = useSelector(
     (state: RootState) => state.web3?.account
   );
 
   useEffect(() => {
-    console.log(account)
+    console.log(account);
     if (account !== undefined) {
       const getDaiBalance = async () => {
         const daiBalance = await daiContract.balanceOf(account[0]);
@@ -84,7 +84,11 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
       {isLoggedIn ? (
         <View>
           <Text text={`${ethers.utils.formatEther(daiBalance)} DAI`} />
-          <Text text={`${ethers.utils.formatEther(nativeTokenBalance)} ${nativeToken}`} />
+          <Text
+            text={`${ethers.utils.formatEther(
+              nativeTokenBalance
+            )} ${nativeToken}`}
+          />
         </View>
       ) : (
         <Text text="NOT LOGGED IN" />
@@ -102,6 +106,11 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
               : setPopUpVisible(true)
           }
         />
+        <Button
+          text={strings.footer.help}
+          onPress={() => navigation.navigate("Faq")}
+          style={styles.helpButton}
+        />
       </Footer>
     </LayoutContainer>
   );
@@ -112,6 +121,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
   },
 });
 

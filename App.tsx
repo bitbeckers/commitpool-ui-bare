@@ -25,6 +25,7 @@ import {
   ConfirmationPage,
   TrackPage,
   CompletionPage,
+  FaqPage,
 } from "./pages";
 
 let persistor = persistStore(store);
@@ -45,7 +46,7 @@ const App = () => {
         <PersistGate loading={null} persistor={persistor}>
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="Staking"
+              initialRouteName="ActivityGoal"
               screenOptions={{
                 headerTitle: () => <Header />,
                 headerLeft: () => null,
@@ -67,6 +68,7 @@ const App = () => {
               <Stack.Screen name="Confirmation" component={ConfirmationPage} />
               <Stack.Screen name="Track" component={TrackPage} />
               <Stack.Screen name="Completion" component={CompletionPage} />
+              <Stack.Screen name="Faq" component={FaqPage} />
             </Stack.Navigator>
           </NavigationContainer>
         </PersistGate>

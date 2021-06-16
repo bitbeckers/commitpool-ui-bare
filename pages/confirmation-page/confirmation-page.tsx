@@ -9,17 +9,17 @@ import {
   Text,
   Button,
   ProgressBar,
-  DialogPopUp
+  DialogPopUp,
 } from "../../components";
 import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import strings from "../../resources/strings"
+import strings from "../../resources/strings";
 
 type ConfirmationPageNavigationProps = StackNavigationProp<
   RootStackParamList,
-  'Confirmation'
+  "Confirmation"
 >;
 
 type ConfirmationPageProps = {
@@ -28,7 +28,9 @@ type ConfirmationPageProps = {
 
 const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  const commitment: Commitment = useSelector((state: RootState) => state.commitment);
+  const commitment: Commitment = useSelector(
+    (state: RootState) => state.commitment
+  );
 
   return (
     <LayoutContainer>
@@ -41,15 +43,25 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
       <View style={styles.commitment}>
         <Text text={strings.confirmation.commitment.text} />
         <View style={styles.commitmentValues}>
-          <Text text={`${strings.confirmation.commitment.activity} ${commitment.activity.toLowerCase()}`} />
-          <Text text={`${strings.confirmation.commitment.distance} ${commitment.distance} ${commitment.unit}`} />
           <Text
-            text={`${strings.confirmation.commitment.startDate} ${DateTime.fromSeconds(
-              commitment.startDate
-            ).toFormat("yyyy MMMM dd")}`}
+            text={`${
+              strings.confirmation.commitment.activity
+            } ${commitment.activityKey.toLowerCase()}`}
           />
           <Text
-            text={`${strings.confirmation.commitment.endDate} ${DateTime.fromSeconds(commitment.endDate).toFormat(
+            text={`${strings.confirmation.commitment.distance} ${commitment.distance} ${commitment.unit}`}
+          />
+          <Text
+            text={`${
+              strings.confirmation.commitment.startDate
+            } ${DateTime.fromSeconds(commitment.startDate).toFormat(
+              "yyyy MMMM dd"
+            )}`}
+          />
+          <Text
+            text={`${
+              strings.confirmation.commitment.endDate
+            } ${DateTime.fromSeconds(commitment.endDate).toFormat(
               "yyyy MMMM dd"
             )}`}
           />
@@ -57,11 +69,14 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
         <View style={styles.commitmentValues}>
           <Text text={strings.confirmation.commitment.stake} />
 
-          <Text text={`${commitment.stake} ${commitment.currency}`} />
+          <Text text={`${commitment.stake} DAI`} />
         </View>
       </View>
       <Footer>
-        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
+        <Button
+          text={strings.footer.back}
+          onPress={() => navigation.goBack()}
+        />
         <Button
           text={strings.footer.next}
           onPress={() =>
@@ -69,6 +84,11 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
               ? navigation.navigate("Track")
               : setPopUpVisible(true)
           }
+        />
+        <Button
+          text={strings.footer.help}
+          onPress={() => navigation.navigate("Faq")}
+          style={styles.helpButton}
         />
       </Footer>
     </LayoutContainer>
@@ -79,12 +99,12 @@ const validCommitment = (commitment: Commitment) => {
   const nowInSeconds = new Date().getTime() / 1000;
 
   return (
-    commitment.activity !== "" &&
-    commitment.distance > 0  &&
+    commitment.activityKey !== "" &&
+    commitment.distance > 0 &&
     commitment.endDate > commitment.startDate &&
     commitment.endDate > nowInSeconds &&
     commitment.stake > 0 &&
-    commitment.progress === 0 && 
+    commitment.progress === 0 &&
     commitment.complete === false
   );
 };
@@ -100,7 +120,11 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
     alignContent: "flex-start",
-    alignItems: "center"
+    alignItems: "center",
+  },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
   },
 });
 

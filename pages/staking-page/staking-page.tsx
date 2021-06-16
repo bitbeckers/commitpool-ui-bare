@@ -78,6 +78,11 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
               : setPopUpVisible(true);
           }}
         />
+        <Button
+          text={strings.footer.help}
+          onPress={() => navigation.navigate("Faq")}
+          style={styles.helpButton}
+        />
       </Footer>
     </LayoutContainer>
   );
@@ -107,8 +112,12 @@ const styles = StyleSheet.create({
   },
   textHighAlert: {
     marginTop: 25,
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
+  },
 });
 
 export default StakingPage;

@@ -9,16 +9,16 @@ import {
   Text,
   Button,
   ProgressCircle,
-  DialogPopUp
+  DialogPopUp,
 } from "../../components";
 import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
-import strings from "../../resources/strings"
+import strings from "../../resources/strings";
 
 type TrackPageNavigationProps = StackNavigationProp<
   RootStackParamList,
-  'Track'
+  "Track"
 >;
 
 type TrackPageProps = {
@@ -27,9 +27,12 @@ type TrackPageProps = {
 
 const TrackPage = ({ navigation }: TrackPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  const commitment: Commitment = useSelector((state: RootState) => state.commitment);
+  const commitment: Commitment = useSelector(
+    (state: RootState) => state.commitment
+  );
 
-  const progress: number = (commitment?.progress / commitment?.distance * 100) | 0
+  const progress: number =
+    ((commitment?.progress / commitment?.distance) * 100) | 0;
 
   return (
     <LayoutContainer>
@@ -41,17 +44,23 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
       <View style={styles.commitment}>
         <Text text={strings.track.tracking.text} />
         <View style={styles.commitmentValues}>
-          <Text text={`${strings.track.tracking.activity} ${commitment.activity.toLowerCase()}`} />
-          <Text text={`${strings.track.tracking.distance} ${commitment.distance} ${commitment.unit}`} />
+          <Text
+            text={`${
+              strings.track.tracking.activity
+            } ${commitment.activity.toLowerCase()}`}
+          />
+          <Text
+            text={`${strings.track.tracking.distance} ${commitment.distance} ${commitment.unit}`}
+          />
           <Text
             text={`${strings.track.tracking.startDate} ${DateTime.fromSeconds(
               commitment.startDate
             ).toFormat("yyyy MMMM dd")}`}
           />
           <Text
-            text={`${strings.track.tracking.endDate}  ${DateTime.fromSeconds(commitment.endDate).toFormat(
-              "yyyy MMMM dd"
-            )}`}
+            text={`${strings.track.tracking.endDate}  ${DateTime.fromSeconds(
+              commitment.endDate
+            ).toFormat("yyyy MMMM dd")}`}
           />
         </View>
         <View style={styles.commitmentValues}>
@@ -72,6 +81,11 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
               : setPopUpVisible(true)
           }
         />
+        <Button
+          text={strings.footer.help}
+          onPress={() => navigation.navigate("Faq")}
+          style={styles.helpButton}
+        />
       </Footer>
     </LayoutContainer>
   );
@@ -79,8 +93,8 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 
 //TODO implement logic to compare against actual Strava data and timebox
 const processCommitmentProgress = (commitment: Commitment) => {
-  return true
-}
+  return true;
+};
 
 const styles = StyleSheet.create({
   commitment: {
@@ -93,7 +107,11 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
     alignContent: "flex-start",
-    alignItems: "center"
+    alignItems: "center",
+  },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
   },
 });
 

@@ -36,7 +36,6 @@ type ActivityGoalPageProps = {
 
 const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [helpVisible, setHelpVisible] = useState<boolean>(false);
 
   const commitment: Commitment = useSelector(
     (state: RootState) => state.commitment
@@ -48,11 +47,6 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         visible={alertVisible}
         onTouchOutside={() => setAlertVisible(false)}
         text={strings.activityGoal.alert}
-      />
-      <DialogPopUp
-        visible={helpVisible}
-        onTouchOutside={() => setHelpVisible(false)}
-        text={strings.activityGoal.help}
       />
       <ProgressBar size={1 / 6} />
       <View style={styles.setUp}>
@@ -85,7 +79,7 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         />
         <Button
           text={strings.footer.help}
-          onPress={() => setHelpVisible(true)}
+          onPress={() => navigation.navigate("Faq")}
           style={styles.helpButton}
         />
       </Footer>
