@@ -1,7 +1,6 @@
 interface Commitment {
   activityKey: string;
   complete: boolean;
-  currency: string;
   distance: number;
   endDate: number;
   progress: number;
@@ -11,11 +10,11 @@ interface Commitment {
 }
 
 interface Athlete {
+  username?: string;
   firstname?: string;
   id: number;
-  lastname?: number;
-  profile_medium?: number;
-  username?: string;
+  profile_medium?: string;
+  measurement_preference?: string
 }
 
 interface Activity {

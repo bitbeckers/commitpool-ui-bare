@@ -30,26 +30,13 @@ type StakingPageProps = {
   navigation: StakingPageNavigationProps;
 };
 
-//TODO conversion between DAI USD
 const StakingPage = ({ navigation }: StakingPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  const [isEnabled, setIsEnabled] = useState(false);
   const stake: number = useSelector(
     (state: RootState) => state.commitment.stake
   );
 
   const dispatch = useAppDispatch();
-
-  const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
-  };
-  const toggleOptions: string[] = ["USD", "DAI"];
-
-  useEffect(() => {
-    isEnabled
-      ? dispatch(updateCurrency(toggleOptions[0]))
-      : dispatch(updateCurrency(toggleOptions[1]));
-  }, [isEnabled]);
 
   return (
     <LayoutContainer>
@@ -68,7 +55,7 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
             style={styles.textInput}
             onChangeText={(value) => dispatch(updateStake(value))}
           />
-          <Text text={`DAI (~ $${stake?.toString()})`} />
+          <Text text={`DAI`} />
         </View>
         {stake >= 100 ? (
           <Text

@@ -9,7 +9,6 @@ const initialState: Commitment =  {
   startDate: DateTime.now().toSeconds(),
   endDate: DateTime.now().toSeconds(),
   stake: 0,
-  currency: "DAI",
   progress: 0,
   complete: false,
  }
@@ -36,9 +35,6 @@ export const commitmentSlice: Slice = createSlice({
     updateStake: (state: Commitment, action) => {
       state.stake = action.payload;
     },
-    updateCurrency: (state: Commitment, action) => {
-      state.currency = action.payload;
-    },
   },
 });
 
@@ -50,7 +46,6 @@ export const {
   updateStartDate,
   updateEndDate,
   updateStake,
-  updateCurrency
 } = commitmentSlice.actions;
 
 export default commitmentSlice.reducer;
