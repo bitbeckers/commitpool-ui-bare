@@ -2,10 +2,10 @@ interface Commitment {
   activityKey: string;
   complete: boolean;
   distance: number;
+  startDate: number;
   endDate: number;
   progress: number;
   stake: number;
-  startDate: number;
   unit: string;
 }
 

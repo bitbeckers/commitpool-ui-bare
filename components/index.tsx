@@ -12,6 +12,7 @@ import DateBox from "./date-box/date-box.component";
 import DistanceSelector from "./distance-selector/distance-selector.component";
 import DialogPopUp from "./custom-dialog-popup/custom-dialog-popup.component";
 import ValueToggle from "./value-toggle/value-toggle.component";
+import DateFromTo from "./date-from-to/date-from-to.component";
 
 //TODO split atoms and molecules
 export {
@@ -28,5 +29,6 @@ export {
   ActivitySelector,
   DistanceSelector,
   DialogPopUp,
-  ValueToggle
+  ValueToggle,
+  DateFromTo
 };

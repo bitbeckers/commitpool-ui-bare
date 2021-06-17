@@ -10,7 +10,7 @@ import {
   Button,
   ProgressBar,
   ActivitySelector,
-  DateBox,
+  DateFromTo,
   DistanceSelector,
   DialogPopUp,
 } from "../../components";
@@ -53,7 +53,8 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         <Text text={strings.activityGoal.setUp.text} />
         <ActivitySelector text={strings.activityGoal.setUp.activitySelector} />
         <DistanceSelector text={strings.activityGoal.setUp.distanceSelector} />
-        <DateBox
+        <DateFromTo />
+        {/* <DateBox
           dateInSeconds={commitment.startDate}
           text={strings.activityGoal.setUp.startDate}
           onDateChange={updateStartDate}
@@ -62,7 +63,7 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
           dateInSeconds={commitment.endDate}
           text={strings.activityGoal.setUp.endDate}
           onDateChange={updateEndDate}
-        />
+        /> */}
       </View>
       <Footer>
         <Button
