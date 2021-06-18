@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import {
@@ -43,9 +43,15 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
       />
       <View style={styles.intro}>
         {isLoggedIn ? (
-          <Text
-            text={`${strings.activitySource.loggedIn.text} ${stravaAthlete?.firstname}`}
-          />
+          <Fragment>
+            <Text
+              text={`${strings.activitySource.loggedIn.text} ${stravaAthlete?.firstname}`}
+            />
+            <Image
+              style={styles.tinyAvatar}
+              source={{uri:stravaAthlete?.profile_medium}}
+            />
+          </Fragment>
         ) : (
           <Text text={strings.activitySource.notLoggedIn.text} />
         )}
@@ -90,10 +96,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  tinyAvatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 10
+  },
   helpButton: {
     width: 50,
     maxWidth: 50,
-  }
+  },
 });
 
 export default ActivitySourcePage;
