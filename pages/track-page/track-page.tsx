@@ -47,7 +47,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
           <Text
             text={`${
               strings.track.tracking.activity
-            } ${commitment.activity.toLowerCase()}`}
+            } ${commitment.activityKey.toLowerCase()}`}
           />
           <Text
             text={`${strings.track.tracking.distance} ${commitment.distance} ${commitment.unit}`}
@@ -66,7 +66,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
         <View style={styles.commitmentValues}>
           <Text text={strings.track.tracking.stake} />
 
-          <Text text={`${commitment.stake} ${commitment.currency}`} />
+          <Text text={`${commitment.stake} DAI`} />
         </View>
       </View>
       <ProgressCircle progress={progress} />

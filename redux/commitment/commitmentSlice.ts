@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 const initialState: Commitment =  {
   activityKey: "",
   distance: 0,
-  unit: "km",
+  unit: "mi",
   startDate: DateTime.now().toSeconds(),
   endDate: DateTime.now().toSeconds(),
   stake: 0,

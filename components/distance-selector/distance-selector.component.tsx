@@ -46,7 +46,7 @@ const DistanceSelector = ({ text }: DistanceSelector) => {
         style={styles.textInput}
         onChangeText={(value) => checkAndUpdateDistance(value)}
       />
-      <ValueToggle toggleOptions={toggleOptions} onToggle={toggleSwitch} />
+      {/* <ValueToggle toggleOptions={toggleOptions} onToggle={toggleSwitch} /> */}
     </View>
   );
 };

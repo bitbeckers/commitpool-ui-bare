@@ -16,11 +16,6 @@ import {
 } from "../../components";
 
 import strings from "../../resources/strings";
-
-import {
-  updateStartDate,
-  updateEndDate,
-} from "../../redux/commitment/commitmentSlice";
 import { RootState } from "../../redux/store";
 
 import { RootStackParamList } from "..";
@@ -54,16 +49,6 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         <ActivitySelector text={strings.activityGoal.setUp.activitySelector} />
         <DistanceSelector text={strings.activityGoal.setUp.distanceSelector} />
         <DateFromTo />
-        {/* <DateBox
-          dateInSeconds={commitment.startDate}
-          text={strings.activityGoal.setUp.startDate}
-          onDateChange={updateStartDate}
-        />
-        <DateBox
-          dateInSeconds={commitment.endDate}
-          text={strings.activityGoal.setUp.endDate}
-          onDateChange={updateEndDate}
-        /> */}
       </View>
       <Footer>
         <Button
