@@ -16,6 +16,7 @@ import getEnvVars from "../../environment";
 import { useTorusLogin } from "./hooks";
 import strings from "../../resources/strings";
 import { RootState } from "../../redux/store";
+import { ethers } from "ethers";
 
 type LoginPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -26,6 +27,7 @@ type LoginPageProps = {
   navigation: LoginPageNavigationProps;
 };
 
+
 //TODO check for open commitments to determine redirect
 const LoginPage = ({ navigation }: LoginPageProps) => {
   const [isLoggedIn, handleLogin] = useTorusLogin();
@@ -34,6 +36,27 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
   const account: string | undefined = useSelector(
     (state: RootState) => state.web3?.account
   );
+
+  const singlePlayerCommit = useSelector(
+    (state: RootState) => state.web3.contracts.singlePlayerCommit
+  ); 
+
+  //When account has active commitment, navigate to Track page
+  useEffect(() => {
+    if(account && isAddress(account)){
+      console.log("ACCOUNT IS ADDRESS")
+      const getCommitmentAndRoute = async () => {
+        console.log("CHECKING FOR COMMITMENT")
+        const commitment = await singlePlayerCommit.commitments(account);
+        if(commitment.exists){
+          navigation.navigate("Track")
+        }
+      }
+
+      getCommitmentAndRoute()
+
+    }
+  }, [account])
 
   return (
     <LayoutContainer>
@@ -84,6 +107,15 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
     </LayoutContainer>
   );
 };
+
+const isAddress = (account: string) => {
+  try {
+    ethers.utils.getAddress(account);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
 
 const styles = StyleSheet.create({
   loginPage: {

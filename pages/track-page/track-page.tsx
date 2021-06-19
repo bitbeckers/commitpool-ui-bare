@@ -47,7 +47,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
           <Text
             text={`${
               strings.track.tracking.activity
-            } ${commitment.activityKey.toLowerCase()}`}
+            } ${commitment?.activity?.name.toLowerCase()}`}
           />
           <Text
             text={`${strings.track.tracking.distance} ${commitment.distance} ${commitment.unit}`}

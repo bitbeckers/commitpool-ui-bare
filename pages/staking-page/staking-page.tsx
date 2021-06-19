@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../redux/store";
 
-
 import { StyleSheet, View, TextInput } from "react-native";
 import {
   LayoutContainer,
@@ -32,7 +31,6 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
   const stake: number = useSelector(
     (state: RootState) => state.commitment.stake
   );
-
 
   return (
     <LayoutContainer>

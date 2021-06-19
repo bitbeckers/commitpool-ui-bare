@@ -39,7 +39,9 @@ export const web3Slice: Slice = createSlice({
   initialState,
   reducers: {
     updateProvider: (state, action) => {
-      state.provider = action.payload;
+      state.provider = new ethers.providers.Web3Provider(action.payload.provider);
+      state.contracts.dai.connect(state.provider);
+      state.contracts.singlePlayerCommit.connect(state.provider)
     },
     updateAccount: (state, action) => {
       state.account = action.payload;

@@ -16,7 +16,10 @@ import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import strings from "../../resources/strings";
+import getEnvVars from "../../environment";
 
+import { ethers, utils } from "ethers";
+const { spcAbi, spcAddress, daiAbi, daiAddress } = getEnvVars();
 type ConfirmationPageNavigationProps = StackNavigationProp<
   RootStackParamList,
   "Confirmation"
@@ -29,12 +32,87 @@ type ConfirmationPageProps = {
 const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [txSent, setTxSent] = useState<boolean>(false);
   const commitment: Commitment = useSelector(
     (state: RootState) => state.commitment
   );
   const athlete: Athlete = useSelector(
     (state: RootState) => state.strava.athlete
   );
+
+  const provider = useSelector((state: RootState) => state.web3.provider);
+  const account = useSelector((state: RootState) => state.web3.account);
+  let { dai, singlePlayerCommit } = useSelector(
+    (state: RootState) => state.web3.contracts
+  );
+
+  let _dai = dai.connect(provider.getSigner());
+  let _singlePlayerCommit = singlePlayerCommit.connect(provider.getSigner());
+
+  const validCommitment = (commitment: Commitment) => {
+    const nowInSeconds = new Date().getTime() / 1000;
+
+    return (
+      commitment.activity?.key !== "" &&
+      commitment.activity?.name !== "" &&
+      commitment.distance > 0 &&
+      commitment.endDate > commitment.startDate &&
+      commitment.endDate > nowInSeconds &&
+      commitment.stake > 0 &&
+      commitment.progress === 0 &&
+      commitment.complete === false
+    );
+  };
+
+  const createCommitment = async () => {
+    let tx;
+    if (validCommitment(commitment)) {
+      const distanceInMiles: number = Math.floor(commitment.distance);
+      const startTimestamp: number = Math.ceil(commitment.startDate);
+      const endTimestamp: number = Math.ceil(commitment.endDate);
+      const stakeAmount = utils.parseEther(commitment.stake.toString());
+      setLoading(true);
+
+      const allowance = await dai.allowance(
+        account,
+        "0xDb28e5521718Cf746a9900DE3Aff12644F699B98"
+      );
+      if (allowance.gte(stakeAmount)) {
+        tx = await _singlePlayerCommit.depositAndCommit(
+          commitment.activity?.key,
+          distanceInMiles * 100,
+          startTimestamp,
+          endTimestamp,
+          stakeAmount,
+          stakeAmount,
+          String(athlete.id),
+          { gasLimit: 5000000 }
+        );
+      } else {
+        await _dai.approve(
+          "0xDb28e5521718Cf746a9900DE3Aff12644F699B98",
+          stakeAmount
+        );
+        tx = await _singlePlayerCommit.depositAndCommit(
+          commitment.activity?.key,
+          distanceInMiles * 100,
+          startTimestamp,
+          endTimestamp,
+          stakeAmount,
+          stakeAmount,
+          String(athlete.id),
+          { gasLimit: 5000000 }
+        );
+      }
+
+      setLoading(false);
+      setTxSent(true);
+      navigation.navigate("Track");
+    } else {
+      setPopUpVisible(true);
+    }
+  };
 
   return (
     <LayoutContainer>
@@ -60,7 +138,6 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
             text="Set"
             onPress={() => {
               setEditMode(false);
-              console.log("Viewing commitment");
             }}
           />
         ) : (
@@ -68,7 +145,6 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
             text="Edit"
             onPress={() => {
               setEditMode(true);
-              console.log("Editing commitment");
             }}
           />
         )}
@@ -78,14 +154,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
           text={strings.footer.back}
           onPress={() => navigation.goBack()}
         />
-        <Button
-          text={strings.footer.next}
-          onPress={() =>
-            validCommitment(commitment)
-              ? navigation.navigate("Track")
-              : setPopUpVisible(true)
-          }
-        />
+        <Button text={"Confirm"} onPress={async () => createCommitment()} />
         <Button
           text={strings.footer.help}
           onPress={() => navigation.navigate("Faq")}
@@ -93,21 +162,6 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
         />
       </Footer>
     </LayoutContainer>
-  );
-};
-
-const validCommitment = (commitment: Commitment) => {
-  const nowInSeconds = new Date().getTime() / 1000;
-
-  return (
-    commitment.activity?.key !== "" &&
-    commitment.activity?.name !== "" &&
-    commitment.distance > 0 &&
-    commitment.endDate > commitment.startDate &&
-    commitment.endDate > nowInSeconds &&
-    commitment.stake > 0 &&
-    commitment.progress === 0 &&
-    commitment.complete === false
   );
 };
 
