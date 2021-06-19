@@ -12,9 +12,13 @@ import {
   Button,
   ProgressBar,
   DialogPopUp,
+  ActivitySelector,
+  DistanceSelector,
+  DateFromTo,
 } from "../../components";
 
 import strings from "../../resources/strings";
+import StakeBox from "../stake-selector/stake-selector.component";
 
 interface CommitmentOverviewProps {
   editing: boolean;
@@ -30,6 +34,14 @@ const CommitmentOverview = ({ editing }: CommitmentOverviewProps) => {
       {editing ? (
         <Fragment>
           <Text text="EDITING" />
+          <ActivitySelector
+            text={strings.activityGoal.setUp.activitySelector}
+          />
+          <DistanceSelector
+            text={strings.activityGoal.setUp.distanceSelector}
+          />
+          <DateFromTo />
+          <StakeBox />
         </Fragment>
       ) : (
         <Fragment>

@@ -14,6 +14,7 @@ interface ActivitySelectorProps {
 }
 
 //TODO any[] can be prettier
+//TODO store activites in global state
 const ActivitySelector = ({ text }: ActivitySelectorProps) => {
   const [activities, setActivities] = useState<any[]>([]);
   const [formattedActivities, setFormattedActivities] = useState<any[]>([]);
