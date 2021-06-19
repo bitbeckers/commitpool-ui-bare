@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import { DateTime } from "luxon";
 
 import {
@@ -28,8 +28,12 @@ type ConfirmationPageProps = {
 
 const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
   const commitment: Commitment = useSelector(
     (state: RootState) => state.commitment
+  );
+  const athlete: Athlete = useSelector(
+    (state: RootState) => state.strava.athlete
   );
 
   return (
@@ -40,6 +44,15 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
         text={strings.confirmation.alert}
       />
       <ProgressBar size={4 / 6} />
+      <Fragment>
+        <Text
+          text={`${strings.activitySource.loggedIn.text} ${athlete?.firstname}`}
+        />
+        <Image
+          style={styles.tinyAvatar}
+          source={{ uri: athlete?.profile_medium }}
+        />
+      </Fragment>
       <View style={styles.commitment}>
         <Text text={strings.confirmation.commitment.text} />
         <View style={styles.commitmentValues}>
@@ -71,6 +84,17 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
 
           <Text text={`${commitment.stake} DAI`} />
         </View>
+        {editMode ? (
+          <Button
+            text="Edit"
+            onPress={() => {setEditMode(true); console.log("Editing commitment")}}
+          />
+        ) : (
+          <Button
+            text="Set"
+            onPress={() => {setEditMode(false); console.log("Viewing commitment")}}
+          />
+        )}
       </View>
       <Footer>
         <Button
@@ -122,6 +146,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignContent: "flex-start",
     alignItems: "center",
+  },
+  tinyAvatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
   },
   helpButton: {
     width: 50,
