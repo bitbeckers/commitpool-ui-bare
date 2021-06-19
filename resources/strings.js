@@ -50,13 +50,14 @@ const strings = {
     staking: "When you commit DAI to an activity measured via Strava.."
   },
   landing: {
+    intro: "Hello.. lorem. ipsum. lala.",
     new: {
-      text: "New to CommitPool?",
-      button: "New user",
+      text: "",
+      button: "Get started",
     },
     reconnect: {
-      text: "Used CommitPool before?",
-      button: "Reconnect",
+      text: "",
+      button: "Connect wallet",
     },
   },
   login: {
