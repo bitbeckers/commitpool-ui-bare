@@ -49,22 +49,21 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
             />
             <Image
               style={styles.tinyAvatar}
-              source={{uri:stravaAthlete?.profile_medium}}
+              source={{ uri: stravaAthlete?.profile_medium }}
+            />
+            <Button
+              text={strings.activitySource.loggedIn.button}
+              onPress={() => handleLogin()}
             />
           </Fragment>
         ) : (
-          <Text text={strings.activitySource.notLoggedIn.text} />
-        )}
-        {isLoggedIn ? (
-          <Button
-            text={strings.activitySource.loggedIn.button}
-            onPress={() => handleLogin()}
-          />
-        ) : (
-          <Button
-            text={strings.activitySource.notLoggedIn.button}
-            onPress={() => handleLogin()}
-          />
+          <Fragment>
+            <Text text={strings.activitySource.notLoggedIn.text} />
+            <Button
+              text={strings.activitySource.notLoggedIn.button}
+              onPress={() => handleLogin()}
+            />
+          </Fragment>
         )}
       </View>
       <Footer>
@@ -76,7 +75,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
           text={strings.footer.next}
           onPress={() =>
             isLoggedIn
-              ? navigation.navigate("ActivityGoal")
+              ? navigation.navigate("Confirmation")
               : setPopUpVisible(true)
           }
         />
@@ -99,7 +98,7 @@ const styles = StyleSheet.create({
   tinyAvatar: {
     width: 150,
     height: 150,
-    borderRadius: 10
+    borderRadius: 10,
   },
   helpButton: {
     width: 50,

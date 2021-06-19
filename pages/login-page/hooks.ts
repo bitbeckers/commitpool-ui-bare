@@ -15,6 +15,8 @@ import {
 export const useTorusLogin = () => {
   const dispatch = useAppDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.web3.isLoggedIn);
+  const provider = useSelector((state: RootState) => state.web3.provider);
+
   const [triggerLogin, setTriggerLogin] = useState<boolean>(false);
 
   const torus = new Torus({
@@ -22,8 +24,16 @@ export const useTorusLogin = () => {
   });
 
   const handleLogin = () => {
-    isLoggedIn ? dispatch(reset()) : setTriggerLogin(true);
+    isLoggedIn ? logOut() : setTriggerLogin(true);
   };
+
+  const logOut = () => {
+    if(provider?.provider?.isTorus){
+      console.log(provider)
+      provider.cleanUp();
+    }
+    dispatch(reset({}))
+  }
 
   //Login in Torus
   useEffect(() => {
@@ -40,9 +50,9 @@ export const useTorusLogin = () => {
           showTorusButton: true,
         });
 
-        await torus.login().then((account) => {
+        await torus.login({}).then((account) => {
           console.log(account[0]);
-          dispatch(updateAccount(account));
+          dispatch(updateAccount(account[0]));
           dispatch(updateProvider(torus));
         });
       };

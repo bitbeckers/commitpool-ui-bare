@@ -15,7 +15,9 @@ interface Web3State {
   isLoggedIn: boolean;
 }
 
-const defaultProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
+// const defaultProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
+// const defaultProvider = ethers.getDefaultProvider("https://polygon-mumbai.infura.io/v3/fb9dd1f3476f44ad92158c24ba5120c6")
+const defaultProvider = ethers.getDefaultProvider(rpcUrl)
 
 const initialState: Web3State = {
   // account: undefined,

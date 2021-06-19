@@ -1,5 +1,5 @@
 interface Commitment {
-  activityKey: string;
+  activity?: Activity;
   complete: boolean;
   distance: number;
   startDate: number;
@@ -14,7 +14,6 @@ interface Athlete {
   firstname?: string;
   id: number;
   profile_medium?: string;
-  measurement_preference?: string
 }
 
 interface Activity {

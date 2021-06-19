@@ -46,7 +46,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
           <Text
             text={`${
               strings.confirmation.commitment.activity
-            } ${commitment.activityKey.toLowerCase()}`}
+            } ${commitment?.activity?.name.toLowerCase()}`}
           />
           <Text
             text={`${strings.confirmation.commitment.distance} ${commitment.distance} ${commitment.unit}`}
@@ -99,7 +99,8 @@ const validCommitment = (commitment: Commitment) => {
   const nowInSeconds = new Date().getTime() / 1000;
 
   return (
-    commitment.activityKey !== "" &&
+    commitment.activity?.key !== "" &&
+    commitment.activity?.name !== "" &&
     commitment.distance > 0 &&
     commitment.endDate > commitment.startDate &&
     commitment.endDate > nowInSeconds &&

@@ -1,10 +1,9 @@
 import { createSlice, Slice } from "@reduxjs/toolkit";
-import { ethers } from "ethers";
 
 import { DateTime } from "luxon";
 
 const initialState: Commitment =  {
-  activityKey: "",
+  activity: undefined,
   distance: 0,
   unit: "mi",
   startDate: DateTime.now().toSeconds(),
@@ -18,8 +17,8 @@ export const commitmentSlice: Slice = createSlice({
   name: "commitment",
   initialState,
   reducers: {
-    updateActivityKey: (state: Commitment, action) => {
-      state.activityKey = action.payload;
+    updateActivity: (state: Commitment, action) => {
+      state.activity = action.payload;
     },
     updateDistance: (state: Commitment, action) => {
       state.distance = action.payload;
@@ -41,7 +40,7 @@ export const commitmentSlice: Slice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  updateActivityKey,
+  updateActivity,
   updateDistance,
   updateUnit,
   updateStartDate,

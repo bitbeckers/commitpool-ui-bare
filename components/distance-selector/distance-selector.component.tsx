@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {RootState, useAppDispatch} from "../../redux/store";
+import { RootState, useAppDispatch } from "../../redux/store";
 import {
   updateDistance,
   updateUnit,
@@ -10,12 +10,14 @@ import { Text, ValueToggle } from "..";
 import { useSelector } from "react-redux";
 
 interface DistanceSelector {
-  text: string
+  text: string;
 }
 
 const DistanceSelector = ({ text }: DistanceSelector) => {
   const [isEnabled, setIsEnabled] = useState(true);
-  const distance: number = useSelector((state: RootState) => state.commitment.distance);
+  const distance: number = useSelector(
+    (state: RootState) => state.commitment.distance
+  );
 
   const dispatch = useAppDispatch();
 
@@ -29,23 +31,24 @@ const DistanceSelector = ({ text }: DistanceSelector) => {
   }, [isEnabled]);
 
   const checkAndUpdateDistance = (value: string) => {
-    const number = Number(value)
-    if(number > 0) {
-      dispatch(updateDistance(Number(value))) 
+    const number = Number(value);
+    if (number > 0) {
+      dispatch(updateDistance(Number(value)));
     } else {
-      dispatch(updateDistance(null))
+      dispatch(updateDistance(null));
     }
-  }
+  };
 
   return (
     <View style={styles.distanceSelector}>
       <Text text={text} />
       <TextInput
-        defaultValue={distance.toString()} 
+        defaultValue={distance.toString()}
         keyboardType={"number-pad"}
         style={styles.textInput}
         onChangeText={(value) => checkAndUpdateDistance(value)}
       />
+      <Text text="miles" />
       {/* <ValueToggle toggleOptions={toggleOptions} onToggle={toggleSwitch} /> */}
     </View>
   );

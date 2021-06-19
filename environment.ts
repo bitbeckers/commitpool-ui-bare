@@ -22,7 +22,7 @@ const ENV = {
     spcAbi: abi,
     daiAbi: daiAbi,
     spcAddress: "0x6B6FD55b224b25B2F56A10Ce670B097e66Fca136",
-    daiAddress: "0x27a44456bEDb94DbD59D0f0A14fE977c777fC5C3",
+    daiAddress: "0x70d1F773A9f81C852087B77F6Ae6d3032B02D2AB",
     // daiAddress: "0x6A383cf1F8897585718DCA629a8f1471339abFe4",
     linkAddress: "0x70d1F773A9f81C852087B77F6Ae6d3032B02D2AB",
     rpcUrl:

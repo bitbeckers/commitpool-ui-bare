@@ -3,44 +3,25 @@ import { StyleSheet, View } from "react-native";
 
 import DropDownPicker from "react-native-dropdown-picker";
 
+import { Text } from "../../components";
+
 interface Picker {
-  itemsToSelect: [];
+  itemsToSelect: Item[];
   onSelect: any;
   children?: React.ReactNode;
 }
 
-const Picker = ({ itemsToSelect, onSelect, children }: Picker) => {
-  const [items, setItems] = useState([]);
+interface Item {
+  label: string;
+  value: string;
+}
 
-  useEffect(() => {
-    console.log("Formatting activities")
-    const formattedActivities = itemsToSelect.map((act: Activity) => {
-      console.log("formatting ", act)
-      if (act.name === "Run") {
-        return {
-          label: "Run 🏃‍♂️",
-          value: act.key,
-        };
-      } else if (act.name === "Ride") {
-        return {
-          label: "Ride 🚲",
-          value: act.key,
-        };
-      } else {
-        return {
-          label: act.name,
-          value: act.key,
-        };
-      }
-    });
-    setItems(formattedActivities);
-  }, [itemsToSelect]);
+const Picker = ({ itemsToSelect , onSelect, children }: Picker) => {
 
-  console.log(items)
   return (
     <View style={styles.container}>
       <DropDownPicker
-        items={items}
+        items={itemsToSelect}
         defaultValue={"Loading"}
         placeholder={"Click to select"}
         arrowStyle={styles.arrowStyle}
