@@ -1,7 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View, Image } from "react-native";
-import { DateTime } from "luxon";
 
 import {
   LayoutContainer,
@@ -10,6 +9,7 @@ import {
   Button,
   ProgressBar,
   DialogPopUp,
+  CommitmentOverview,
 } from "../../components";
 import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
@@ -53,46 +53,23 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
           source={{ uri: athlete?.profile_medium }}
         />
       </Fragment>
-      <View style={styles.commitment}>
-        <Text text={strings.confirmation.commitment.text} />
-        <View style={styles.commitmentValues}>
-          <Text
-            text={`${
-              strings.confirmation.commitment.activity
-            } ${commitment?.activity?.name.toLowerCase()}`}
-          />
-          <Text
-            text={`${strings.confirmation.commitment.distance} ${commitment.distance} ${commitment.unit}`}
-          />
-          <Text
-            text={`${
-              strings.confirmation.commitment.startDate
-            } ${DateTime.fromSeconds(commitment.startDate).toFormat(
-              "yyyy MMMM dd"
-            )}`}
-          />
-          <Text
-            text={`${
-              strings.confirmation.commitment.endDate
-            } ${DateTime.fromSeconds(commitment.endDate).toFormat(
-              "yyyy MMMM dd"
-            )}`}
-          />
-        </View>
-        <View style={styles.commitmentValues}>
-          <Text text={strings.confirmation.commitment.stake} />
-
-          <Text text={`${commitment.stake} DAI`} />
-        </View>
+      <View style={styles.commitmentOverview}>
+        <CommitmentOverview editing={editMode} />
         {editMode ? (
           <Button
-            text="Edit"
-            onPress={() => {setEditMode(true); console.log("Editing commitment")}}
+            text="Set"
+            onPress={() => {
+              setEditMode(false);
+              console.log("Viewing commitment");
+            }}
           />
         ) : (
           <Button
-            text="Set"
-            onPress={() => {setEditMode(false); console.log("Viewing commitment")}}
+            text="Edit"
+            onPress={() => {
+              setEditMode(true);
+              console.log("Editing commitment");
+            }}
           />
         )}
       </View>
@@ -135,17 +112,11 @@ const validCommitment = (commitment: Commitment) => {
 };
 
 const styles = StyleSheet.create({
-  commitment: {
+  commitmentOverview: {
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
-  },
-  commitmentValues: {
-    flex: 1,
-    marginTop: 20,
-    alignContent: "flex-start",
-    alignItems: "center",
   },
   tinyAvatar: {
     width: 150,
