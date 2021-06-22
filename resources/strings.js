@@ -52,11 +52,9 @@ const strings = {
   landing: {
     intro: "Hello.. lorem. ipsum. lala.",
     new: {
-      text: "",
       button: "Get started",
     },
     reconnect: {
-      text: "",
       button: "Connect wallet",
     },
   },

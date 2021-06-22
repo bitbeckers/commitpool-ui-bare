@@ -19,12 +19,10 @@ const LandingPage = ({ navigation }: LandingPageProps) => {
     <LayoutContainer>
       <View style={styles.landingPage}>
         <Text text={strings.landing.intro} />
-          <Text text={strings.landing.new.text} />
           <Button
             text={strings.landing.new.button}
             onPress={() => navigation.navigate("Intro")}
           />
-          <Text text={strings.landing.reconnect.text} />
           <Button
             text={strings.landing.reconnect.button}
             onPress={() => navigation.navigate("Login")}

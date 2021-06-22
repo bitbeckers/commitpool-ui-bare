@@ -34,7 +34,7 @@ const DateFromTo = ({ children }: DateFromTo) => {
   useEffect(() => {
     const updateDates = () => {
       const startDay = calculateStartDay(startIn);
-      const endDay = calculateEndDay(endIn);
+      const endDay = calculateEndDay(startDay, endIn);
       dispatch(updateStartDate(startDay));
       dispatch(updateEndDate(endDay))
     }
@@ -56,14 +56,15 @@ const DateFromTo = ({ children }: DateFromTo) => {
     }
   };
 
-  const calculateEndDay = (input: string) => {
+  const calculateEndDay = (from: number, input: string) => {
     const numericInput: number = Number(input);
+    const _startDate = DateTime.fromSeconds(from)
     if (numericInput === 0) {
-      return DateTime.fromSeconds(startDate)
+      return _startDate
         .set({ hour: 23, minute: 59 })
         .toSeconds();
     } else if (numericInput > 0) {
-      return DateTime.fromSeconds(startDate)
+      return _startDate
         .plus({ days: numericInput })
         .set({ hour: 23, minute: 59 })
         .toSeconds();
