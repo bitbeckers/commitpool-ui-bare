@@ -11,6 +11,8 @@ const initialState: Commitment =  {
   stake: 0,
   progress: 0,
   complete: false,
+  activitySet: false,
+  stakeSet: false,
  }
 
 export const commitmentSlice: Slice = createSlice({
@@ -35,6 +37,12 @@ export const commitmentSlice: Slice = createSlice({
     updateStake: (state: Commitment, action) => {
       state.stake = action.payload;
     },
+    updateActivitySet: (state: Commitment, action) => {
+      state.activitySet = action.payload;
+    },
+    updateStakeSet: (state: Commitment, action) => {
+      state.stakeSet = action.payload;
+    },
   },
 });
 
@@ -46,6 +54,8 @@ export const {
   updateStartDate,
   updateEndDate,
   updateStake,
+  updateActivitySet,
+  updateStakeSet
 } = commitmentSlice.actions;
 
 export default commitmentSlice.reducer;

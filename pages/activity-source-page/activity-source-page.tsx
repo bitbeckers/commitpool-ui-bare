@@ -27,10 +27,14 @@ type ActivitySourcePageProps = {
 };
 
 const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
-  const [isLoggedIn, handleLogin] = useStravaLogin();
+  const [stravaIsLoggedIn, handleStravaLogin] = useStravaLogin();
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
   const stravaAthlete: Athlete = useSelector(
     (state: RootState) => state.strava.athlete
+  );
+
+  const web3IsLoggedIn: boolean = useSelector(
+    (state: RootState) => state.web3.isLoggedIn
   );
 
   return (
@@ -42,7 +46,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
         text={strings.activitySource.alert}
       />
       <View style={styles.intro}>
-        {isLoggedIn ? (
+        {stravaIsLoggedIn ? (
           <Fragment>
             <Text
               text={`${strings.activitySource.loggedIn.text} ${stravaAthlete?.firstname}`}
@@ -53,7 +57,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
             />
             <Button
               text={strings.activitySource.loggedIn.button}
-              onPress={() => handleLogin()}
+              onPress={() => handleStravaLogin()}
             />
           </Fragment>
         ) : (
@@ -61,7 +65,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
             <Text text={strings.activitySource.notLoggedIn.text} />
             <Button
               text={strings.activitySource.notLoggedIn.button}
-              onPress={() => handleLogin()}
+              onPress={() => handleStravaLogin()}
             />
           </Fragment>
         )}
@@ -73,11 +77,15 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
         />
         <Button
           text={strings.footer.next}
-          onPress={() =>
-            isLoggedIn
-              ? navigation.navigate("Confirmation")
-              : setPopUpVisible(true)
-          }
+          onPress={() => {
+            if (stravaIsLoggedIn && web3IsLoggedIn) {
+              navigation.navigate("Confirmation");
+            } else if (stravaIsLoggedIn && !web3IsLoggedIn) {
+              navigation.navigate("Login");
+            } else {
+              setPopUpVisible(true);
+            }
+          }}
         />
         <Button
           text={strings.footer.help}

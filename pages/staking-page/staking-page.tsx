@@ -15,6 +15,8 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "..";
 
+import { updateStakeSet } from "../../redux/commitment/commitmentSlice";
+
 import strings from "../../resources/strings";
 
 type StakingPageNavigationProps = StackNavigationProp<
@@ -28,9 +30,22 @@ type StakingPageProps = {
 
 const StakingPage = ({ navigation }: StakingPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+
   const stake: number = useSelector(
     (state: RootState) => state.commitment.stake
   );
+  const commitment: Commitment = useSelector(
+    (state: RootState) => state.commitment
+  );
+
+  useEffect(() => {
+    if (validStake(stake) && !commitment.stakeSet) {
+      dispatch(updateStakeSet(true));
+    } else if (!validStake(stake)){
+      dispatch(updateStakeSet(false));
+    }
+  }, [stake]);
 
   return (
     <LayoutContainer>
@@ -53,8 +68,8 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
         <Button
           text={strings.footer.next}
           onPress={() => {
-            validStake(stake)
-              ? navigation.navigate("Confirmation")
+            commitment.stakeSet
+              ? navigation.navigate("ActivitySource")
               : setPopUpVisible(true);
           }}
         />

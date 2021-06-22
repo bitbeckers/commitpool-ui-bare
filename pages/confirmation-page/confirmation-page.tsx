@@ -16,10 +16,8 @@ import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import strings from "../../resources/strings";
-import getEnvVars from "../../environment";
 
 import { ethers, utils } from "ethers";
-const { spcAbi, spcAddress, daiAbi, daiAddress } = getEnvVars();
 type ConfirmationPageNavigationProps = StackNavigationProp<
   RootStackParamList,
   "Confirmation"

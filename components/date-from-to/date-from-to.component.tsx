@@ -92,7 +92,11 @@ const DateFromTo = ({ children }: DateFromTo) => {
       </View>
       <View>
         <Text
-          text={`From ${parseToString(startDate)} to ${parseToString(endDate)}`}
+          text={`Starts on: ${parseToString(startDate)} `}
+          style={styles.dateView}
+        />
+        <Text
+          text={`Ends on:  ${parseToString(endDate)}`}
           style={styles.dateView}
         />
       </View>

@@ -7,6 +7,8 @@ interface Commitment {
   progress: number;
   stake: number;
   unit: string;
+  activitySet: boolean;
+  stakeSet: boolean;
 }
 
 interface Athlete {

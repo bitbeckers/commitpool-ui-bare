@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -16,7 +16,10 @@ import {
 } from "../../components";
 
 import strings from "../../resources/strings";
-import { RootState } from "../../redux/store";
+import { RootState, useAppDispatch } from "../../redux/store";
+import {
+  updateActivitySet,
+} from "../../redux/commitment/commitmentSlice";
 
 import { RootStackParamList } from "..";
 
@@ -31,10 +34,17 @@ type ActivityGoalPageProps = {
 
 const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   const commitment: Commitment = useSelector(
     (state: RootState) => state.commitment
   );
+
+  useEffect(() => {
+    if (validActivity(commitment) && !commitment.activitySet) {
+      dispatch(updateActivitySet(true));
+    }
+  }, [commitment]);
 
   return (
     <LayoutContainer>
@@ -58,7 +68,7 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         <Button
           text={strings.footer.next}
           onPress={() =>
-            validActivity(commitment)
+            commitment.activitySet
               ? navigation.navigate("Staking")
               : setAlertVisible(true)
           }
@@ -94,7 +104,7 @@ const styles = StyleSheet.create({
   helpButton: {
     width: 50,
     maxWidth: 50,
-  }
+  },
 });
 
 export default ActivityGoalPage;

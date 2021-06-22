@@ -27,7 +27,6 @@ type LoginPageProps = {
   navigation: LoginPageNavigationProps;
 };
 
-
 //TODO check for open commitments to determine redirect
 const LoginPage = ({ navigation }: LoginPageProps) => {
   const [isLoggedIn, handleLogin] = useTorusLogin();
@@ -37,26 +36,29 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
     (state: RootState) => state.web3?.account
   );
 
+  const commitment: Commitment = useSelector(
+    (state: RootState) => state.commitment
+  );
+
   const singlePlayerCommit = useSelector(
     (state: RootState) => state.web3.contracts.singlePlayerCommit
-  ); 
+  );
 
   //When account has active commitment, navigate to Track page
   useEffect(() => {
-    if(account && isAddress(account)){
-      console.log("ACCOUNT IS ADDRESS")
+    if (account && isAddress(account)) {
+      console.log("ACCOUNT IS ADDRESS");
       const getCommitmentAndRoute = async () => {
-        console.log("CHECKING FOR COMMITMENT")
+        console.log("CHECKING FOR COMMITMENT");
         const commitment = await singlePlayerCommit.commitments(account);
-        if(commitment.exists){
-          navigation.navigate("Track")
+        if (commitment.exists) {
+          navigation.navigate("Track");
         }
-      }
+      };
 
-      getCommitmentAndRoute()
-
+      getCommitmentAndRoute();
     }
-  }, [account])
+  }, [account]);
 
   return (
     <LayoutContainer>
@@ -92,11 +94,19 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
         />
         <Button
           text={strings.footer.next}
-          onPress={() =>
-            isLoggedIn
-              ? navigation.navigate("ActivityGoal")
-              : setPopUpVisible(true)
-          }
+          onPress={() => {
+            if (isLoggedIn && commitment.activitySet && commitment.stakeSet) {
+              navigation.navigate("Confirmation");
+            } else if (
+              isLoggedIn &&
+              !commitment.activitySet &&
+              !commitment.stakeSet
+            ) {
+              navigation.navigate("ActivityGoal");
+            } else {
+              setPopUpVisible(true);
+            }
+          }}
         />
         <Button
           text={strings.footer.help}
@@ -115,7 +125,7 @@ const isAddress = (account: string) => {
     return false;
   }
   return true;
-}
+};
 
 const styles = StyleSheet.create({
   loginPage: {
