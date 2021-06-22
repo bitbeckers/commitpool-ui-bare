@@ -21,7 +21,7 @@ interface DateFromTo {
 const DateFromTo = ({ children }: DateFromTo) => {
   const [startIn, setStartIn] = useState("0");
   const [endIn, setEndIn] = useState("7");
- 
+
   const startDate: any = useSelector(
     (state: RootState) => state.commitment.startDate
   );
@@ -36,11 +36,11 @@ const DateFromTo = ({ children }: DateFromTo) => {
       const startDay = calculateStartDay(startIn);
       const endDay = calculateEndDay(startDay, endIn);
       dispatch(updateStartDate(startDay));
-      dispatch(updateEndDate(endDay))
-    }
+      dispatch(updateEndDate(endDay));
+    };
 
-    updateDates()
-  }, [startIn, endIn])
+    updateDates();
+  }, [startIn, endIn]);
 
   const calculateStartDay = (input: string) => {
     const numericInput: number = Number(input);
@@ -58,11 +58,9 @@ const DateFromTo = ({ children }: DateFromTo) => {
 
   const calculateEndDay = (from: number, input: string) => {
     const numericInput: number = Number(input);
-    const _startDate = DateTime.fromSeconds(from)
+    const _startDate = DateTime.fromSeconds(from);
     if (numericInput === 0) {
-      return _startDate
-        .set({ hour: 23, minute: 59 })
-        .toSeconds();
+      return _startDate.set({ hour: 23, minute: 59 }).toSeconds();
     } else if (numericInput > 0) {
       return _startDate
         .plus({ days: numericInput })
@@ -76,23 +74,21 @@ const DateFromTo = ({ children }: DateFromTo) => {
   return (
     <Fragment>
       <View style={styles.dateInput}>
-        <Text text={"Starting in"}/>
+        <Text text={"Starting in"} />
         <TextInput
           defaultValue={startIn}
           keyboardType={"number-pad"}
           style={styles.textInput}
-          onChangeText={(value) => setStartIn(value)
-          }
+          onChangeText={(value) => setStartIn(value)}
         />
         <Text text={"days for"} />
         <TextInput
           defaultValue={endIn}
           keyboardType={"number-pad"}
           style={styles.textInput}
-          onChangeText={(value) => setEndIn(value)
-          }
+          onChangeText={(value) => setEndIn(value)}
         />
-        <Text text={"days"}/>
+        <Text text={"days"} />
       </View>
       <View>
         <Text
@@ -105,7 +101,13 @@ const DateFromTo = ({ children }: DateFromTo) => {
 };
 
 const parseToString = (dateInSeconds: number) => {
-  return DateTime.fromSeconds(dateInSeconds).toLocaleString();
+  return DateTime.fromSeconds(dateInSeconds).toLocaleString({
+    weekday: "long",
+    month: "long",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 };
 
 const styles = StyleSheet.create({
@@ -119,7 +121,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center", 
+    alignItems: "center",
   },
   textInput: {
     backgroundColor: "white",
