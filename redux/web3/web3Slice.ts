@@ -1,6 +1,8 @@
 import { createSlice, Slice } from "@reduxjs/toolkit";
 import { ethers, Wallet, Contract } from "ethers";
 import getEnvVars from "../../environment";
+import Web3 from "web3";
+import Web3Modal from "web3modal";
 
 const { spcAbi, daiAbi, daiAddress, spcAddress, rpcUrl } = getEnvVars();
 
@@ -18,6 +20,7 @@ interface Web3State {
 // const defaultProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
 // const defaultProvider = ethers.getDefaultProvider("https://polygon-mumbai.infura.io/v3/fb9dd1f3476f44ad92158c24ba5120c6")
 const defaultProvider = ethers.getDefaultProvider(rpcUrl)
+console.log(defaultProvider);
 
 const initialState: Web3State = {
   // account: undefined,
@@ -39,6 +42,7 @@ export const web3Slice: Slice = createSlice({
   initialState,
   reducers: {
     updateProvider: (state, action) => {
+      //state.provider = new ethers.providers.Web3Provider(action.payload.provider);
       state.provider = new ethers.providers.Web3Provider(action.payload.provider);
       state.contracts.dai.connect(state.provider);
       state.contracts.singlePlayerCommit.connect(state.provider)

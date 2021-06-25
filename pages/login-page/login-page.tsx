@@ -13,10 +13,12 @@ import {
 
 import getEnvVars from "../../environment";
 
+import { useWeb3ModalLogin } from "./hooks";
 import { useTorusLogin } from "./hooks";
 import strings from "../../resources/strings";
 import { RootState } from "../../redux/store";
 import { ethers } from "ethers";
+import Web3Modal from "web3modal";
 
 type LoginPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -29,7 +31,7 @@ type LoginPageProps = {
 
 //TODO check for open commitments to determine redirect
 const LoginPage = ({ navigation }: LoginPageProps) => {
-  const [isLoggedIn, handleLogin] = useTorusLogin();
+  const [isLoggedIn, handleLogin] = useWeb3ModalLogin();
   const [popUpVisible, setPopUpVisible] = useState(false);
 
   const account: string | undefined = useSelector(

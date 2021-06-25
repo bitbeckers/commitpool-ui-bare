@@ -50,7 +50,7 @@ const strings = {
     staking: "When you commit DAI to an activity measured via Strava.."
   },
   landing: {
-    intro: "Hello.. lorem. ipsum. lala.",
+    intro: "Welcome to CommitPool",
     new: {
       button: "Get started",
     },
