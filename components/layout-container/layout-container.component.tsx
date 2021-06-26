@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
+
 interface LayoutContainer {
   children?: React.ReactNode;
 }
@@ -15,7 +16,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(212, 84, 84, 1)",
+    backgroundPosition: "50% 50%",
+    backgroundSize: "auto 100%",
+    backgroundImage: "url('https://i.imgur.com/Q1NCXvz.png')",
   },
 });
 

@@ -13,6 +13,7 @@ import { Rubik_700Bold } from "@expo-google-fonts/rubik";
 
 import { Header } from "./components/";
 import {
+  TestPage,
   LandingPage,
   IntroPage,
   LoginPage,
@@ -39,12 +40,13 @@ const App = () => {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Landing"
+            initialRouteName="Test"
             screenOptions={{
               headerTitle: () => <Header  />,
               headerLeft: () => null,
             }}
           >
+            <Stack.Screen name="Test" component={TestPage} />
             <Stack.Screen
               name="Landing"
               component={LandingPage}
