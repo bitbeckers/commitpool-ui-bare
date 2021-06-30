@@ -74,7 +74,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
 
       const allowance = await dai.allowance(
         account,
-        "0xDb28e5521718Cf746a9900DE3Aff12644F699B98"
+        singlePlayerCommit.address
       );
       if (allowance.gte(stakeAmount)) {
         tx = await _singlePlayerCommit.depositAndCommit(
@@ -89,7 +89,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
         );
       } else {
         await _dai.approve(
-          "0xDb28e5521718Cf746a9900DE3Aff12644F699B98",
+          singlePlayerCommit.address,
           stakeAmount
         );
         tx = await _singlePlayerCommit.depositAndCommit(
