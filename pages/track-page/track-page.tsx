@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Linking } from "react-native";
 import { DateTime } from "luxon";
 
 import {
@@ -31,8 +31,14 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
     (state: RootState) => state.commitment
   );
 
+  const athleteId: number = useSelector(
+    (state: RootState) => state.strava.athlete.id
+  );
+
   const progress: number =
     ((commitment?.progress / commitment?.distance) * 100) | 0;
+
+  const stravaUrl: string = `http://www.strava.com/athletes/${athleteId}`;
 
   return (
     <LayoutContainer>
@@ -54,12 +60,21 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
           />
         </View>
         <View style={styles.commitmentValues}>
-          <Text text={`${strings.track.tracking.stake} ${commitment.stake} DAI`} />
+          <Text
+            text={`${strings.track.tracking.stake} ${commitment.stake} DAI`}
+          />
         </View>
         <View style={styles.commitmentValues}>
           <Text text={`Progression`} />
           <ProgressCircle progress={progress} />
         </View>
+        <a
+          style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
+          href={stravaUrl}
+          target="_blank"
+        >
+          Open Strava profile
+        </a>
       </View>
 
       <Footer>
