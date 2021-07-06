@@ -1,5 +1,6 @@
 interface Commitment {
   activity?: Activity;
+  exists: boolean;
   complete: boolean;
   distance: number;
   startDate: number;

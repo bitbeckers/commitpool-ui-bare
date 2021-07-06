@@ -11,8 +11,6 @@ import {
   DialogPopUp,
 } from "../../components";
 
-import getEnvVars from "../../environment";
-
 import { useTorusLogin } from "./hooks";
 import strings from "../../resources/strings";
 import { RootState } from "../../redux/store";
@@ -27,7 +25,6 @@ type LoginPageProps = {
   navigation: LoginPageNavigationProps;
 };
 
-//TODO check for open commitments to determine redirect
 const LoginPage = ({ navigation }: LoginPageProps) => {
   const [isLoggedIn, handleLogin] = useTorusLogin();
   const [popUpVisible, setPopUpVisible] = useState(false);
@@ -51,7 +48,9 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
       const getCommitmentAndRoute = async () => {
         console.log("CHECKING FOR COMMITMENT");
         const commitment = await singlePlayerCommit.commitments(account);
+        console.log("COMMITMENT FOUND: ", commitment)
         if (commitment.exists) {
+          //TODO write commitment to state
           navigation.navigate("Track");
         }
       };

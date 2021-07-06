@@ -45,31 +45,22 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
         <Text text={strings.track.tracking.text} />
         <View style={styles.commitmentValues}>
           <Text
-            text={`${
-              strings.track.tracking.activity
-            } ${commitment?.activity?.name.toLowerCase()}`}
+            text={`${commitment?.activity?.name} for ${commitment.distance} ${commitment.unit}`}
           />
           <Text
-            text={`${strings.track.tracking.distance} ${commitment.distance} ${commitment.unit}`}
-          />
-          <Text
-            text={`${strings.track.tracking.startDate} ${DateTime.fromSeconds(
+            text={`from ${parseToString(
               commitment.startDate
-            ).toFormat("yyyy MMMM dd")}`}
-          />
-          <Text
-            text={`${strings.track.tracking.endDate}  ${DateTime.fromSeconds(
-              commitment.endDate
-            ).toFormat("yyyy MMMM dd")}`}
+            )} to ${parseToString(commitment.endDate)}`}
           />
         </View>
         <View style={styles.commitmentValues}>
-          <Text text={strings.track.tracking.stake} />
-
-          <Text text={`${commitment.stake} DAI`} />
+          <Text text={`${strings.track.tracking.stake} ${commitment.stake} DAI`} />
+        </View>
+        <View style={styles.commitmentValues}>
+          <Text text={`Progression`} />
+          <ProgressCircle progress={progress} />
         </View>
       </View>
-      <ProgressCircle progress={progress} />
 
       <Footer>
         <Button text={"Back"} onPress={() => navigation.goBack()} />
@@ -94,6 +85,16 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 //TODO implement logic to compare against actual Strava data and timebox
 const processCommitmentProgress = (commitment: Commitment) => {
   return true;
+};
+
+const parseToString = (dateInSeconds: number) => {
+  return DateTime.fromSeconds(dateInSeconds).toLocaleString({
+    weekday: "long",
+    month: "long",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 };
 
 const styles = StyleSheet.create({

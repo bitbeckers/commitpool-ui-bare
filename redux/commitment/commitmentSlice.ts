@@ -11,6 +11,7 @@ const initialState: Commitment =  {
   stake: 0,
   progress: 0,
   complete: false,
+  exists: false,
   activitySet: false,
   stakeSet: false,
  }

@@ -37,7 +37,7 @@ const ENV = {
   prod: {
     spcAbi: abi,
     daiAbi: daiAbi,
-    spcAddress: "0xDb28e5521718Cf746a9900DE3Aff12644F699B98",
+    spcAddress: "0x91E17f2A995f7EB830057a2F83ADa3A50a37F20d",
     daiAddress: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
     linkAddress: "0xb0897686c545045aFc77CF20eC7A532E3120E0F1",
     rpcUrl:
@@ -55,7 +55,7 @@ const getEnvVars = (env = Constants.manifest.releaseChannel) => {
   // __DEV__ is true when run locally, but false when published.
   if (__DEV__) {
     return ENV.dev as EnvironmentProps;
-  } else if (env === "prod") {
+  } else {
     return ENV.prod as EnvironmentProps;
   }
 };

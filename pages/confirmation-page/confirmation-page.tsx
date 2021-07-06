@@ -16,6 +16,8 @@ import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import strings from "../../resources/strings";
+import getEnvVars from "../../environment";
+const { spcAddress } = getEnvVars();
 
 import { ethers, utils } from "ethers";
 type ConfirmationPageNavigationProps = StackNavigationProp<
@@ -47,6 +49,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
 
   let _dai = dai.connect(provider.getSigner());
   let _singlePlayerCommit = singlePlayerCommit.connect(provider.getSigner());
+  console.log("Connected SPC contract: ", _singlePlayerCommit);
 
   const validCommitment = (commitment: Commitment) => {
     const nowInSeconds = new Date().getTime() / 1000;
@@ -71,10 +74,11 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
       const endTimestamp: number = Math.ceil(commitment.endDate);
       const stakeAmount = utils.parseEther(commitment.stake.toString());
       setLoading(true);
+      console.log("Stake amount: ", stakeAmount)
 
       const allowance = await dai.allowance(
         account,
-        "0xDb28e5521718Cf746a9900DE3Aff12644F699B98"
+        _singlePlayerCommit.address
       );
       if (allowance.gte(stakeAmount)) {
         tx = await _singlePlayerCommit.depositAndCommit(
@@ -88,10 +92,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
           { gasLimit: 5000000 }
         );
       } else {
-        await _dai.approve(
-          "0xDb28e5521718Cf746a9900DE3Aff12644F699B98",
-          stakeAmount
-        );
+        await _dai.approve(_singlePlayerCommit.address, stakeAmount);
         tx = await _singlePlayerCommit.depositAndCommit(
           commitment.activity?.key,
           distanceInMiles * 100,
