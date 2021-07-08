@@ -43,7 +43,7 @@ const DistanceSelector = ({ text }: DistanceSelector) => {
     <View style={styles.distanceSelector}>
       <Text text={text} />
       <TextInput
-        defaultValue={distance.toString()}
+        defaultValue={distance?.toString()}
         keyboardType={"number-pad"}
         style={styles.textInput}
         onChangeText={(value) => checkAndUpdateDistance(value)}

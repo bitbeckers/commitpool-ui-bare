@@ -14,6 +14,7 @@ import {
 import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useStravaRefresh } from './hooks'
 import strings from "../../resources/strings";
 
 type TrackPageNavigationProps = StackNavigationProp<
@@ -26,9 +27,18 @@ type TrackPageProps = {
 };
 
 const TrackPage = ({ navigation }: TrackPageProps) => {
+  useStravaRefresh();
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
+  
   const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
+    (state: RootState) => {
+      console.log("TRACK", state.commitment)
+      return state.commitment
+    }
+  );
+
+  const accessToken: string | undefined = useSelector(
+    (state: RootState) => state.strava.access_token
   );
 
   const progress: number =
@@ -76,7 +86,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
         <Button
           text={"Continue"}
           onPress={() =>
-            processCommitmentProgress(commitment)
+            processCommitmentProgress(commitment, accessToken)
               ? navigation.navigate("Completion")
               : setPopUpVisible(true)
           }
@@ -92,9 +102,34 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 };
 
 //TODO implement logic to compare against actual Strava data and timebox
-const processCommitmentProgress = (commitment: Commitment) => {
-  return true;
+const processCommitmentProgress = async (commitment: Commitment, accessToken: any) => {
+  const total = await getActivity(commitment, accessToken);
+  return total > commitment.distance
 };
+
+const getActivity = (commitment: Commitment, accessToken: any) => {
+  return fetch(
+    "https://test2.dcl.properties/activities?startTime=" +
+      commitment.startDate +
+      "&endTime=" +
+      commitment.endDate +
+      "&type=" +
+      commitment?.activity?.name +
+      "&accessToken=" +
+      accessToken,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer: " + accessToken,
+      },
+    }
+  )
+    .then((res) => res.json())
+    .then((json) => {
+      return json.total
+    });
+}
 
 const styles = StyleSheet.create({
   commitment: {
