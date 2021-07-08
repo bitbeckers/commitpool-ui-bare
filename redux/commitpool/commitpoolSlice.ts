@@ -1,73 +1,58 @@
-import { createSlice, Slice } from "@reduxjs/toolkit";
-
+import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 import { DateTime } from "luxon";
 
-const initialState = {
+interface CommitpoolState {
+  commitment: Commitment,
+  activities: Activity[],
+  activitySet: boolean,
+  stakeSet: boolean
+}
+
+const initialState: CommitpoolState = {
   commitment: {
-    activity: undefined,
-    distance: 0,
+    activityKey: "",
+    goalValue: 0,
     unit: "mi",
-    startDate: DateTime.now().toSeconds(),
-    endDate: DateTime.now().toSeconds(),
+    startTime: DateTime.now().toSeconds(),
+    endTime: DateTime.now().toSeconds(),
     stake: 0,
-    progress: 0,
-    complete: false,
+    reportedValue: 0,
+    met: false,
     exists: false,
-    activitySet: false,
-    stakeSet: false,
   },
   activities: [],
+  activitySet: false,
+  stakeSet: false,
 };
 
 export const commitpoolSlice: Slice = createSlice({
   name: "commitpool",
   initialState,
   reducers: {
-    updateCommitment: (state, action) => {
-      state.commitment = action.payload;
+    updateCommitment: (state, action: PayloadAction<Partial<Commitment>>) => {
+      state.commitment = {
+        ...state.commitment,
+        ...action.payload,
+      }
     },
-    updateCommitmentActivity: (state, action) => {
-      state.commitment.activity = action.payload;
+    updateActivities: (state, action: PayloadAction<Activity[]>) => {
+      state.activities = action.payload
     },
-    updateCommitmentDistance: (state, action) => {
-      state.commitment.distance = action.payload;
+    updateActivitySet: (state, action: PayloadAction<boolean>) => {
+      state.activitySet = action.payload
     },
-    updateCommitmentUnit: (state, action) => {
-      state.commitment.unit = action.payload;
+    updateStakeSet: (state, action: PayloadAction<boolean>) => {
+      state.stakeSet = action.payload
     },
-    updateCommitmentStartDate: (state, action) => {
-      state.commitment.startDate = action.payload;
-    },
-    updateCommitmentEndDate: (state, action) => {
-      state.commitment.endDate = action.payload;
-    },
-    updateCommitmentStake: (state, action) => {
-      state.commitment.stake = action.payload;
-    },
-    updateCommitmentActivitySet: (state, action) => {
-      state.commitment.activitySet = action.payload;
-    },
-    updateCommitmentStakeSet: (state, action) => {
-      state.commitment.stakeSet = action.payload;
-    },
-    addActivity: (state, action) => {
-      state.activities.push(action.payload)
-    }
   },
 });
 
 // Action creators are generated for each case reducer function
 export const {
   updateCommitment,
-  updateCommitmentActivity,
-  updateCommitmentDistance,
-  updateCommitmentUnit,
-  updateCommitmentStartDate,
-  updateCommitmentEndDate,
-  updateCommitmentStake,
-  updateCommitmentActivitySet,
-  updateCommitmentStakeSet,
-  addActivity,
+  updateActivities,
+  updateActivitySet,
+  updateStakeSet
 } = commitpoolSlice.actions;
 
 export default commitpoolSlice.reducer;

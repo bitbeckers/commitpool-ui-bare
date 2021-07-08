@@ -35,7 +35,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [txSent, setTxSent] = useState<boolean>(false);
   const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
+    (state: RootState) => state.commitpool.commitment
   );
   const athlete: Athlete = useSelector(
     (state: RootState) => state.strava.athlete
@@ -55,35 +55,35 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
     const nowInSeconds = new Date().getTime() / 1000;
 
     return (
-      commitment.activity?.key !== "" &&
-      commitment.activity?.name !== "" &&
-      commitment.distance > 0 &&
-      commitment.endDate > commitment.startDate &&
-      commitment.endDate > nowInSeconds &&
+      commitment.activityKey !== "" &&
+      commitment.goalValue > 0 &&
+      commitment.endTime > commitment.startTime &&
+      commitment.endTime > nowInSeconds &&
       commitment.stake > 0 &&
-      commitment.progress === 0 &&
-      commitment.complete === false
+      commitment.reportedValue === 0 &&
+      commitment.met === false
     );
   };
 
   const createCommitment = async () => {
     let tx;
     if (validCommitment(commitment)) {
-      const distanceInMiles: number = Math.floor(commitment.distance);
-      const startTimestamp: number = Math.ceil(commitment.startDate);
-      const endTimestamp: number = Math.ceil(commitment.endDate);
+      const distanceInMiles: number = Math.floor(commitment.goalValue);
+      const startTimestamp: number = Math.ceil(commitment.startTime);
+      const endTimestamp: number = Math.ceil(commitment.endTime);
       const stakeAmount = utils.parseEther(commitment.stake.toString());
       setLoading(true);
-      console.log("Stake amount: ", stakeAmount)
+      console.log("Stake amount: ", stakeAmount);
 
       const allowance = await dai.allowance(
         account,
         _singlePlayerCommit.address
       );
+
       if (allowance.gte(stakeAmount)) {
         tx = await _singlePlayerCommit.depositAndCommit(
-          commitment.activity?.key,
-          distanceInMiles * 100,
+          commitment.activityKey,
+          distanceInMiles,
           startTimestamp,
           endTimestamp,
           stakeAmount,
@@ -94,8 +94,8 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
       } else {
         await _dai.approve(_singlePlayerCommit.address, stakeAmount);
         tx = await _singlePlayerCommit.depositAndCommit(
-          commitment.activity?.key,
-          distanceInMiles * 100,
+          commitment.activityKey,
+          distanceInMiles,
           startTimestamp,
           endTimestamp,
           stakeAmount,

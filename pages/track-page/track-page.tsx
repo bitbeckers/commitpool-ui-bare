@@ -28,7 +28,10 @@ type TrackPageProps = {
 const TrackPage = ({ navigation }: TrackPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
   const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
+    (state: RootState) => state.commitpool.commitment
+  );
+  const activities: Activity[] = useSelector(
+    (state: RootState) => state.commitpool.activities
   );
 
   const athleteId: number = useSelector(
@@ -36,9 +39,17 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   );
 
   const progress: number =
-    ((commitment?.progress / commitment?.distance) * 100) | 0;
+    ((commitment?.reportedValue / commitment?.goalValue) * 100) | 0;
 
   const stravaUrl: string = `http://www.strava.com/athletes/${athleteId}`;
+
+  //TODO refactor into utils
+  const getActivityName = (activityKey: string, activities: Activity[]) => {
+    const activity = activities.find((activity) => activity.key === activityKey);
+    return activity?.name;
+  };
+
+  const activityName: string = getActivityName(commitment.activityKey, activities) || "";
 
   return (
     <LayoutContainer>
@@ -51,12 +62,12 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
         <Text text={strings.track.tracking.text} />
         <View style={styles.commitmentValues}>
           <Text
-            text={`${commitment?.activity?.name} for ${commitment.distance} ${commitment.unit}`}
+            text={`${activityName} for ${commitment.goalValue} miles`}
           />
           <Text
             text={`from ${parseToString(
-              commitment.startDate
-            )} to ${parseToString(commitment.endDate)}`}
+              commitment.startTime
+            )} to ${parseToString(commitment.endTime)}`}
           />
         </View>
         <View style={styles.commitmentValues}>

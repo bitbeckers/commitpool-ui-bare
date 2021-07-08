@@ -6,7 +6,10 @@ import { useAppDispatch } from "../../redux/store";
 import { StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import { Text, DropDownPicker } from "..";
-import { updateActivity } from "../../redux/commitment/commitmentSlice";
+import {
+  updateActivities,
+  updateCommitment,
+} from "../../redux/commitpool/commitpoolSlice";
 import { RootState } from "../../redux/store";
 
 interface ActivitySelectorProps {
@@ -14,10 +17,11 @@ interface ActivitySelectorProps {
 }
 
 //TODO any[] can be prettier
-//TODO store activites in global state
 //TODO load selected activity from state
 const ActivitySelector = ({ text }: ActivitySelectorProps) => {
-  const [activities, setActivities] = useState<any[]>([]);
+  const activities: Activity[] = useSelector(
+    (state: RootState) => state.commitpool.activities
+  );
   const [formattedActivities, setFormattedActivities] = useState<any[]>([]);
   const dispatch = useAppDispatch();
 
@@ -30,8 +34,8 @@ const ActivitySelector = ({ text }: ActivitySelectorProps) => {
     if (spcContract) {
       const buildActivityArray = async () => {
         const localActivities: Activity[] = [];
-        let loading = true;
-        let index = 0;
+        let loading: boolean = true;
+        let index: number = 0;
 
         while (loading) {
           try {
@@ -49,14 +53,10 @@ const ActivitySelector = ({ text }: ActivitySelectorProps) => {
           }
         }
 
-        return localActivities;
+        dispatch(updateActivities(localActivities));
       };
 
-      buildActivityArray().then((activityArray) => {
-        if (activityArray) {
-          setActivities(activityArray);
-        }
-      });
+      buildActivityArray();
     }
   }, [spcContract]);
 
@@ -83,24 +83,25 @@ const ActivitySelector = ({ text }: ActivitySelectorProps) => {
         }
       });
 
-      return _formattedActivities;
+      setFormattedActivities(_formattedActivities);
     };
 
-    const formattedActivities = formatActivities(activities);
-    setFormattedActivities(formattedActivities)
+    if (activities.length > 0) {
+      formatActivities(activities);
+    }
   }, [activities]);
 
   const onSelect = (activityKey: string) => {
-    const selectedActivity: Activity = activities.find(
-      ({ key }) => key === activityKey
-    );
-    dispatch(updateActivity(selectedActivity));
+    dispatch(updateCommitment({ activityKey }));
   };
-
+  
   return (
     <View style={styles.activitySelector}>
       <Text text={text} />
-      <DropDownPicker itemsToSelect={formattedActivities as []} onSelect={onSelect} />
+      <DropDownPicker
+        itemsToSelect={formattedActivities as []}
+        onSelect={onSelect}
+      />
     </View>
   );
 };

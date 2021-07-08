@@ -1,15 +1,13 @@
 interface Commitment {
-  activity?: Activity;
+  activityKey: string;
   exists: boolean;
-  complete: boolean;
-  distance: number;
-  startDate: number;
-  endDate: number;
-  progress: number;
+  met: boolean;
+  goalValue: number;
+  startTime: number;
+  endTime: number;
+  reportedValue: number;
   stake: number;
   unit: string;
-  activitySet: boolean;
-  stakeSet: boolean;
 }
 
 interface Athlete {

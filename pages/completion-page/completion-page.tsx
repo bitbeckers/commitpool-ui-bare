@@ -20,13 +20,13 @@ type CompletionPageProps = {
 
 const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
+    (state: RootState) => state.commitpool.commitment
   );
 
   return (
     <LayoutContainer>
       <View style={styles.completionPage}>
-        {commitment.complete ? (
+        {commitment.met ? (
           <Text text={strings.completion.success} />
         ) : (
           <Text text={strings.completion.fail} />
