@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { DateTime } from "luxon";
+import { BigNumber } from "ethers";
 
 import {
   LayoutContainer,
@@ -32,7 +33,6 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   
   const commitment: Commitment = useSelector(
     (state: RootState) => {
-      console.log("TRACK", state.commitment)
       return state.commitment
     }
   );
@@ -41,8 +41,24 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
     (state: RootState) => state.strava.access_token
   );
 
+  const singlePlayerCommit = useSelector(
+    (state: RootState) => state.web3.contracts.singlePlayerCommit
+  );
+
+  const account: string | undefined = useSelector(
+    (state: RootState) => state.web3?.account
+  );
+
+  const provider = useSelector((state: RootState) => state.web3.provider);
+
+  let _singlePlayerCommit = singlePlayerCommit.connect(provider.getSigner());
+
   const progress: number =
     ((commitment?.progress / commitment?.distance) * 100) | 0;
+
+  listenForActivityDistanceUpdate(_singlePlayerCommit, account, commitment, navigation, setPopUpVisible);
+
+  getActivity(commitment, accessToken);
 
   return (
     <LayoutContainer>
@@ -86,9 +102,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
         <Button
           text={"Continue"}
           onPress={() =>
-            processCommitmentProgress(commitment, accessToken)
-              ? navigation.navigate("Completion")
-              : setPopUpVisible(true)
+            processCommitmentProgress(_singlePlayerCommit, account, commitment)
           }
         />
         <Button
@@ -102,13 +116,46 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 };
 
 //TODO implement logic to compare against actual Strava data and timebox
-const processCommitmentProgress = async (commitment: Commitment, accessToken: any) => {
-  const total = await getActivity(commitment, accessToken);
-  return total > commitment.distance
+const processCommitmentProgress = async (
+  _singlePlayerCommit: any,
+  account: string | undefined,
+  commitment: Commitment
+) => {
+  console.log(_singlePlayerCommit, account, commitment.activity?.oracle)
+  _singlePlayerCommit.requestActivityDistance(
+    account,
+    commitment.activity?.oracle,
+    //to do - move to env and/or activity state
+    "2fdfac54c3574e8e861d4f8c334a4121",
+    { gasLimit: 500000 }
+  );
 };
 
+const listenForActivityDistanceUpdate = (
+  _singlePlayerCommit: any,
+  account: string | undefined,
+  commitment: Commitment,
+  navigation: any,
+  setPopUpVisible: any
+) => {
+  _singlePlayerCommit.on(
+    "RequestActivityDistanceFulfilled",
+    async (id: string, distance: BigNumber, committer: string) => {
+      const now = new Date().getTime() / 1000;
+
+      if (committer.toLowerCase() === account?.toLowerCase()) {
+        if (now > commitment.endDate) {
+          navigation.navigate("Completion")
+        } else {
+          setPopUpVisible(true)
+        } 
+      }
+    }
+  );
+}
+
 const getActivity = (commitment: Commitment, accessToken: any) => {
-  return fetch(
+  const total = fetch(
     "https://test2.dcl.properties/activities?startTime=" +
       commitment.startDate +
       "&endTime=" +
@@ -129,6 +176,7 @@ const getActivity = (commitment: Commitment, accessToken: any) => {
     .then((json) => {
       return json.total
     });
+  console.log(total)
 }
 
 const styles = StyleSheet.create({
