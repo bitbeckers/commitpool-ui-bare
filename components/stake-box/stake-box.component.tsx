@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import {
   StyleSheet,
   StyleProp,
@@ -11,7 +11,10 @@ import { RootState, useAppDispatch } from "../../redux/store";
 
 import { Text } from "..";
 
-import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
+import {
+  updateCommitment,
+  updateStakeSet,
+} from "../../redux/commitpool/commitpoolSlice";
 
 interface StakeBoxProps {
   style?: StyleProp<TextStyle>;
@@ -27,9 +30,10 @@ const StakeBox = ({ style }: StakeBoxProps) => {
   const onStakeInput = (stake: string) => {
     const _stake = Number.parseFloat(stake);
     if (!isNaN(_stake) && validStake(_stake)) {
-      dispatch(updateCommitment({ stake: _stake, stakeSet: true }));
+      dispatch(updateCommitment({ stake: _stake }));
+      dispatch(updateStakeSet(true));
     } else {
-      dispatch(updateCommitment({ stakeSet: false }));
+      dispatch(updateStakeSet(false));
     }
   };
 
