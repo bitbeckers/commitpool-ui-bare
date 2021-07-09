@@ -1,4 +1,4 @@
-import { createSlice, Slice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface StravaState {
   isLoggedIn: boolean;
@@ -17,7 +17,10 @@ export const stravaSlice = createSlice({
   name: "strava",
   initialState,
   reducers: {
-    logInStravaUser: (state, action) => {
+    updateAccessToken: (state, action: PayloadAction<string>) => {
+      state.access_token = action.payload
+    },
+    logInStravaUser: (state, action: PayloadAction<StravaState>) => {
       const data = action.payload;
       state.athlete = data.athlete;
       state.refresh_token = data.refresh_token;
@@ -29,6 +32,6 @@ export const stravaSlice = createSlice({
   },
 });
 
-export const { logInStravaUser, logOutStravaUser } = stravaSlice.actions;
+export const { logInStravaUser, logOutStravaUser, updateAccessToken } = stravaSlice.actions;
 
 export default stravaSlice.reducer;
