@@ -77,7 +77,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
 
       const allowance = await dai.allowance(
         account,
-        _singlePlayerCommit.address
+        singlePlayerCommit.address
       );
 
       if (allowance.gte(stakeAmount)) {
@@ -92,7 +92,10 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
           { gasLimit: 5000000 }
         );
       } else {
-        await _dai.approve(_singlePlayerCommit.address, stakeAmount);
+        await _dai.approve(
+          singlePlayerCommit.address,
+          stakeAmount
+        );
         tx = await _singlePlayerCommit.depositAndCommit(
           commitment.activityKey,
           distanceInMiles,
