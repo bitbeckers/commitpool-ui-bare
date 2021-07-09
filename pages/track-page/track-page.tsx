@@ -15,6 +15,8 @@ import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 import strings from "../../resources/strings";
+import { getActivityName } from "../../utils/commitment";
+import { parseSecondTimestampToFullString } from "../../utils/dateTime";
 
 type TrackPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -39,17 +41,12 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   );
 
   const progress: number =
-    ((commitment?.reportedValue / commitment?.goalValue) * 100) | 0;
+    ((commitment.reportedValue / commitment.goalValue) * 100) | 0;
 
   const stravaUrl: string = `http://www.strava.com/athletes/${athleteId}`;
 
-  //TODO refactor into utils
-  const getActivityName = (activityKey: string, activities: Activity[]) => {
-    const activity = activities.find((activity) => activity.key === activityKey);
-    return activity?.name;
-  };
-
-  const activityName: string = getActivityName(commitment.activityKey, activities) || "";
+  const activityName: string =
+    getActivityName(commitment.activityKey, activities) || "";
 
   return (
     <LayoutContainer>
@@ -61,13 +58,11 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
       <View style={styles.commitment}>
         <Text text={strings.track.tracking.text} />
         <View style={styles.commitmentValues}>
+          <Text text={`${activityName} for ${commitment.goalValue} miles`} />
           <Text
-            text={`${activityName} for ${commitment.goalValue} miles`}
-          />
-          <Text
-            text={`from ${parseToString(
+            text={`from ${parseSecondTimestampToFullString(
               commitment.startTime
-            )} to ${parseToString(commitment.endTime)}`}
+            )} to ${parseSecondTimestampToFullString(commitment.endTime)}`}
           />
         </View>
         <View style={styles.commitmentValues}>
@@ -111,16 +106,6 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 //TODO implement logic to compare against actual Strava data and timebox
 const processCommitmentProgress = (commitment: Commitment) => {
   return true;
-};
-
-const parseToString = (dateInSeconds: number) => {
-  return DateTime.fromSeconds(dateInSeconds).toLocaleString({
-    weekday: "long",
-    month: "long",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 };
 
 const styles = StyleSheet.create({

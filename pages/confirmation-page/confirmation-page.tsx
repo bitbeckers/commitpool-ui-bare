@@ -16,10 +16,12 @@ import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import strings from "../../resources/strings";
-import getEnvVars from "../../environment";
-const { spcAddress } = getEnvVars();
 
-import { ethers, utils } from "ethers";
+import {
+  validCommitmentRequest,
+  getCommitmentRequestParameters,
+} from "../../utils/commitment";
+
 type ConfirmationPageNavigationProps = StackNavigationProp<
   RootStackParamList,
   "Confirmation"
@@ -37,6 +39,9 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   const commitment: Commitment = useSelector(
     (state: RootState) => state.commitpool.commitment
   );
+  const activities: Activity[] = useSelector(
+    (state: RootState) => state.commitpool.activities
+  );
   const athlete: Athlete = useSelector(
     (state: RootState) => state.strava.athlete
   );
@@ -51,59 +56,51 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   let _singlePlayerCommit = singlePlayerCommit.connect(provider.getSigner());
   console.log("Connected SPC contract: ", _singlePlayerCommit);
 
-  const validCommitment = (commitment: Commitment) => {
-    const nowInSeconds = new Date().getTime() / 1000;
-
-    return (
-      commitment.activityKey !== "" &&
-      commitment.goalValue > 0 &&
-      commitment.endTime > commitment.startTime &&
-      commitment.endTime > nowInSeconds &&
-      commitment.stake > 0 &&
-      commitment.reportedValue === 0 &&
-      commitment.met === false
-    );
-  };
-
   const createCommitment = async () => {
     let tx;
-    if (validCommitment(commitment)) {
-      const distanceInMiles: number = Math.floor(commitment.goalValue);
-      const startTimestamp: number = Math.ceil(commitment.startTime);
-      const endTimestamp: number = Math.ceil(commitment.endTime);
-      const stakeAmount = utils.parseEther(commitment.stake.toString());
+    if (validCommitmentRequest(commitment, activities)) {
       setLoading(true);
-      console.log("Stake amount: ", stakeAmount);
 
-      const allowance = await dai.allowance(
+      const allowance = await _dai.allowance(
         account,
-        singlePlayerCommit.address
+        _singlePlayerCommit.address
       );
 
-      if (allowance.gte(stakeAmount)) {
+      const _commitmentParameters = getCommitmentRequestParameters(commitment);
+      const _commitmentParametersWithUserId = {
+        ..._commitmentParameters,
+        _userId: String(athlete.id),
+      };
+
+      console.log(
+        "Commitment request with user ID: ",
+        _commitmentParametersWithUserId
+      );
+
+      if (allowance.gte(_commitmentParameters._stake)) {
         tx = await _singlePlayerCommit.depositAndCommit(
-          commitment.activityKey,
-          distanceInMiles,
-          startTimestamp,
-          endTimestamp,
-          stakeAmount,
-          stakeAmount,
-          String(athlete.id),
+          _commitmentParametersWithUserId._activityKey,
+          _commitmentParametersWithUserId._goalValue,
+          _commitmentParametersWithUserId._startTime,
+          _commitmentParametersWithUserId._endTime,
+          _commitmentParametersWithUserId._stake,
+          _commitmentParametersWithUserId._depositAmount,
+          _commitmentParametersWithUserId._userId,
           { gasLimit: 5000000 }
         );
       } else {
         await _dai.approve(
-          singlePlayerCommit.address,
-          stakeAmount
+          _singlePlayerCommit.address,
+          _commitmentParametersWithUserId._stake
         );
         tx = await _singlePlayerCommit.depositAndCommit(
-          commitment.activityKey,
-          distanceInMiles,
-          startTimestamp,
-          endTimestamp,
-          stakeAmount,
-          stakeAmount,
-          String(athlete.id),
+          _commitmentParametersWithUserId._activityKey,
+          _commitmentParametersWithUserId._goalValue,
+          _commitmentParametersWithUserId._startTime,
+          _commitmentParametersWithUserId._endTime,
+          _commitmentParametersWithUserId._stake,
+          _commitmentParametersWithUserId._depositAmount,
+          _commitmentParametersWithUserId._userId,
           { gasLimit: 5000000 }
         );
       }

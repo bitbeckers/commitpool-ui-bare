@@ -17,10 +17,8 @@ import {
 
 import strings from "../../resources/strings";
 import { RootState, useAppDispatch } from "../../redux/store";
-import {
-  updateActivitySet,
-  updateCommitment,
-} from "../../redux/commitpool/commitpoolSlice";
+import { updateActivitySet } from "../../redux/commitpool/commitpoolSlice";
+import { validActivityParameters } from "../../utils/commitment";
 
 import { RootStackParamList } from "..";
 
@@ -41,13 +39,19 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
     (state: RootState) => state.commitpool.commitment
   );
 
+  const activities: Activity[] = useSelector(
+    (state: RootState) => state.commitpool.activities
+  );
+
   const activitySet: boolean = useSelector(
     (state: RootState) => state.commitpool.activitySet
   );
 
   useEffect(() => {
-    if (validActivity(commitment) && !activitySet) {
+    if (validActivityParameters(commitment, activities)) {
       dispatch(updateActivitySet(true));
+    } else if (!validActivityParameters(commitment, activities)) {
+      dispatch(updateActivitySet(false));
     }
   }, [commitment]);
 
@@ -73,9 +77,7 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         <Button
           text={strings.footer.next}
           onPress={() =>
-            activitySet
-              ? navigation.navigate("Staking")
-              : setAlertVisible(true)
+            activitySet ? navigation.navigate("Staking") : setAlertVisible(true)
           }
         />
         <Button
@@ -85,17 +87,6 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         />
       </Footer>
     </LayoutContainer>
-  );
-};
-
-const validActivity = (commitment: Commitment) => {
-  const nowInSeconds = new Date().getTime() / 1000;
-
-  return (
-    commitment.activityKey !== "" &&
-    commitment.goalValue > 0 &&
-    commitment.endTime > commitment.startTime &&
-    commitment.endTime > nowInSeconds
   );
 };
 

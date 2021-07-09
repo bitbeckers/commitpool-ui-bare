@@ -14,8 +14,9 @@ import {
 import { useTorusLogin } from "./hooks";
 import strings from "../../resources/strings";
 import { RootState, useAppDispatch } from "../../redux/store";
-import { ethers } from "ethers";
-import { updateActivities, updateCommitment } from "../../redux/commitpool/commitpoolSlice";
+import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
+import { parseCommitmentFromContract } from "../../utils/commitment";
+import { isAddress } from "../../utils/web3helper";
 
 type LoginPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -39,23 +40,19 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
     (state: RootState) => state.commitpool
   );
 
-  const activities: Activity[] = useSelector(
-    (state: RootState) => state.commitpool.activities
-  );
-
   const singlePlayerCommit = useSelector(
     (state: RootState) => state.web3.contracts.singlePlayerCommit
   );
 
-  //When account has an active commitment, write to state
+  //When account has an commitment, write to state
   useEffect(() => {
     if (isAddress(account)) {
       const getCommitmentAndRoute = async () => {
         console.log("Checking for commitment");
         const commitment = await singlePlayerCommit.commitments(account);
-        console.log("Commitment found: ", commitment);
+        console.log("Commitment from contract: ", commitment);
         if (commitment.exists) {
-          const _commitment = parseCommitment(commitment);
+          const _commitment: Commitment = parseCommitmentFromContract(commitment);
           dispatch(updateCommitment({ ..._commitment}))
           navigation.navigate("Track");
         }
@@ -116,36 +113,6 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
       </Footer>
     </LayoutContainer>
   );
-};
-
-//TODO check validCommitment, setup utils for universal use
-const parseCommitment = (commitment) => {
-  try {
-    const _commitment: Commitment = {
-      activityKey: commitment.activityKey,
-      goalValue: Number.parseFloat(commitment.goalValue),
-      reportedValue: Number.parseFloat(commitment.reportedValue),
-      endTime: Number.parseFloat(commitment.endTime.toString()),
-      startTime: Number.parseFloat(commitment.startTime.toString()),
-      stake: Number.parseFloat(ethers.utils.formatEther(commitment.stake)),
-      exists: commitment.exists,
-      met: commitment.met,
-      unit: "mi",
-    }
-    console.log("Parsed commitment: ", _commitment)
-    return _commitment
-  } catch (e) {
-    console.log(e)
-  }
-}
-
-const isAddress = (account: string) => {
-  try {
-    ethers.utils.getAddress(account);
-    return true;
-  } catch (e) {
-    return false;
-  }
 };
 
 const styles = StyleSheet.create({

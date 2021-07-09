@@ -14,11 +14,14 @@ import {
 
 import strings from "../../resources/strings";
 import StakeBox from "../stake-box/stake-box.component";
+import { getActivityName } from "../../utils/commitment";
+import { parseSecondTimestampToFullString} from "../../utils/dateTime"
 
 interface CommitmentOverviewProps {
   editing: boolean;
 }
 
+//TODO Activity selector to front, now disappears behind distance field
 const CommitmentOverview = ({ editing }: CommitmentOverviewProps) => {
   const commitment: Commitment = useSelector(
     (state: RootState) => state.commitpool.commitment
@@ -27,14 +30,6 @@ const CommitmentOverview = ({ editing }: CommitmentOverviewProps) => {
   const activities: Activity[] = useSelector(
     (state: RootState) => state.commitpool.activities
   );
-
-  //TODO refactor into utils
-  const getActivityName = (activityKey: string, activities: Activity[]) => {
-    const activity = activities.find(
-      (activity) => activity.key === activityKey
-    );
-    return activity?.name;
-  };
 
   const activityName: string =
     getActivityName(commitment.activityKey, activities) || "";
@@ -66,16 +61,12 @@ const CommitmentOverview = ({ editing }: CommitmentOverviewProps) => {
             <Text
               text={`${
                 strings.confirmation.commitment.startDate
-              } ${DateTime.fromSeconds(commitment.startTime).toFormat(
-                "yyyy MMMM dd"
-              )}`}
+              } ${parseSecondTimestampToFullString(commitment.startTime)}`}
             />
             <Text
               text={`${
                 strings.confirmation.commitment.endDate
-              } ${DateTime.fromSeconds(commitment.endTime).toFormat(
-                "yyyy MMMM dd"
-              )}`}
+              } ${parseSecondTimestampToFullString(commitment.endTime)}`}
             />
           </View>
           <View style={styles.commitmentValues}>
