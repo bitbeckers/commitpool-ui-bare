@@ -18,8 +18,13 @@ export const stravaSlice = createSlice({
   initialState,
   reducers: {
     logInStravaUser: (state, action) => {
-      state = { ...state, ...action.payload };
-    },
+      const data = action.payload;
+      state.athlete = data.athlete;
+      state.refresh_token = data.refresh_token;
+      state.access_token = data.access_token;
+      state.expires_at = data.expires_at;
+      state.expires_in = data.expires_in;
+      state.isLoggedIn = true;    },
     logOutStravaUser: () => initialState,
   },
 });
