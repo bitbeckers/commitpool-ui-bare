@@ -17,6 +17,9 @@ import { RootState, useAppDispatch } from "../../redux/store";
 import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
 import { parseCommitmentFromContract } from "../../utils/commitment";
 import { isAddress } from "../../utils/web3helper";
+import { ethers } from "ethers";
+import Clipboard from "@react-native-community/clipboard";
+
 
 type LoginPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -30,19 +33,22 @@ type LoginPageProps = {
 const LoginPage = ({ navigation }: LoginPageProps) => {
   const [isLoggedIn, handleLogin] = useTorusLogin();
   const [popUpVisible, setPopUpVisible] = useState(false);
+  const [daiBalance, setDaiBalance] = useState("n/a");
   const dispatch = useAppDispatch();
 
   const account: string = useSelector(
     (state: RootState) => state.web3?.account
   );
 
-  const {activitySet, stakeSet} = useSelector(
+  const { activitySet, stakeSet } = useSelector(
     (state: RootState) => state.commitpool
   );
 
   const singlePlayerCommit = useSelector(
     (state: RootState) => state.web3.contracts.singlePlayerCommit
   );
+
+  const dai = useSelector((state: RootState) => state.web3.contracts.dai);
 
   //When account has an commitment, write to state
   useEffect(() => {
@@ -52,13 +58,23 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
         const commitment = await singlePlayerCommit.commitments(account);
         console.log("Commitment from contract: ", commitment);
         if (commitment.exists) {
-          const _commitment: Commitment = parseCommitmentFromContract(commitment);
-          dispatch(updateCommitment({ ..._commitment}))
+          const _commitment: Commitment =
+            parseCommitmentFromContract(commitment);
+          dispatch(updateCommitment({ ..._commitment }));
           navigation.navigate("Track");
         }
       };
 
+      const getDaiBalance = async () => {
+        console.log(`Calling DAI balance for ${account}`);
+        let balance = await dai.balanceOf(account);
+        balance = ethers.utils.formatEther(balance);
+        console.log(`${balance} DAI in wallet`);
+        return balance;
+      };
+
       getCommitmentAndRoute();
+      getDaiBalance().then((balance) => setDaiBalance(balance));
     }
   }, [account]);
 
@@ -72,6 +88,10 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
     }
   };
 
+  const copyToClipboard = (text: string) => {
+    Clipboard.setString(text);
+  };
+
   return (
     <LayoutContainer>
       <DialogPopUp
@@ -82,7 +102,11 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
       <View style={styles.loginPage}>
         {isLoggedIn ? (
           <View>
-            <Text text={`You're logged in to ${account}`} />
+            <Text
+              text={`You're logged in to ${account}`}
+              // onPress={copyToClipboard(account)}
+            />
+            <Text text={`Your DAI balance ${daiBalance}`} />
             <Button text="Log out" onPress={() => handleLogin()} />
           </View>
         ) : (

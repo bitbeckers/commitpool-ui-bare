@@ -4,14 +4,15 @@ import { StyleSheet, StyleProp, Text, TextStyle } from "react-native";
 interface TextBox {
   text: string;
   style?: StyleProp<TextStyle>;
+  onPress?: any
 }
 
 interface Styles {
   text: TextStyle;
 }
 
-const TextBox: React.FC<TextBox> = ({ text, style }: TextBox) => {
-  return <Text style={[styles.text, style]}>{text}</Text>;
+const TextBox: React.FC<TextBox> = ({ text, style, onPress }: TextBox) => {
+  return <Text style={[styles.text, style]} onPress={onPress}>{text}</Text>;
 };
 
 const styles = StyleSheet.create<Styles>({
