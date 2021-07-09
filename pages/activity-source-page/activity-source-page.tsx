@@ -38,7 +38,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
   );
 
   const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
+    (state: RootState) => state.commitpool.commitment
   );
 
   return (

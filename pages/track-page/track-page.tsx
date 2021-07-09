@@ -61,9 +61,6 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 
   let _singlePlayerCommit = singlePlayerCommit.connect(provider.getSigner());
 
-  const progress: number =
-    ((commitment.reportedValue / commitment.goalValue) * 100) | 0;
-
   const stravaUrl: string = `http://www.strava.com/athletes/${athleteId}`;
 
   const activityName: string =
@@ -71,7 +68,11 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 
   listenForActivityDistanceUpdate(_singlePlayerCommit, account, commitment, navigation, setPopUpVisible);
 
-  getActivity(commitment, accessToken, activityName);
+  let progress: number = 0;
+  getActivity(commitment, accessToken, activityName).then((total) => {
+    console.log(total, commitment.goalValue, (total / commitment.goalValue))
+    progress = ((total / commitment.goalValue) * 100) | 0;
+  })    
 
   return (
     <LayoutContainer>
@@ -166,13 +167,13 @@ const listenForActivityDistanceUpdate = (
 }
 
 const getActivity = async (commitment: Commitment, accessToken: any, activityName: string) => {
-  const total = await fetch(
+  return fetch(
     "https://test2.dcl.properties/activities?startTime=" +
       commitment.startTime +
       "&endTime=" +
       commitment.endTime +
       "&type=" +
-      activityName +
+      "Run" +
       "&accessToken=" +
       accessToken,
     {
@@ -185,9 +186,8 @@ const getActivity = async (commitment: Commitment, accessToken: any, activityNam
   )
     .then((res) => res.json())
     .then((json) => {
-      return json.total
+      return json.total;
     });
-  console.log(total)
 }
 
 const styles = StyleSheet.create({
