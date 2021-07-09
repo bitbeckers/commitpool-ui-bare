@@ -17,22 +17,18 @@ type TestPageProps = {
 const TestPage = ({ navigation }: TestPageProps) => {
   return (
     <LayoutContainer>
-      <View style={styles.testPage}>
-        <View style={styles.actionSection}>
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <Text style={styles.headerOne} text="Hold Yourself Accountable" />
-            </View>
-            <View style={styles.content}>
-              <Text text={copy.intro} />
-            </View>
-            <View style={styles.footer}>
-              <Button
-                text={strings.login.select.metamask}
-                onPress={() => console.log("Log in using MetaMask")}
-              />
-            </View>
-          </View>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerOne} text="Hold Yourself Accountable" />
+        </View>
+        <View style={styles.content}>
+          <Text text={copy.intro} />
+        </View>
+        <View style={styles.footer}>
+          <Button
+            text={strings.login.select.metamask}
+            onPress={() => console.log("Log in using MetaMask")}
+          />
         </View>
       </View>
     </LayoutContainer>
@@ -53,21 +49,6 @@ If you complete your goal, you get your money back. But if you come up short of 
 }
 
 const styles = StyleSheet.create({
-  testPage: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  actionSection: {
-    position: "absolute",
-    width: "764px",
-    height: "696px",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "rgba(0, 0, 0, 0.4)",
-    backdropFilter: "blur(27px)",
-    borderRadius: 10,
-  },
   headerOne: {
     fontStyle: "normal",
     fontWeight: "normal",

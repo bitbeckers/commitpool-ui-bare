@@ -40,13 +40,12 @@ const App = () => {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Test"
+            initialRouteName="Landing"
             screenOptions={{
               headerTitle: () => <Header  />,
               headerLeft: () => null,
             }}
           >
-            <Stack.Screen name="Test" component={TestPage} />
             <Stack.Screen
               name="Landing"
               component={LandingPage}
