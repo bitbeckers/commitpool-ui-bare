@@ -38,6 +38,7 @@ export const useStravaRefresh = () => {
 
   //Post strava user to db
   useEffect(() => {
+    console.log("HERE")
     const getAccessToken = async () => {
       await axios({
         baseURL: discovery.tokenEndpoint,

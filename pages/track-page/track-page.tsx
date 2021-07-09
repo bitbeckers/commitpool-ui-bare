@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Linking } from "react-native";
 import { DateTime } from "luxon";
 import { BigNumber } from "ethers";
 
@@ -17,6 +17,8 @@ import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useStravaRefresh } from './hooks'
 import strings from "../../resources/strings";
+import { getActivityName } from "../../utils/commitment";
+import { parseSecondTimestampToFullString } from "../../utils/dateTime";
 
 type TrackPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -32,9 +34,15 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
   
   const commitment: Commitment = useSelector(
-    (state: RootState) => {
-      return state.commitment
-    }
+    (state: RootState) => state.commitpool.commitment
+  );
+
+  const activities: Activity[] = useSelector(
+    (state: RootState) => state.commitpool.activities
+  );
+
+  const athleteId: number = useSelector(
+    (state: RootState) => state.strava?.athlete?.id
   );
 
   const accessToken: string | undefined = useSelector(
@@ -54,11 +62,16 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   let _singlePlayerCommit = singlePlayerCommit.connect(provider.getSigner());
 
   const progress: number =
-    ((commitment?.progress / commitment?.distance) * 100) | 0;
+    ((commitment.reportedValue / commitment.goalValue) * 100) | 0;
+
+  const stravaUrl: string = `http://www.strava.com/athletes/${athleteId}`;
+
+  const activityName: string =
+    getActivityName(commitment.activityKey, activities) || "";
 
   listenForActivityDistanceUpdate(_singlePlayerCommit, account, commitment, navigation, setPopUpVisible);
 
-  getActivity(commitment, accessToken);
+  getActivity(commitment, accessToken, activityName);
 
   return (
     <LayoutContainer>
@@ -70,32 +83,30 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
       <View style={styles.commitment}>
         <Text text={strings.track.tracking.text} />
         <View style={styles.commitmentValues}>
+          <Text text={`${activityName} for ${commitment.goalValue} miles`} />
           <Text
-            text={`${
-              strings.track.tracking.activity
-            } ${commitment?.activity?.name.toLowerCase()}`}
-          />
-          <Text
-            text={`${strings.track.tracking.distance} ${commitment.distance} ${commitment.unit}`}
-          />
-          <Text
-            text={`${strings.track.tracking.startDate} ${DateTime.fromSeconds(
-              commitment.startDate
-            ).toFormat("yyyy MMMM dd")}`}
-          />
-          <Text
-            text={`${strings.track.tracking.endDate}  ${DateTime.fromSeconds(
-              commitment.endDate
-            ).toFormat("yyyy MMMM dd")}`}
+            text={`from ${parseSecondTimestampToFullString(
+              commitment.startTime
+            )} to ${parseSecondTimestampToFullString(commitment.endTime)}`}
           />
         </View>
         <View style={styles.commitmentValues}>
-          <Text text={strings.track.tracking.stake} />
-
-          <Text text={`${commitment.stake} DAI`} />
+          <Text
+            text={`${strings.track.tracking.stake} ${commitment.stake} DAI`}
+          />
         </View>
+        <View style={styles.commitmentValues}>
+          <Text text={`Progression`} />
+          <ProgressCircle progress={progress} />
+        </View>
+        <a
+          style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
+          href={stravaUrl}
+          target="_blank"
+        >
+          Open Strava profile
+        </a>
       </View>
-      <ProgressCircle progress={progress} />
 
       <Footer>
         <Button text={"Back"} onPress={() => navigation.goBack()} />
@@ -154,14 +165,14 @@ const listenForActivityDistanceUpdate = (
   );
 }
 
-const getActivity = (commitment: Commitment, accessToken: any) => {
-  const total = fetch(
+const getActivity = async (commitment: Commitment, accessToken: any, activityName: string) => {
+  const total = await fetch(
     "https://test2.dcl.properties/activities?startTime=" +
-      commitment.startDate +
+      commitment.startTime +
       "&endTime=" +
-      commitment.endDate +
+      commitment.endTime +
       "&type=" +
-      commitment?.activity?.name +
+      activityName +
       "&accessToken=" +
       accessToken,
     {

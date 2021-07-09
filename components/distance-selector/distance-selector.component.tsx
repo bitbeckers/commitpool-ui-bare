@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { RootState, useAppDispatch } from "../../redux/store";
-import {
-  updateDistance,
-  updateUnit,
-} from "../../redux/commitment/commitmentSlice";
+import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
 
 import { StyleSheet, View, TextInput } from "react-native";
-import { Text, ValueToggle } from "..";
+import { Text } from "..";
 import { useSelector } from "react-redux";
 
 interface DistanceSelector {
@@ -14,28 +11,16 @@ interface DistanceSelector {
 }
 
 const DistanceSelector = ({ text }: DistanceSelector) => {
-  const [isEnabled, setIsEnabled] = useState(true);
-  const distance: number = useSelector(
-    (state: RootState) => state.commitment.distance
+  const goalValue: number = useSelector(
+    (state: RootState) => state.commitpool.commitment.goalValue
   );
 
   const dispatch = useAppDispatch();
 
-  const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
-  };
-  const toggleOptions: string[] = ["km", "mi"];
-
-  useEffect(() => {
-    isEnabled ? dispatch(updateUnit("mi")) : dispatch(updateUnit("km"));
-  }, [isEnabled]);
-
-  const checkAndUpdateDistance = (value: string) => {
-    const number = Number(value);
-    if (number > 0) {
-      dispatch(updateDistance(Number(value)));
-    } else {
-      dispatch(updateDistance(null));
+  const onDistanceInput = (value: string) => {
+    const distance: number = Number.parseFloat(value);
+    if (!isNaN(distance) && distance > 0) {
+      dispatch(updateCommitment({ goalValue: distance }));
     }
   };
 
@@ -43,13 +28,12 @@ const DistanceSelector = ({ text }: DistanceSelector) => {
     <View style={styles.distanceSelector}>
       <Text text={text} />
       <TextInput
-        defaultValue={distance?.toString()}
+        defaultValue={goalValue.toString()}
         keyboardType={"number-pad"}
         style={styles.textInput}
-        onChangeText={(value) => checkAndUpdateDistance(value)}
+        onChangeText={(value) => onDistanceInput(value)}
       />
       <Text text="miles" />
-      {/* <ValueToggle toggleOptions={toggleOptions} onToggle={toggleSwitch} /> */}
     </View>
   );
 };

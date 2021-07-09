@@ -9,20 +9,33 @@ import {
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../redux/store";
 
-import { Text } from "../../components";
+import { Text } from "..";
 
-import { updateStake } from "../../redux/commitment/commitmentSlice";
+import {
+  updateCommitment,
+  updateStakeSet,
+} from "../../redux/commitpool/commitpoolSlice";
 
 interface StakeBoxProps {
   style?: StyleProp<TextStyle>;
 }
 
 const StakeBox = ({ style }: StakeBoxProps) => {
+  const dispatch = useAppDispatch();
+
   const stake: number = useSelector(
-    (state: RootState) => state.commitment.stake
+    (state: RootState) => state.commitpool.commitment.stake
   );
 
-  const dispatch = useAppDispatch();
+  const onStakeInput = (stake: string) => {
+    const _stake = Number.parseFloat(stake);
+    if (!isNaN(_stake) && validStake(_stake)) {
+      dispatch(updateCommitment({ stake: _stake }));
+      dispatch(updateStakeSet(true));
+    } else {
+      dispatch(updateStakeSet(false));
+    }
+  };
 
   return (
     <Fragment>
@@ -31,7 +44,7 @@ const StakeBox = ({ style }: StakeBoxProps) => {
           defaultValue={stake?.toString()}
           keyboardType={"number-pad"}
           style={styles.textInput}
-          onChangeText={(value) => dispatch(updateStake(value))}
+          onChangeText={(stake) => onStakeInput(stake)}
         />
         <Text text={`DAI`} />
       </View>
@@ -44,6 +57,10 @@ const StakeBox = ({ style }: StakeBoxProps) => {
       ;
     </Fragment>
   );
+};
+
+const validStake = (stake: number) => {
+  return stake > 0;
 };
 
 const styles = StyleSheet.create({

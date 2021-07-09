@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../../redux/store";
+import { RootState} from "../../redux/store";
 
-import { StyleSheet, View, TextInput } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   LayoutContainer,
   Footer,
@@ -14,8 +14,6 @@ import {
 } from "../../components";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "..";
-
-import { updateStakeSet } from "../../redux/commitment/commitmentSlice";
 
 import strings from "../../resources/strings";
 
@@ -30,22 +28,10 @@ type StakingPageProps = {
 
 const StakingPage = ({ navigation }: StakingPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
 
-  const stake: number = useSelector(
-    (state: RootState) => state.commitment.stake
+  const stakeSet: boolean = useSelector(
+    (state: RootState) => state.commitpool.stakeSet
   );
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
-  );
-
-  useEffect(() => {
-    if (validStake(stake) && !commitment.stakeSet) {
-      dispatch(updateStakeSet(true));
-    } else if (!validStake(stake)){
-      dispatch(updateStakeSet(false));
-    }
-  }, [stake]);
 
   return (
     <LayoutContainer>
@@ -54,6 +40,7 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
         onTouchOutside={() => setPopUpVisible(false)}
         text={strings.staking.alert}
       />
+      
       <ProgressBar size={3 / 6} />
       <View style={styles.text}>
         <Text text={strings.staking.text} />
@@ -68,7 +55,7 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
         <Button
           text={strings.footer.next}
           onPress={() => {
-            commitment.stakeSet
+            stakeSet
               ? navigation.navigate("ActivitySource")
               : setPopUpVisible(true);
           }}
@@ -81,10 +68,6 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
       </Footer>
     </LayoutContainer>
   );
-};
-
-const validStake = (stake: number) => {
-  return stake > 0;
 };
 
 const styles = StyleSheet.create({

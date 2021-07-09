@@ -11,12 +11,12 @@ import {
   DialogPopUp,
 } from "../../components";
 
-import getEnvVars from "../../environment";
-
 import { useTorusLogin } from "./hooks";
 import strings from "../../resources/strings";
-import { RootState } from "../../redux/store";
-import { ethers } from "ethers";
+import { RootState, useAppDispatch } from "../../redux/store";
+import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
+import { parseCommitmentFromContract } from "../../utils/commitment";
+import { isAddress } from "../../utils/web3helper";
 
 type LoginPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -27,31 +27,33 @@ type LoginPageProps = {
   navigation: LoginPageNavigationProps;
 };
 
-//TODO check for open commitments to determine redirect
 const LoginPage = ({ navigation }: LoginPageProps) => {
   const [isLoggedIn, handleLogin] = useTorusLogin();
   const [popUpVisible, setPopUpVisible] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const account: string | undefined = useSelector(
+  const account: string = useSelector(
     (state: RootState) => state.web3?.account
   );
 
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
+  const {activitySet, stakeSet} = useSelector(
+    (state: RootState) => state.commitpool
   );
 
   const singlePlayerCommit = useSelector(
     (state: RootState) => state.web3.contracts.singlePlayerCommit
   );
 
-  //When account has active commitment, navigate to Track page
+  //When account has an commitment, write to state
   useEffect(() => {
-    if (account && isAddress(account)) {
-      console.log("ACCOUNT IS ADDRESS");
+    if (isAddress(account)) {
       const getCommitmentAndRoute = async () => {
-        console.log("CHECKING FOR COMMITMENT");
+        console.log("Checking for commitment");
         const commitment = await singlePlayerCommit.commitments(account);
+        console.log("Commitment from contract: ", commitment);
         if (commitment.exists) {
+          const _commitment: Commitment = parseCommitmentFromContract(commitment);
+          dispatch(updateCommitment({ ..._commitment}))
           navigation.navigate("Track");
         }
       };
@@ -59,6 +61,16 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
       getCommitmentAndRoute();
     }
   }, [account]);
+
+  const onNext = () => {
+    if (isLoggedIn && activitySet && stakeSet) {
+      navigation.navigate("Confirmation");
+    } else if (isLoggedIn && !activitySet && !stakeSet) {
+      navigation.navigate("ActivityGoal");
+    } else {
+      setPopUpVisible(true);
+    }
+  };
 
   return (
     <LayoutContainer>
@@ -92,22 +104,7 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
           text={strings.footer.back}
           onPress={() => navigation.goBack()}
         />
-        <Button
-          text={strings.footer.next}
-          onPress={() => {
-            if (isLoggedIn && commitment.activitySet && commitment.stakeSet) {
-              navigation.navigate("Confirmation");
-            } else if (
-              isLoggedIn &&
-              !commitment.activitySet &&
-              !commitment.stakeSet
-            ) {
-              navigation.navigate("ActivityGoal");
-            } else {
-              setPopUpVisible(true);
-            }
-          }}
-        />
+        <Button text={strings.footer.next} onPress={() => onNext()} />
         <Button
           text={strings.footer.help}
           onPress={() => navigation.navigate("Faq")}
@@ -116,15 +113,6 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
       </Footer>
     </LayoutContainer>
   );
-};
-
-const isAddress = (account: string) => {
-  try {
-    ethers.utils.getAddress(account);
-  } catch (e) {
-    return false;
-  }
-  return true;
 };
 
 const styles = StyleSheet.create({

@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import DropDownPicker from "react-native-dropdown-picker";
-
-import { Text } from "../../components";
 
 interface Picker {
   itemsToSelect: Item[];
@@ -16,8 +14,10 @@ interface Item {
   value: string;
 }
 
+//TODO set value of picker based on commitment in state
 const Picker = ({ itemsToSelect , onSelect, children }: Picker) => {
 
+  console.log(itemsToSelect);
   return (
     <View style={styles.container}>
       <DropDownPicker
