@@ -43,12 +43,15 @@ export const web3Slice: Slice = createSlice({
   reducers: {
     updateProvider: (state, action) => {
       //state.provider = new ethers.providers.Web3Provider(action.payload.provider);
-      state.provider = new ethers.providers.Web3Provider(action.payload.provider);
+      state.provider = new ethers.providers.Web3Provider(action.payload);
+      console.log("Updated Provider")
       state.contracts.dai.connect(state.provider);
       state.contracts.singlePlayerCommit.connect(state.provider)
+      state.isLoggedIn = true;
     },
     updateAccount: (state, action) => {
       state.account = action.payload;
+      console.log("Updated Ccount: " + action.payload)
       state.isLoggedIn = true;
     },
     reset: () => initialState,
