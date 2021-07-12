@@ -48,12 +48,14 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
   );
 
   useEffect(() => {
-    if (validActivityParameters(commitment, activities)) {
-      dispatch(updateActivitySet(true));
-    } else if (!validActivityParameters(commitment, activities)) {
-      dispatch(updateActivitySet(false));
+    if(activities.length > 0) {
+      if (validActivityParameters(commitment, activities)) {
+        dispatch(updateActivitySet(true));
+      } else if (!validActivityParameters(commitment, activities)) {
+        dispatch(updateActivitySet(false));
+      }
     }
-  }, [commitment]);
+  }, [commitment, activities]);
 
   return (
     <LayoutContainer>
