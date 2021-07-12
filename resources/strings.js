@@ -51,6 +51,10 @@ const strings = {
       text: "Used CommitPool before?",
       button: "Reconnect",
     },
+    getStarted: {
+      text: "Get Started",
+      button: "Get Started",
+    }
   },
   login: {
       alert: "Mmmmm... It appears you are not yet connected to a wallet",

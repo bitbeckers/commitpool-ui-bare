@@ -17,19 +17,17 @@ type TestPageProps = {
 const TestPage = ({ navigation }: TestPageProps) => {
   return (
     <LayoutContainer>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerOne} text="Hold Yourself Accountable" />
-        </View>
-        <View style={styles.content}>
-          <Text text={copy.intro} />
-        </View>
-        <View style={styles.footer}>
-          <Button
-            text={strings.login.select.metamask}
-            onPress={() => console.log("Log in using MetaMask")}
-          />
-        </View>
+      <View style={styles.header}>
+        <Text style={styles.headerOne} text="Hold Yourself Accountable" />
+      </View>
+      <View style={styles.content}>
+        <Text text={copy.intro} />
+      </View>
+      <View style={styles.footer}>
+        <Button
+          text={strings.landing.getStarted.text}
+          onPress={() => navigation.navigate("Login")}
+        />
       </View>
     </LayoutContainer>
   );
@@ -67,9 +65,15 @@ const styles = StyleSheet.create({
   header:{
     marginBottom: 37
   },
-  content: {},
+  content: {
+    flex: 1
+  },
   footer:{
-    alignSelf: "flex-end"
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%"
   }
 });
 
