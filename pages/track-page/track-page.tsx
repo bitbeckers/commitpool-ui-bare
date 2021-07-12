@@ -64,6 +64,9 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   const activityName: string =
     getActivityName(commitment.activityKey, activities) || "";
 
+  const oracleAddress: string = 
+    activities.find((activity) => activity.key === commitment.activityKey)?.oracle;
+
   listenForActivityDistanceUpdate(_singlePlayerCommit, account, commitment, navigation, setPopUpVisible);
 
   let progress: number = 0;
@@ -112,7 +115,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
         <Button
           text={"Continue"}
           onPress={() =>
-            processCommitmentProgress(_singlePlayerCommit, account, commitment)
+            processCommitmentProgress(_singlePlayerCommit, account, oracleAddress)
           }
         />
         <Button
@@ -129,12 +132,12 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 const processCommitmentProgress = async (
   _singlePlayerCommit: any,
   account: string | undefined,
-  commitment: Commitment
+  oracleAddress: string
 ) => {
-  console.log(_singlePlayerCommit, account, commitment.activity?.oracle)
+  console.log(_singlePlayerCommit, account, oracleAddress)
   _singlePlayerCommit.requestActivityDistance(
     account,
-    commitment.activity?.oracle,
+    oracleAddress,
     //to do - move to env and/or activity state
     "2fdfac54c3574e8e861d4f8c334a4121",
     { gasLimit: 500000 }
@@ -154,7 +157,7 @@ const listenForActivityDistanceUpdate = (
       const now = new Date().getTime() / 1000;
 
       if (committer.toLowerCase() === account?.toLowerCase()) {
-        if (now > commitment.endDate) {
+        if (now > commitment.endTime) {
           navigation.navigate("Completion")
         } else {
           setPopUpVisible(true)
