@@ -37,6 +37,10 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
     (state: RootState) => state.web3.isLoggedIn
   );
 
+  const commitment: Commitment = useSelector(
+    (state: RootState) => state.commitpool.commitment
+  );
+
   return (
     <LayoutContainer>
       <ProgressBar size={2 / 6} />
@@ -78,7 +82,9 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
         <Button
           text={strings.footer.next}
           onPress={() => {
-            if (stravaIsLoggedIn && web3IsLoggedIn) {
+            if(commitment.exists && stravaIsLoggedIn && web3IsLoggedIn) {
+              navigation.navigate("Track");
+            } else if (stravaIsLoggedIn && web3IsLoggedIn) {
               navigation.navigate("Confirmation");
             } else if (stravaIsLoggedIn && !web3IsLoggedIn) {
               navigation.navigate("Login");
