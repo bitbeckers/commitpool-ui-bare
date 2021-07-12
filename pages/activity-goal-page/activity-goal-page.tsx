@@ -45,7 +45,7 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         onTouchOutside={() => setPopUpVisible(false)}
         text={strings.activityGoal.alert}
       />
-      <ProgressBar size={1 / 6} />
+      <ProgressBar size={1} />
       <View style={styles.setUp}>
         <Text text={strings.activityGoal.setUp.text} />
         <ActivitySelector text={strings.activityGoal.setUp.activitySelector} />
@@ -67,7 +67,7 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
           text={strings.footer.next}
           onPress={() =>
             validActivity(commitment)
-              ? navigation.navigate("ActivitySource")
+              ? navigation.navigate("Staking")
               : setPopUpVisible(true)
           }
         />

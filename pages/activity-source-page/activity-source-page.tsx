@@ -33,7 +33,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
 
   return (
     <LayoutContainer>
-      <ProgressBar size={2 / 6} />
+      <ProgressBar size={3} />
       <DialogPopUp
         visible={popUpVisible}
         onTouchOutside={() => setPopUpVisible(false)}
@@ -55,7 +55,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
         <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
         <Button
           text={strings.footer.next}
-          onPress={() => isLoggedIn ? navigation.navigate("Staking") : setPopUpVisible(true)}
+          onPress={() => isLoggedIn ? navigation.navigate("Confirmation") : setPopUpVisible(true)}
         />
       </Footer>
     </LayoutContainer>

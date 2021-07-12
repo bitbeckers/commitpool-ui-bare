@@ -26,7 +26,7 @@ const TestPage = ({ navigation }: TestPageProps) => {
       <View style={styles.footer}>
         <Button
           text={strings.landing.getStarted.text}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => navigation.navigate("ActivityGoal")}
         />
       </View>
     </LayoutContainer>

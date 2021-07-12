@@ -37,7 +37,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
         onTouchOutside={() => setPopUpVisible(false)}
         text={strings.confirmation.alert}
       />
-      <ProgressBar size={4 / 6} />
+      <ProgressBar size={4} />
       <View style={styles.commitment}>
         <Text text={strings.confirmation.commitment.text} />
         <View style={styles.commitmentValues}>

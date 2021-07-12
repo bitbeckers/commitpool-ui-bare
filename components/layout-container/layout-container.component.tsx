@@ -23,7 +23,6 @@ const styles = StyleSheet.create({
   layoutContainer: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "center",
     alignItems: "center",
     backgroundPosition: "50% 50%",
     backgroundSize: "auto 100%",
@@ -33,7 +32,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     alignItems: "center",
-    justifyContent: "center",
   },
   actionSection: {
     width: "764px",
@@ -43,6 +41,7 @@ const styles = StyleSheet.create({
     background: "rgba(0, 0, 0, 0.4)",
     backdropFilter: "blur(27px)",
     borderRadius: 10,
+    top: 100
   },
 });
 

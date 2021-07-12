@@ -60,7 +60,7 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
           strings.staking.alert
         }
       />
-      <ProgressBar size={3 / 6} />
+      <ProgressBar size={2} />
       <View style={styles.text}>
         <Text text={strings.staking.text} />
         <View style={styles.valueInput}>
@@ -78,7 +78,7 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
           text={strings.footer.next}
           onPress={() => {
             validStake(commitment)
-              ? navigation.navigate("Confirmation")
+              ? navigation.navigate("ActivitySource")
               : setPopUpVisible(true);
           }}
         />
