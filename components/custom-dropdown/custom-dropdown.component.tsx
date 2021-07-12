@@ -4,25 +4,17 @@ import { StyleSheet, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 interface Picker {
-  itemsToSelect: Item[];
+  itemsToSelect: DropdownItem[];
   onSelect: any;
   children?: React.ReactNode;
 }
 
-interface Item {
-  label: string;
-  value: string;
-}
-
 //TODO set value of picker based on commitment in state
 const Picker = ({ itemsToSelect , onSelect, children }: Picker) => {
-
-  console.log(itemsToSelect);
   return (
     <View style={styles.container}>
       <DropDownPicker
         items={itemsToSelect}
-        defaultValue={"Loading"}
         placeholder={"Click to select"}
         arrowStyle={styles.arrowStyle}
         containerStyle={styles.containerStyle}

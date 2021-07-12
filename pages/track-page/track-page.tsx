@@ -1,8 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, View, Linking } from "react-native";
-import { DateTime } from "luxon";
-import { BigNumber } from "ethers";
+import { StyleSheet, View } from "react-native";
 
 import {
   LayoutContainer,
@@ -20,6 +18,8 @@ import strings from "../../resources/strings";
 import { getActivityName } from "../../utils/commitment";
 import { parseSecondTimestampToFullString } from "../../utils/dateTime";
 
+import useActivities from "../../hooks/useActivities";
+
 type TrackPageNavigationProps = StackNavigationProp<
   RootStackParamList,
   "Track"
@@ -32,14 +32,12 @@ type TrackPageProps = {
 const TrackPage = ({ navigation }: TrackPageProps) => {
   useStravaRefresh();
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  
+  const { activities } = useActivities();
+
   const commitment: Commitment = useSelector(
     (state: RootState) => state.commitpool.commitment
   );
 
-  const activities: Activity[] = useSelector(
-    (state: RootState) => state.commitpool.activities
-  );
 
   const athleteId: number = useSelector(
     (state: RootState) => state.strava?.athlete?.id

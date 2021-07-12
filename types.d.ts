@@ -24,3 +24,8 @@ interface Activity {
   allowed: boolean;
   exists: boolean;
 }
+
+interface DropdownItem {
+  label: string,
+  value: string
+}

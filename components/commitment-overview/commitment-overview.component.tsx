@@ -3,7 +3,6 @@ import { StyleSheet } from "react-native";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { DateTime } from "luxon";
 
 import {
   Text,
@@ -16,6 +15,7 @@ import strings from "../../resources/strings";
 import StakeBox from "../stake-box/stake-box.component";
 import { getActivityName } from "../../utils/commitment";
 import { parseSecondTimestampToFullString} from "../../utils/dateTime"
+import useActivities from "../../hooks/useActivities";
 
 interface CommitmentOverviewProps {
   editing: boolean;
@@ -23,12 +23,9 @@ interface CommitmentOverviewProps {
 
 //TODO Activity selector to front, now disappears behind distance field
 const CommitmentOverview = ({ editing }: CommitmentOverviewProps) => {
+  const { activities } = useActivities();
   const commitment: Commitment = useSelector(
     (state: RootState) => state.commitpool.commitment
-  );
-
-  const activities: Activity[] = useSelector(
-    (state: RootState) => state.commitpool.activities
   );
 
   const activityName: string =
@@ -38,7 +35,6 @@ const CommitmentOverview = ({ editing }: CommitmentOverviewProps) => {
     <View style={styles.commitment}>
       {editing ? (
         <Fragment>
-          <Text text="EDITING" />
           <ActivitySelector
             text={strings.activityGoal.setUp.activitySelector}
           />

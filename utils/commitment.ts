@@ -1,8 +1,32 @@
 import { ethers } from "ethers";
 
-const getActivityName = (activityKey: string, activities: Activity[]) => {
+const getActivityName = (activityKey: string, activities: Activity[]): string => {
   const activity = activities.find((activity) => activity.key === activityKey);
-  return activity?.name;
+  return activity?.name || "";
+};
+
+const formatActivities = (activities: Activity[]): DropdownItem[] => {
+  const formattedActivities = activities.map((act: Activity) => {
+      console.log("formatting ", act);
+      if (act.name === "Run") {
+        return {
+          label: "Run 🏃‍♂️",
+          value: act.key,
+        };
+      } else if (act.name === "Ride") {
+        return {
+          label: "Ride 🚲",
+          value: act.key,
+        };
+      } else {
+        return {
+          label: act.name,
+          value: act.key,
+        };
+      }
+    });
+
+  return formattedActivities;
 };
 
 const parseCommitmentFromContract = (commitment): Commitment => {
@@ -13,8 +37,8 @@ const parseCommitmentFromContract = (commitment): Commitment => {
   try {
     _commitment = {
       activityKey: commitment.activityKey,
-      goalValue: Number.parseFloat(commitment.goalValue),
-      reportedValue: Number.parseFloat(commitment.reportedValue),
+      goalValue: Number.parseFloat(commitment.goalValue) / 100,
+      reportedValue: Number.parseFloat(commitment.reportedValue) / 100,
       endTime: Number.parseFloat(commitment.endTime.toString()),
       startTime: Number.parseFloat(commitment.startTime.toString()),
       stake: Number.parseFloat(ethers.utils.formatEther(commitment.stake)),
@@ -30,14 +54,20 @@ const parseCommitmentFromContract = (commitment): Commitment => {
   return _commitment as Commitment;
 };
 
-const validActivityKey = (commitment: Commitment, activities: Activity[]): boolean => {
+const validActivityKey = (
+  commitment: Commitment,
+  activities: Activity[]
+): boolean => {
   return (
     activities.find((activity) => activity.key === commitment.activityKey) !==
     undefined
   );
 };
 
-const validActivityParameters = (commitment: Commitment, activities: Activity[]): boolean => {
+const validActivityParameters = (
+  commitment: Commitment,
+  activities: Activity[]
+): boolean => {
   return (
     validActivityKey(commitment, activities) &&
     validStartEndTimestamps(commitment) &&
@@ -54,8 +84,13 @@ const validStartEndTimestamps = (commitment: Commitment): boolean => {
   );
 };
 
-const validCommitmentRequest = (commitment: Commitment, activities: Activity[]): boolean => {
-  return validActivityParameters(commitment, activities) && commitment.stake > 0;
+const validCommitmentRequest = (
+  commitment: Commitment,
+  activities: Activity[]
+): boolean => {
+  return (
+    validActivityParameters(commitment, activities) && commitment.stake > 0
+  );
 };
 
 const getCommitmentRequestParameters = (commitment: Commitment) => {
@@ -76,6 +111,7 @@ const getCommitmentRequestParameters = (commitment: Commitment) => {
 };
 
 export {
+  formatActivities,
   getActivityName,
   getCommitmentRequestParameters,
   parseCommitmentFromContract,
