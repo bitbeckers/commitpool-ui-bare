@@ -7,7 +7,7 @@ import strings from "../../resources/strings";
 
 type LandingPageNavigationProps = StackNavigationProp<
   RootStackParamList,
-  'Landing'
+  "Landing"
 >;
 
 type LandingPageProps = {
@@ -18,17 +18,16 @@ const LandingPage = ({ navigation }: LandingPageProps) => {
   return (
     <LayoutContainer>
       <View style={styles.landingPage}>
-        <Text text={strings.landing.new.text} />
-        <Button
-          text={strings.landing.new.button}
-          onPress={() => navigation.navigate("Intro")}
-        />
-        <Text text={strings.landing.reconnect.text} />
-        <Button
-          text={strings.landing.reconnect.button}
-          onPress={() => navigation.navigate("Login")}
-        />
-      </View>
+        <Text text={strings.landing.intro} />
+          <Button
+            text={strings.landing.new.button}
+            onPress={() => navigation.navigate("Intro")}
+          />
+          <Button
+            text={strings.landing.reconnect.button}
+            onPress={() => navigation.navigate("Login")}
+          />
+        </View>
     </LayoutContainer>
   );
 };

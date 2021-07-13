@@ -1,40 +1,38 @@
-import React, { useState, useEffect } from "react";
-import {useAppDispatch} from "../../redux/store";
-import {
-  updateDistance,
-  updateUnit,
-} from "../../redux/commitment/commitmentSlice";
+import React from "react";
+import { useAppDispatch } from "../../redux/store";
+import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
 
 import { StyleSheet, View, TextInput } from "react-native";
-import { Text, ValueToggle } from "..";
+import { Text } from "..";
+import useCommitment from "../../hooks/useCommitment";
 
 interface DistanceSelector {
-  text: string
+  text: string;
 }
 
 const DistanceSelector = ({ text }: DistanceSelector) => {
-  const [isEnabled, setIsEnabled] = useState(true);
+  const { commitment } = useCommitment();
+  const { goalValue }: { goalValue: number} = commitment
 
   const dispatch = useAppDispatch();
 
-  const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
+  const onDistanceInput = (value: string) => {
+    const distance: number = Number.parseFloat(value);
+    if (!isNaN(distance) && distance > 0) {
+      dispatch(updateCommitment({ goalValue: distance }));
+    }
   };
-  const toggleOptions: string[] = ["km", "mi"];
-
-  useEffect(() => {
-    isEnabled ? dispatch(updateUnit("mi")) : dispatch(updateUnit("km"));
-  }, [isEnabled]);
 
   return (
     <View style={styles.distanceSelector}>
       <Text text={text} />
       <TextInput
+        defaultValue={goalValue.toString()}
         keyboardType={"number-pad"}
         style={styles.textInput}
-        onChangeText={(value) => dispatch(updateDistance(value))}
+        onChangeText={(value) => onDistanceInput(value)}
       />
-      <ValueToggle toggleOptions={toggleOptions} onToggle={toggleSwitch} />
+      <Text text="miles" />
     </View>
   );
 };

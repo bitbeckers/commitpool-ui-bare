@@ -1,20 +1,35 @@
 import { configureStore } from "@reduxjs/toolkit";
+
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+
 import { useDispatch } from "react-redux";
-import commitmentReducer from "./commitment/commitmentSlice";
-import stravaReducer from "./strava/stravaSlice";
-import web3Reducer from "./web3/web3Slice";
+
+import rootReducer from "./reducer";
+
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage,
+  blacklist: ['web3']
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
-  reducer: {
-    commitment: commitmentReducer,
-    strava: stravaReducer,
-    web3: web3Reducer,
-  },
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      // serializableCheck: {
+      //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      // },
+      serializableCheck: false,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 
 export type AppDispatch = typeof store.dispatch;
-export const useAppDispatch = () => useDispatch<AppDispatch>() // Export a hook that can be reused to resolve types
+export const useAppDispatch = () => useDispatch<AppDispatch>(); // Export a hook that can be reused to resolve types
 
 export default store;

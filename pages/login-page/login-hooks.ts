@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../redux/store";
 import Torus from "@toruslabs/torus-embed";
+import getEnvVars from '../../environment';
+
+const { rpcUrl, chainId, networkName, debug } = getEnvVars();
 
 import {
   updateProvider,
@@ -12,6 +15,8 @@ import {
 export const useTorusLogin = () => {
   const dispatch = useAppDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.web3.isLoggedIn);
+  const provider = useSelector((state: RootState) => state.web3.provider);
+
   const [triggerLogin, setTriggerLogin] = useState<boolean>(false);
 
   const torus = new Torus({
@@ -19,8 +24,16 @@ export const useTorusLogin = () => {
   });
 
   const handleLogin = () => {
-    isLoggedIn ? dispatch(reset()) : setTriggerLogin(true);
+    isLoggedIn ? logOut() : setTriggerLogin(true);
   };
+
+  const logOut = () => {
+    if(provider?.provider?.isTorus){
+      console.log(provider)
+      provider.cleanUp();
+    }
+    dispatch(reset({}))
+  }
 
   //Login in Torus
   useEffect(() => {
@@ -28,17 +41,18 @@ export const useTorusLogin = () => {
       const torusLogin = async () => {
         await torus.init({
           buildEnv: "production",
-          enableLogging: true,
+          enableLogging: debug,
           network: {
-            host: "mumbai",
-            chainId: 80001,
-            networkName: "Mumbai Test Network",
+            host: rpcUrl,
+            chainId: chainId,
+            networkName: networkName,
           },
           showTorusButton: true,
         });
 
-        await torus.login().then((account) => {
-          dispatch(updateAccount(account));
+        await torus.login({}).then((account) => {
+          console.log(account[0]);
+          dispatch(updateAccount(account[0]));
           dispatch(updateProvider(torus));
         });
       };

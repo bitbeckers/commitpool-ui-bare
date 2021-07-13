@@ -5,8 +5,10 @@ interface Footer {
   children?: React.ReactNode;
 }
 
+//TODO DRY FAQ button
 const Footer = ({ children }: Footer) => {
-  return <View style={styles.footer}>{children}</View>;
+  return <View style={styles.footer}>{children}
+  </View>;
 };
 
 const styles = StyleSheet.create({

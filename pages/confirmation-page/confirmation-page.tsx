@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, View } from "react-native";
-import { DateTime } from "luxon";
+import { StyleSheet, View, Image } from "react-native";
 
 import {
   LayoutContainer,
@@ -9,17 +8,28 @@ import {
   Text,
   Button,
   ProgressBar,
-  DialogPopUp
+  DialogPopUp,
+  CommitmentOverview,
 } from "../../components";
 import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import strings from "../../resources/strings"
+import strings from "../../resources/strings";
+
+import {
+  validCommitmentRequest,
+  getCommitmentRequestParameters,
+} from "../../utils/commitment";
+import useCommitment from "../../hooks/useCommitment";
+import useActivities from "../../hooks/useActivities";
+import useContracts from "../../hooks/useContracts";
+import useWeb3 from "../../hooks/useWeb3";
+import useStravaAthlete from "../../hooks/useStravaAthlete";
 
 type ConfirmationPageNavigationProps = StackNavigationProp<
   RootStackParamList,
-  'Confirmation'
+  "Confirmation"
 >;
 
 type ConfirmationPageProps = {
@@ -28,7 +38,77 @@ type ConfirmationPageProps = {
 
 const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  const commitment: Commitment = useSelector((state: RootState) => state.commitment);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [txSent, setTxSent] = useState<boolean>(false);
+
+  const { commitment } = useCommitment();
+  const { activities } = useActivities();
+
+
+  const {athlete} = useStravaAthlete();
+
+  const { account, provider } = useWeb3();
+  const { dai, singlePlayerCommit } = useContracts();
+
+  console.log("Connected SPC contract: ", singlePlayerCommit);
+
+  const createCommitment = async () => {
+    let tx;
+    if (validCommitmentRequest(commitment, activities)) {
+      setLoading(true);
+
+      const allowance = await dai.allowance(
+        account,
+        singlePlayerCommit.address
+      );
+
+      const _commitmentParameters = getCommitmentRequestParameters(commitment);
+      const _commitmentParametersWithUserId = {
+        ..._commitmentParameters,
+        _userId: String(athlete.id),
+      };
+
+      console.log(
+        "Commitment request with user ID: ",
+        _commitmentParametersWithUserId
+      );
+
+      if (allowance.gte(_commitmentParameters._stake)) {
+        tx = await singlePlayerCommit.depositAndCommit(
+          _commitmentParametersWithUserId._activityKey,
+          _commitmentParametersWithUserId._goalValue,
+          _commitmentParametersWithUserId._startTime,
+          _commitmentParametersWithUserId._endTime,
+          _commitmentParametersWithUserId._stake,
+          _commitmentParametersWithUserId._depositAmount,
+          _commitmentParametersWithUserId._userId,
+          { gasLimit: 5000000 }
+        );
+      } else {
+        await dai.approve(
+          singlePlayerCommit.address,
+          _commitmentParametersWithUserId._stake
+        );
+        tx = await singlePlayerCommit.depositAndCommit(
+          _commitmentParametersWithUserId._activityKey,
+          _commitmentParametersWithUserId._goalValue,
+          _commitmentParametersWithUserId._startTime,
+          _commitmentParametersWithUserId._endTime,
+          _commitmentParametersWithUserId._stake,
+          _commitmentParametersWithUserId._depositAmount,
+          _commitmentParametersWithUserId._userId,
+          { gasLimit: 5000000 }
+        );
+      }
+
+      setLoading(false);
+      setTxSent(true);
+      navigation.navigate("Track");
+    } else {
+      setPopUpVisible(true);
+    }
+  };
 
   return (
     <LayoutContainer>
@@ -37,70 +117,65 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
         onTouchOutside={() => setPopUpVisible(false)}
         text={strings.confirmation.alert}
       />
-      <ProgressBar size={4} />
-      <View style={styles.commitment}>
-        <Text text={strings.confirmation.commitment.text} />
-        <View style={styles.commitmentValues}>
-          <Text text={`${strings.confirmation.commitment.activity} ${commitment.activity.toLowerCase()}`} />
-          <Text text={`${strings.confirmation.commitment.distance} ${commitment.distance} ${commitment.unit}`} />
-          <Text
-            text={`${strings.confirmation.commitment.startDate} ${DateTime.fromSeconds(
-              commitment.startDate
-            ).toFormat("yyyy MMMM dd")}`}
+      <ProgressBar size={4 / 6} />
+      <Fragment>
+        <Text
+          text={`${strings.activitySource.loggedIn.text} ${athlete?.firstname}`}
+        />
+        <Image
+          style={styles.tinyAvatar}
+          source={{ uri: athlete?.profile_medium }}
+        />
+      </Fragment>
+      <View style={styles.commitmentOverview}>
+        <CommitmentOverview editing={editMode} />
+        {editMode ? (
+          <Button
+            text="Set"
+            onPress={() => {
+              setEditMode(false);
+            }}
           />
-          <Text
-            text={`${strings.confirmation.commitment.endDate} ${DateTime.fromSeconds(commitment.endDate).toFormat(
-              "yyyy MMMM dd"
-            )}`}
+        ) : (
+          <Button
+            text="Edit"
+            onPress={() => {
+              setEditMode(true);
+            }}
           />
-        </View>
-        <View style={styles.commitmentValues}>
-          <Text text={strings.confirmation.commitment.stake} />
-
-          <Text text={`${commitment.stake} ${commitment.currency}`} />
-        </View>
+        )}
       </View>
       <Footer>
-        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
         <Button
-          text={strings.footer.next}
-          onPress={() =>
-            validCommitment(commitment)
-              ? navigation.navigate("Track")
-              : setPopUpVisible(true)
-          }
+          text={strings.footer.back}
+          onPress={() => navigation.goBack()}
+        />
+        <Button text={"Confirm"} onPress={async () => createCommitment()} />
+        <Button
+          text={strings.footer.help}
+          onPress={() => navigation.navigate("Faq")}
+          style={styles.helpButton}
         />
       </Footer>
     </LayoutContainer>
   );
 };
 
-const validCommitment = (commitment: Commitment) => {
-  const nowInSeconds = new Date().getTime() / 1000;
-
-  return (
-    commitment.activity !== "" &&
-    commitment.distance > 0  &&
-    commitment.endDate > commitment.startDate &&
-    commitment.endDate > nowInSeconds &&
-    commitment.stake > 0 &&
-    commitment.progress === 0 && 
-    commitment.complete === false
-  );
-};
-
 const styles = StyleSheet.create({
-  commitment: {
+  commitmentOverview: {
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  commitmentValues: {
-    flex: 1,
-    marginTop: 20,
-    alignContent: "flex-start",
-    alignItems: "center"
+  tinyAvatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
+  },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
   },
 });
 

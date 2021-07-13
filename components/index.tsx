@@ -7,11 +7,12 @@ import ProgressBar from "./progress-bar/progress-bar.component";
 import ProgressCircle from "./progress-circle/progress-circle.component";
 import DropDownPicker from "./custom-dropdown/custom-dropdown.component";
 import ActivitySelector from "./activity-selector/activity-selector.component";
-import DatePicker from "./custom-date-picker/custom-date-picker.component";
-import DateBox from "./date-box/date-box.component";
 import DistanceSelector from "./distance-selector/distance-selector.component";
 import DialogPopUp from "./custom-dialog-popup/custom-dialog-popup.component";
 import ValueToggle from "./value-toggle/value-toggle.component";
+import DateFromTo from "./date-from-to/date-from-to.component";
+import CommitmentOverview from "./commitment-overview/commitment-overview.component";
+import StakeBox from "./stake-box/stake-box.component";
 
 //TODO split atoms and molecules
 export {
@@ -23,10 +24,11 @@ export {
   ProgressBar,
   ProgressCircle,
   DropDownPicker,
-  DatePicker,
-  DateBox,
   ActivitySelector,
   DistanceSelector,
   DialogPopUp,
-  ValueToggle
+  ValueToggle,
+  DateFromTo,
+  CommitmentOverview,
+  StakeBox
 };

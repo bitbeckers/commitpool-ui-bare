@@ -1,33 +1,27 @@
 import React from "react";
-import { useAppDispatch } from "../../redux/store";
 import { StyleSheet, View } from "react-native";
 
 import DropDownPicker from "react-native-dropdown-picker";
-import { updateActivity } from "../../redux/commitment/commitmentSlice";
 
 interface Picker {
+  itemsToSelect: DropdownItem[];
+  onSelect: any;
   children?: React.ReactNode;
 }
 
-const items = [
-  { label: "Run  🏃‍♂️", value: "Run" },
-  { label: "Ride  🚲", value: "Ride" },
-];
-
-const Picker = ({children}: Picker) => {
-  const dispatch = useAppDispatch();
+//TODO set value of picker based on commitment in state
+const Picker = ({ itemsToSelect , onSelect, children }: Picker) => {
   return (
     <View style={styles.container}>
       <DropDownPicker
-        items={items}
-        defaultValue={items[0]}
+        items={itemsToSelect}
         placeholder={"Click to select"}
         arrowStyle={styles.arrowStyle}
         containerStyle={styles.containerStyle}
         labelStyle={styles.labelStyle}
         itemStyle={styles.itemStyle}
         globalTextStyle={styles.textStyle}
-        onChangeItem={(item) => dispatch(updateActivity(item.value))}
+        onChangeItem={(item) => onSelect(item.value)}
       />
       {children}
     </View>

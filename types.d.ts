@@ -1,19 +1,31 @@
 interface Commitment {
-    activity: string,
-    distance: number,
-    unit: string,
-    startDate: number,
-    endDate: number,
-    stake: number,
-    currency: string,
-    progress: number,
-    complete
+  activityKey: string;
+  exists: boolean;
+  met: boolean;
+  goalValue: number;
+  startTime: number;
+  endTime: number;
+  reportedValue: number;
+  stake: number;
+  unit: string;
 }
 
 interface Athlete {
-    id: number,
-    username?: string,
-    firstname?: string,
-    lastname?: number,
-    profile_medium?: number,
+  username?: string;
+  firstname?: string;
+  id: number;
+  profile_medium?: string;
+}
+
+interface Activity {
+  key: string
+  name: string;
+  oracle: string;
+  allowed: boolean;
+  exists: boolean;
+}
+
+interface DropdownItem {
+  label: string,
+  value: string
 }

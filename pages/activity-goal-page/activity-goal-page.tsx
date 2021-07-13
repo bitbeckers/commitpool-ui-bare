@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
-import { StackNavigationProp } from '@react-navigation/stack';
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import {
   LayoutContainer,
@@ -10,24 +10,23 @@ import {
   Button,
   ProgressBar,
   ActivitySelector,
-  DateBox,
+  DateFromTo,
   DistanceSelector,
   DialogPopUp,
 } from "../../components";
 
 import strings from "../../resources/strings";
+import { RootState, useAppDispatch } from "../../redux/store";
+import { updateActivitySet } from "../../redux/commitpool/commitpoolSlice";
+import { validActivityParameters } from "../../utils/commitment";
 
-import {
-  updateStartDate,
-  updateEndDate,
-} from "../../redux/commitment/commitmentSlice";
-import { RootState } from "../../redux/store";
-
-import {RootStackParamList} from '..'
+import { RootStackParamList } from "..";
+import useCommitment from "../../hooks/useCommitment";
+import useActivities from "../../hooks/useActivities";
 
 type ActivityGoalPageNavigationProps = StackNavigationProp<
   RootStackParamList,
-  'ActivityGoal'
+  "ActivityGoal"
 >;
 
 type ActivityGoalPageProps = {
@@ -35,14 +34,32 @@ type ActivityGoalPageProps = {
 };
 
 const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
-  const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  const commitment: Commitment = useSelector((state: RootState) => state.commitment);
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+
+  const {commitment} = useCommitment();
+
+  const {activities} = useActivities();
+
+  const activitySet: boolean = useSelector(
+    (state: RootState) => state.commitpool.activitySet
+  );
+
+  useEffect(() => {
+    if(activities.length > 0) {
+      if (validActivityParameters(commitment, activities)) {
+        dispatch(updateActivitySet(true));
+      } else if (!validActivityParameters(commitment, activities)) {
+        dispatch(updateActivitySet(false));
+      }
+    }
+  }, [commitment, activities]);
 
   return (
     <LayoutContainer>
       <DialogPopUp
-        visible={popUpVisible}
-        onTouchOutside={() => setPopUpVisible(false)}
+        visible={alertVisible}
+        onTouchOutside={() => setAlertVisible(false)}
         text={strings.activityGoal.alert}
       />
       <ProgressBar size={1} />
@@ -50,40 +67,26 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         <Text text={strings.activityGoal.setUp.text} />
         <ActivitySelector text={strings.activityGoal.setUp.activitySelector} />
         <DistanceSelector text={strings.activityGoal.setUp.distanceSelector} />
-        <DateBox
-          dateInSeconds={commitment.startDate}
-          text={strings.activityGoal.setUp.startDate}
-          onDateChange={updateStartDate}
-        />
-        <DateBox
-          dateInSeconds={commitment.endDate}
-          text={strings.activityGoal.setUp.endDate}
-          onDateChange={updateEndDate}
-        />
+        <DateFromTo />
       </View>
       <Footer>
-        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
+        <Button
+          text={strings.footer.back}
+          onPress={() => navigation.goBack()}
+        />
         <Button
           text={strings.footer.next}
           onPress={() =>
-            validActivity(commitment)
-              ? navigation.navigate("Staking")
-              : setPopUpVisible(true)
+            activitySet ? navigation.navigate("Staking") : setAlertVisible(true)
           }
+        />
+        <Button
+          text={strings.footer.help}
+          onPress={() => navigation.navigate("Faq")}
+          style={styles.helpButton}
         />
       </Footer>
     </LayoutContainer>
-  );
-};
-
-const validActivity = (commitment: Commitment) => {
-  const nowInSeconds = new Date().getTime() / 1000;
-
-  return (
-    commitment.activity !== "" &&
-    commitment.distance > 0  &&
-    commitment.endDate > commitment.startDate &&
-    commitment.endDate > nowInSeconds
   );
 };
 
@@ -93,6 +96,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
+  },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
   },
 });
 

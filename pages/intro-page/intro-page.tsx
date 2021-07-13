@@ -28,6 +28,11 @@ const IntroPage = ({ navigation }: IntroPageProps) => {
           text={strings.footer.start}
           onPress={() => navigation.navigate("ActivityGoal")}
         />
+        <Button
+          text={strings.footer.help}
+          onPress={() => navigation.navigate("Faq")}
+          style={styles.helpButton}
+        />
       </View>
     </LayoutContainer>
   );
@@ -50,6 +55,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%"
+  },
+  helpButton: {
+    width: 50,
+    maxWidth: 50,
   }
 });
 

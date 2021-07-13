@@ -1,14 +1,15 @@
 import React from "react";
-import { StyleSheet, Text, Platform, Pressable } from "react-native";
+import { StyleSheet, Text, Platform, Pressable, StyleProp, ViewStyle } from "react-native";
 
 interface CustomButtonProps {
   text: string,
-  onPress: () => any 
+  onPress: () => any,
+  style?: StyleProp<ViewStyle>;
 }
 
-const CustomButton = ({ text, onPress }: CustomButtonProps) => {
+const CustomButton = ({ text, onPress, style }: CustomButtonProps) => {
   return (
-    <Pressable onPress={onPress} style={styles.button}>
+    <Pressable onPress={onPress} style={[styles.button, style]}>
       <Text style={styles.text}>{text}</Text>
     </Pressable>
   );

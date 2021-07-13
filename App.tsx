@@ -4,6 +4,9 @@ import React from "react";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -22,8 +25,11 @@ import {
   StakingPage,
   ConfirmationPage,
   TrackPage,
-  CompletionPage
+  CompletionPage,
+  FaqPage,
 } from "./pages";
+
+let persistor = persistStore(store);
 
 const App = () => {
   let [fontsLoaded] = useFonts({
@@ -38,37 +44,33 @@ const App = () => {
   } else {
     return (
       <Provider store={store}>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="ActivityGoal"
-            screenOptions={{
-              headerTitle: () => <Header  />,
-              headerLeft: () => null,
-              headerShown: true,
-              headerTransparent: true,
-            }}
-          >
-            <Stack.Screen
-              name="Landing"
-              component={LandingPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="Login" component={LoginPage} />
-            <Stack.Screen name="Intro" component={IntroPage} />
-            <Stack.Screen name="ActivityGoal" component={ActivityGoalPage} />
-            <Stack.Screen
-              name="ActivitySource"
-              component={ActivitySourcePage}
-            />
-            <Stack.Screen name="Staking" component={StakingPage} />
-            <Stack.Screen name="Confirmation" component={ConfirmationPage} />
-            <Stack.Screen name="Track" component={TrackPage} />
-            <Stack.Screen name="Completion" component={CompletionPage} />
-            <Stack.Screen name="Test" component={TestPage} />
-
-
-          </Stack.Navigator>
-        </NavigationContainer>
+        <PersistGate loading={null} persistor={persistor}>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="Test"
+              screenOptions={{
+                headerTitle: () => <Header />,
+                headerLeft: () => null,
+                headerShown: true,
+                headerTransparent: true,
+              }}
+            >
+              <Stack.Screen name="Login" component={LoginPage} />
+              <Stack.Screen name="Intro" component={IntroPage} />
+              <Stack.Screen name="ActivityGoal" component={ActivityGoalPage} />
+              <Stack.Screen
+                name="ActivitySource"
+                component={ActivitySourcePage}
+              />
+              <Stack.Screen name="Staking" component={StakingPage} />
+              <Stack.Screen name="Confirmation" component={ConfirmationPage} />
+              <Stack.Screen name="Track" component={TrackPage} />
+              <Stack.Screen name="Completion" component={CompletionPage} />
+              <Stack.Screen name="Faq" component={FaqPage} />
+              <Stack.Screen name="Test" component={TestPage} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </PersistGate>
       </Provider>
     );
   }
