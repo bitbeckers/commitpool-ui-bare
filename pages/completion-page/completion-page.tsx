@@ -8,7 +8,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 import strings from "../../resources/strings";
 import useCommitment from "../../hooks/useCommitment";
-import useStravaData from "../../hooks/useStravaData";
 
 type CompletionPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -21,19 +20,18 @@ type CompletionPageProps = {
 
 const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const { commitment, activityName } = useCommitment();
-  const { progress } = useStravaData();
   const [loading, setLoading] = useState<boolean>(true);
   const [success, setSuccess] = useState<boolean>(false);
 
   useEffect(() => {
-    if (loading && progress) {
-      const _success: boolean = progress >= commitment.goalValue;
+    if (loading) {
+      const _success: boolean = commitment.reportedValue >= commitment.goalValue;
       setSuccess(_success);
       setLoading(false);
     }
   }, [commitment]);
 
-  const achievement: string = `You managed to ${activityName} for ${progress} miles. You committed to ${commitment.goalValue} miles`;
+  const achievement: string = `You managed to ${activityName} for ${commitment.reportedValue} miles. You committed to ${commitment.goalValue} miles`;
 
   return (
     <LayoutContainer>

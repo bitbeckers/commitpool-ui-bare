@@ -36,7 +36,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   // useStravaRefresh();
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
   const { activities } = useActivities();
-  const { commitment, activityName } = useCommitment();
+  const { commitment, activityName, refreshCommitment } = useCommitment();
   const { singlePlayerCommit } = useContracts();
   const { account } = useWeb3();
   const { athlete } = useStravaAthlete();
@@ -54,7 +54,8 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
     account,
     commitment,
     navigation,
-    setPopUpVisible
+    setPopUpVisible,
+    refreshCommitment
   );
 
   return (
@@ -101,7 +102,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 
       <Footer>
         <Button text={"Back"} onPress={() => navigation.goBack()} />
-        {/* <Button
+        <Button
           text={"Continue"}
           onPress={() =>
             processCommitmentProgress(
@@ -109,12 +110,6 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
               account,
               oracleAddress
             )
-          }
-        /> */}
-        <Button
-          text={"Continue"}
-          onPress={() =>
-            navigation.navigate("Completion")
           }
         />
         <Button
@@ -147,7 +142,8 @@ const listenForActivityDistanceUpdate = (
   account: string | undefined,
   commitment: Commitment,
   navigation: any,
-  setPopUpVisible: any
+  setPopUpVisible: any,
+  refreshCommitment: any
 ) => {
   _singlePlayerCommit.on(
     "RequestActivityDistanceFulfilled",
@@ -156,6 +152,7 @@ const listenForActivityDistanceUpdate = (
 
       if (committer.toLowerCase() === account?.toLowerCase()) {
         if (now > commitment.endTime) {
+          refreshCommitment();
           navigation.navigate("Completion");
         } else {
           setPopUpVisible(true);
