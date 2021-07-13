@@ -1,5 +1,5 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { Fragment } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { RootStackParamList } from "..";
 import { LayoutContainer, Text, Button } from "../../components";

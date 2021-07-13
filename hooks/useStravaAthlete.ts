@@ -178,7 +178,8 @@ const useStravaAthlete = () => {
         baseURL: "https://www.strava.com/api/v3/athlete",
         method: "get",
         headers: {
-          Authorization: `${accessToken}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer: ${accessToken}`,
         },
       })
         .then(async (response) => {
@@ -195,7 +196,7 @@ const useStravaAthlete = () => {
     };
 
     if (accessToken && !stravaIsLoggedIn) {
-      console.log("Trying to use access token");
+      console.log("Trying to use access token for getting athlete");
       getAthleteData();
     }
   }, [accessToken]);
