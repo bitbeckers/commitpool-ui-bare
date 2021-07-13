@@ -6,8 +6,7 @@ import {
   View,
   TextInput,
 } from "react-native";
-import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../../redux/store";
+import { useAppDispatch } from "../../redux/store";
 
 import { Text } from "..";
 
@@ -15,6 +14,7 @@ import {
   updateCommitment,
   updateStakeSet,
 } from "../../redux/commitpool/commitpoolSlice";
+import useCommitment from "../../hooks/useCommitment";
 
 interface StakeBoxProps {
   style?: StyleProp<TextStyle>;
@@ -23,9 +23,8 @@ interface StakeBoxProps {
 const StakeBox = ({ style }: StakeBoxProps) => {
   const dispatch = useAppDispatch();
 
-  const stake: number = useSelector(
-    (state: RootState) => state.commitpool.commitment.stake
-  );
+  const { commitment } = useCommitment();
+  const { stake }: {stake: number} = commitment;
 
   const onStakeInput = (stake: string) => {
     const _stake = Number.parseFloat(stake);

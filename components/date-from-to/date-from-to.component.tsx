@@ -5,10 +5,11 @@ import { StyleSheet, View, TextInput } from "react-native";
 import { Text } from "..";
 
 import { DateTime } from "luxon";
-import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../../redux/store";
+import { useAppDispatch } from "../../redux/store";
 
 import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
+import useCommitment from "../../hooks/useCommitment";
+import { parseSecondTimestampToFullString } from "../../utils/dateTime";
 
 interface DateFromTo {
   children?: React.ReactNode;
@@ -18,9 +19,7 @@ const DateFromTo = ({ children }: DateFromTo) => {
   const [startIn, setStartIn] = useState("0");
   const [endIn, setEndIn] = useState("7");
 
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitpool.commitment
-  );
+  const { commitment } = useCommitment();
 
   const dispatch = useAppDispatch();
 
@@ -84,26 +83,16 @@ const DateFromTo = ({ children }: DateFromTo) => {
       </View>
       <View>
         <Text
-          text={`Starts on: ${parseToString(commitment.startTime)} `}
+          text={`Starts on: ${parseSecondTimestampToFullString(commitment.startTime)} `}
           style={styles.dateView}
         />
         <Text
-          text={`Ends on:  ${parseToString(commitment.endTime)}`}
+          text={`Ends on:  ${parseSecondTimestampToFullString(commitment.endTime)}`}
           style={styles.dateView}
         />
       </View>
     </Fragment>
   );
-};
-
-const parseToString = (dateInSeconds: number) => {
-  return DateTime.fromSeconds(dateInSeconds).toLocaleString({
-    weekday: "long",
-    month: "long",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 };
 
 const styles = StyleSheet.create({

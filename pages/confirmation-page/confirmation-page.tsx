@@ -21,6 +21,11 @@ import {
   validCommitmentRequest,
   getCommitmentRequestParameters,
 } from "../../utils/commitment";
+import useCommitment from "../../hooks/useCommitment";
+import useActivities from "../../hooks/useActivities";
+import useContracts from "../../hooks/useContracts";
+import useWeb3 from "../../hooks/useWeb3";
+import useStravaAthlete from "../../hooks/useStravaAthlete";
 
 type ConfirmationPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -36,34 +41,26 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [txSent, setTxSent] = useState<boolean>(false);
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitpool.commitment
-  );
-  const activities: Activity[] = useSelector(
-    (state: RootState) => state.commitpool.activities
-  );
-  const athlete: Athlete = useSelector(
-    (state: RootState) => state.strava.athlete
-  );
 
-  const provider = useSelector((state: RootState) => state.web3.provider);
-  const account = useSelector((state: RootState) => state.web3.account);
-  let { dai, singlePlayerCommit } = useSelector(
-    (state: RootState) => state.web3.contracts
-  );
+  const { commitment } = useCommitment();
+  const { activities } = useActivities();
 
-  let _dai = dai.connect(provider.getSigner());
-  let _singlePlayerCommit = singlePlayerCommit.connect(provider.getSigner());
-  console.log("Connected SPC contract: ", _singlePlayerCommit);
+
+  const {athlete} = useStravaAthlete();
+
+  const { account, provider } = useWeb3();
+  const { dai, singlePlayerCommit } = useContracts();
+
+  console.log("Connected SPC contract: ", singlePlayerCommit);
 
   const createCommitment = async () => {
     let tx;
     if (validCommitmentRequest(commitment, activities)) {
       setLoading(true);
 
-      const allowance = await _dai.allowance(
+      const allowance = await dai.allowance(
         account,
-        _singlePlayerCommit.address
+        singlePlayerCommit.address
       );
 
       const _commitmentParameters = getCommitmentRequestParameters(commitment);
@@ -78,7 +75,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
       );
 
       if (allowance.gte(_commitmentParameters._stake)) {
-        tx = await _singlePlayerCommit.depositAndCommit(
+        tx = await singlePlayerCommit.depositAndCommit(
           _commitmentParametersWithUserId._activityKey,
           _commitmentParametersWithUserId._goalValue,
           _commitmentParametersWithUserId._startTime,
@@ -89,11 +86,11 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
           { gasLimit: 5000000 }
         );
       } else {
-        await _dai.approve(
-          _singlePlayerCommit.address,
+        await dai.approve(
+          singlePlayerCommit.address,
           _commitmentParametersWithUserId._stake
         );
-        tx = await _singlePlayerCommit.depositAndCommit(
+        tx = await singlePlayerCommit.depositAndCommit(
           _commitmentParametersWithUserId._activityKey,
           _commitmentParametersWithUserId._goalValue,
           _commitmentParametersWithUserId._startTime,

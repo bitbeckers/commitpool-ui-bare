@@ -1,8 +1,6 @@
 import React, { Fragment } from "react";
 import { StyleSheet } from "react-native";
 import { View } from "react-native";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
 
 import {
   Text,
@@ -13,24 +11,15 @@ import {
 
 import strings from "../../resources/strings";
 import StakeBox from "../stake-box/stake-box.component";
-import { getActivityName } from "../../utils/commitment";
 import { parseSecondTimestampToFullString} from "../../utils/dateTime"
-import useActivities from "../../hooks/useActivities";
+import useCommitment from "../../hooks/useCommitment";
 
 interface CommitmentOverviewProps {
   editing: boolean;
 }
 
-//TODO Activity selector to front, now disappears behind distance field
 const CommitmentOverview = ({ editing }: CommitmentOverviewProps) => {
-  const { activities } = useActivities();
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitpool.commitment
-  );
-
-  const activityName: string =
-    getActivityName(commitment.activityKey, activities) || "";
-
+  const { commitment, activityName } = useCommitment();
   return (
     <View style={styles.commitment}>
       {editing ? (

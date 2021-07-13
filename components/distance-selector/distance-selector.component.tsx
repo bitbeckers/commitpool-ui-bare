@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { RootState, useAppDispatch } from "../../redux/store";
+import React from "react";
+import { useAppDispatch } from "../../redux/store";
 import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
 
 import { StyleSheet, View, TextInput } from "react-native";
 import { Text } from "..";
-import { useSelector } from "react-redux";
+import useCommitment from "../../hooks/useCommitment";
 
 interface DistanceSelector {
   text: string;
 }
 
 const DistanceSelector = ({ text }: DistanceSelector) => {
-  const goalValue: number = useSelector(
-    (state: RootState) => state.commitpool.commitment.goalValue
-  );
+  const { commitment } = useCommitment();
+  const { goalValue }: { goalValue: number} = commitment
 
   const dispatch = useAppDispatch();
 

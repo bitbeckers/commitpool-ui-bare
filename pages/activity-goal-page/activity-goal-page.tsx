@@ -21,6 +21,8 @@ import { updateActivitySet } from "../../redux/commitpool/commitpoolSlice";
 import { validActivityParameters } from "../../utils/commitment";
 
 import { RootStackParamList } from "..";
+import useCommitment from "../../hooks/useCommitment";
+import useActivities from "../../hooks/useActivities";
 
 type ActivityGoalPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -35,13 +37,9 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitpool.commitment
-  );
+  const {commitment} = useCommitment();
 
-  const activities: Activity[] = useSelector(
-    (state: RootState) => state.commitpool.activities
-  );
+  const {activities} = useActivities();
 
   const activitySet: boolean = useSelector(
     (state: RootState) => state.commitpool.activitySet

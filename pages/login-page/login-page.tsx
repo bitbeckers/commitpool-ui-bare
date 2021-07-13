@@ -11,12 +11,15 @@ import {
   DialogPopUp,
 } from "../../components";
 
-import { useTorusLogin } from "./hooks";
+import { useTorusLogin } from "./login-hooks";
 import strings from "../../resources/strings";
 import { RootState, useAppDispatch } from "../../redux/store";
 import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
 import { parseCommitmentFromContract } from "../../utils/commitment";
-import { isAddress } from "../../utils/web3helper";
+import useContracts from "../../hooks/useContracts";
+import useWeb3 from "../../hooks/useWeb3";
+import { ethers } from "ethers";
+import useStravaAthlete from "../../hooks/useStravaAthlete";
 
 type LoginPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -32,40 +35,38 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState(false);
   const dispatch = useAppDispatch();
 
-  const account: string = useSelector(
-    (state: RootState) => state.web3?.account
-  );
+  const { account } = useWeb3();
+  const { stravaIsLoggedIn} = useStravaAthlete();
+  const { singlePlayerCommit } = useContracts();
 
-  const {activitySet, stakeSet} = useSelector(
+  const { activitySet, stakeSet } = useSelector(
     (state: RootState) => state.commitpool
-  );
-
-  const singlePlayerCommit = useSelector(
-    (state: RootState) => state.web3.contracts.singlePlayerCommit
   );
 
   //When account has an commitment, write to state
   useEffect(() => {
-    if (isAddress(account)) {
+    console.log("Account: ", account);
+    if (ethers.utils.isAddress(account)) {
       const getCommitmentAndRoute = async () => {
-        console.log("Checking for commitment");
+        console.log(`Checking for commitment for account ${account}`);
         const commitment = await singlePlayerCommit.commitments(account);
         console.log("Commitment from contract: ", commitment);
         if (commitment.exists) {
-          const _commitment: Commitment = parseCommitmentFromContract(commitment);
-          dispatch(updateCommitment({ ..._commitment}))
+          const _commitment: Commitment =
+            parseCommitmentFromContract(commitment);
+          dispatch(updateCommitment({ ..._commitment }));
           navigation.navigate("Track");
         }
       };
 
       getCommitmentAndRoute();
     }
-  }, [account]);
+  }, [account, singlePlayerCommit]);
 
   const onNext = () => {
-    if (isLoggedIn && activitySet && stakeSet) {
+    if (isLoggedIn && activitySet && stakeSet && stravaIsLoggedIn) {
       navigation.navigate("Confirmation");
-    } else if (isLoggedIn && !activitySet && !stakeSet) {
+    } else if (isLoggedIn && !activitySet && !stakeSet && !stravaIsLoggedIn) {
       navigation.navigate("ActivityGoal");
     } else {
       setPopUpVisible(true);

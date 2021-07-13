@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 
 interface StravaState {
   isLoggedIn: boolean;
@@ -13,7 +13,7 @@ const initialState: StravaState = {
   isLoggedIn: false,
 };
 
-export const stravaSlice = createSlice({
+export const stravaSlice: Slice = createSlice({
   name: "strava",
   initialState,
   reducers: {

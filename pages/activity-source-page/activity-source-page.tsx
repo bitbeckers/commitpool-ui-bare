@@ -1,5 +1,4 @@
 import React, { Fragment, useState } from "react";
-import { useSelector } from "react-redux";
 import { StyleSheet, View, Image } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -11,11 +10,12 @@ import {
   Text,
   DialogPopUp,
 } from "../../components";
-import { useStravaLogin } from "./hooks";
-import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 
 import strings from "../../resources/strings";
+import useCommitment from "../../hooks/useCommitment";
+import useWeb3 from "../../hooks/useWeb3";
+import useStravaAthlete from "../../hooks/useStravaAthlete";
 
 type ActivitySourcePageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -27,19 +27,13 @@ type ActivitySourcePageProps = {
 };
 
 const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
-  const [stravaIsLoggedIn, handleStravaLogin] = useStravaLogin();
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
-  const stravaAthlete: Athlete = useSelector(
-    (state: RootState) => state.strava.athlete
-  );
 
-  const web3IsLoggedIn: boolean = useSelector(
-    (state: RootState) => state.web3.isLoggedIn
-  );
+  const { athlete, stravaIsLoggedIn, handleStravaLogin} = useStravaAthlete();
 
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitpool.commitment
-  );
+  const { web3LoggedIn } = useWeb3();
+
+  const { commitment } = useCommitment();
 
   return (
     <LayoutContainer>
@@ -53,11 +47,11 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
         {stravaIsLoggedIn ? (
           <Fragment>
             <Text
-              text={`${strings.activitySource.loggedIn.text} ${stravaAthlete?.firstname}`}
+              text={`${strings.activitySource.loggedIn.text} ${athlete?.firstname}`}
             />
             <Image
               style={styles.tinyAvatar}
-              source={{ uri: stravaAthlete?.profile_medium }}
+              source={{ uri: athlete?.profile_medium }}
             />
             <Button
               text={strings.activitySource.loggedIn.button}
@@ -82,11 +76,11 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
         <Button
           text={strings.footer.next}
           onPress={() => {
-            if(commitment.exists && stravaIsLoggedIn && web3IsLoggedIn) {
+            if(commitment.exists && stravaIsLoggedIn && web3LoggedIn) {
               navigation.navigate("Track");
-            } else if (stravaIsLoggedIn && web3IsLoggedIn) {
+            } else if (stravaIsLoggedIn && web3LoggedIn) {
               navigation.navigate("Confirmation");
-            } else if (stravaIsLoggedIn && !web3IsLoggedIn) {
+            } else if (stravaIsLoggedIn && !web3LoggedIn) {
               navigation.navigate("Login");
             } else {
               setPopUpVisible(true);

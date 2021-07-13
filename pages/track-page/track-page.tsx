@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 
 import {
@@ -10,15 +9,18 @@ import {
   ProgressCircle,
   DialogPopUp,
 } from "../../components";
-import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useStravaRefresh } from './hooks'
 import strings from "../../resources/strings";
-import { getActivityName } from "../../utils/commitment";
 import { parseSecondTimestampToFullString } from "../../utils/dateTime";
 
 import useActivities from "../../hooks/useActivities";
+import { BigNumber } from "ethers";
+import useCommitment from "../../hooks/useCommitment";
+import useContracts from "../../hooks/useContracts";
+import useWeb3 from "../../hooks/useWeb3";
+import useStravaAthlete from "../../hooks/useStravaAthlete";
+import useStravaData from "../../hooks/useStravaData";
 
 type TrackPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -29,51 +31,31 @@ type TrackPageProps = {
   navigation: TrackPageNavigationProps;
 };
 
+//TODO login to strava when auth/refresh-token area persisted in state
 const TrackPage = ({ navigation }: TrackPageProps) => {
-  useStravaRefresh();
+  // useStravaRefresh();
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
   const { activities } = useActivities();
+  const { commitment, activityName } = useCommitment();
+  const { singlePlayerCommit } = useContracts();
+  const { account } = useWeb3();
+  const { athlete } = useStravaAthlete();
+  const { progress } = useStravaData();
 
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitpool.commitment
+  //TODO manage URL smart when 'undefined'
+  const stravaUrl: string = `http://www.strava.com/athletes/${athlete?.id}`;
+
+  const oracleAddress: string =
+    activities.find((activity) => activity.key === commitment.activityKey)
+      ?.oracle || "";
+
+  listenForActivityDistanceUpdate(
+    singlePlayerCommit,
+    account,
+    commitment,
+    navigation,
+    setPopUpVisible
   );
-
-
-  const athleteId: number = useSelector(
-    (state: RootState) => state.strava?.athlete?.id
-  );
-
-  const accessToken: string | undefined = useSelector(
-    (state: RootState) => state.strava.access_token
-  );
-
-  const singlePlayerCommit = useSelector(
-    (state: RootState) => state.web3.contracts.singlePlayerCommit
-  );
-
-  const account: string | undefined = useSelector(
-    (state: RootState) => state.web3?.account
-  );
-
-  const provider = useSelector((state: RootState) => state.web3.provider);
-
-  let _singlePlayerCommit = singlePlayerCommit.connect(provider.getSigner());
-
-  const stravaUrl: string = `http://www.strava.com/athletes/${athleteId}`;
-
-  const activityName: string =
-    getActivityName(commitment.activityKey, activities) || "";
-
-  const oracleAddress: string = 
-    activities.find((activity) => activity.key === commitment.activityKey)?.oracle;
-
-  listenForActivityDistanceUpdate(_singlePlayerCommit, account, commitment, navigation, setPopUpVisible);
-
-  let progress: number = 0;
-  getActivity(commitment, accessToken, activityName).then((total) => {
-    console.log(total, commitment.goalValue, (total / commitment.goalValue))
-    progress = ((total / commitment.goalValue) * 100) | 0;
-  })    
 
   return (
     <LayoutContainer>
@@ -101,21 +83,38 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
           <Text text={`Progression`} />
           <ProgressCircle progress={progress} />
         </View>
-        <a
-          style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
-          href={stravaUrl}
-          target="_blank"
-        >
-          Open Strava profile
-        </a>
+        {athlete?.id !== undefined ? (
+          <a
+            style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
+            href={stravaUrl}
+            target="_blank"
+          >
+            Open Strava profile
+          </a>
+        ) : (
+          <Button
+            text={"Login to Strava"}
+            onPress={() => navigation.navigate("ActivitySource")}
+          />
+        )}
       </View>
 
       <Footer>
         <Button text={"Back"} onPress={() => navigation.goBack()} />
+        {/* <Button
+          text={"Continue"}
+          onPress={() =>
+            processCommitmentProgress(
+              singlePlayerCommit,
+              account,
+              oracleAddress
+            )
+          }
+        /> */}
         <Button
           text={"Continue"}
           onPress={() =>
-            processCommitmentProgress(_singlePlayerCommit, account, oracleAddress)
+            navigation.navigate("Completion")
           }
         />
         <Button
@@ -128,13 +127,12 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   );
 };
 
-//TODO implement logic to compare against actual Strava data and timebox
 const processCommitmentProgress = async (
   _singlePlayerCommit: any,
   account: string | undefined,
   oracleAddress: string
 ) => {
-  console.log(_singlePlayerCommit, account, oracleAddress)
+  console.log(_singlePlayerCommit, account, oracleAddress);
   _singlePlayerCommit.requestActivityDistance(
     account,
     oracleAddress,
@@ -158,38 +156,14 @@ const listenForActivityDistanceUpdate = (
 
       if (committer.toLowerCase() === account?.toLowerCase()) {
         if (now > commitment.endTime) {
-          navigation.navigate("Completion")
+          navigation.navigate("Completion");
         } else {
-          setPopUpVisible(true)
-        } 
+          setPopUpVisible(true);
+        }
       }
     }
   );
-}
-
-const getActivity = async (commitment: Commitment, accessToken: any, activityName: string) => {
-  return fetch(
-    "https://test2.dcl.properties/activities?startTime=" +
-      commitment.startTime +
-      "&endTime=" +
-      commitment.endTime +
-      "&type=" +
-      "Run" +
-      "&accessToken=" +
-      accessToken,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer: " + accessToken,
-      },
-    }
-  )
-    .then((res) => res.json())
-    .then((json) => {
-      return json.total;
-    });
-}
+};
 
 const styles = StyleSheet.create({
   commitment: {

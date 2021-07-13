@@ -1,13 +1,14 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { Fragment, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 import { LayoutContainer, Footer, Text, Button } from "../../components";
-import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import strings from "../../resources/strings"
+import strings from "../../resources/strings";
+import useCommitment from "../../hooks/useCommitment";
+import useStravaData from "../../hooks/useStravaData";
 
 type CompletionPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -19,26 +20,50 @@ type CompletionPageProps = {
 };
 
 const CompletionPage = ({ navigation }: CompletionPageProps) => {
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitpool.commitment
-  );
+  const { commitment, activityName } = useCommitment();
+  const { progress } = useStravaData();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [success, setSuccess] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (loading && progress) {
+      const _success: boolean = progress >= commitment.goalValue;
+      setSuccess(_success);
+      setLoading(false);
+    }
+  }, [commitment]);
+
+  const achievement: string = `You managed to ${activityName} for ${progress} miles. You committed to ${commitment.goalValue} miles`;
 
   return (
     <LayoutContainer>
-      <View style={styles.completionPage}>
-        {commitment.met ? (
-          <Text text={strings.completion.success} />
-        ) : (
-          <Text text={strings.completion.fail} />
-        )}
-      </View>
+      {loading ? (
+        <View style={styles.completionPage}>
+          <Text text="Loading" />
+        </View>
+      ) : (
+        <View style={styles.completionPage}>
+          {success ? (
+            <Fragment>
+              <Text text={strings.completion.success} />
+              <ConfettiCannon count={100} origin={{ x: 100, y: 0 }} />
+            </Fragment>
+          ) : (
+            <Text text={strings.completion.fail} />
+          )}
+          <Text text={achievement} />
+        </View>
+      )}
       <Footer>
-        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
+        <Button
+          text={strings.footer.back}
+          onPress={() => navigation.goBack()}
+        />
         <Button
           text={strings.footer.restart}
           onPress={() => navigation.navigate("ActivityGoal")}
         />
-                <Button
+        <Button
           text={strings.footer.help}
           onPress={() => navigation.navigate("Faq")}
           style={styles.helpButton}
@@ -58,7 +83,7 @@ const styles = StyleSheet.create({
   helpButton: {
     width: 50,
     maxWidth: 50,
-  }
+  },
 });
 
 export default CompletionPage;

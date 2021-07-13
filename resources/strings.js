@@ -30,7 +30,7 @@ const strings = {
     },
   },
   completion: {
-    succes: "Congrats!",
+    success: "Congrats!",
     fail: "Try again...",
   },
   confirmation: {

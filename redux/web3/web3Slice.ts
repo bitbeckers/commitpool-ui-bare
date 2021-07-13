@@ -1,8 +1,9 @@
-import { createSlice, Slice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 import { ethers, Wallet, Contract } from "ethers";
 import getEnvVars from "../../environment";
 
 const { spcAbi, daiAbi, daiAddress, spcAddress, rpcUrl } = getEnvVars();
+
 
 interface Web3State {
   account?: string;
@@ -15,8 +16,6 @@ interface Web3State {
   isLoggedIn: boolean;
 }
 
-// const defaultProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
-// const defaultProvider = ethers.getDefaultProvider("https://polygon-mumbai.infura.io/v3/fb9dd1f3476f44ad92158c24ba5120c6")
 const defaultProvider = ethers.getDefaultProvider(rpcUrl)
 
 const initialState: Web3State = {
@@ -38,12 +37,16 @@ export const web3Slice: Slice = createSlice({
   name: "web3",
   initialState,
   reducers: {
+    updateContracts: (state, action) => {
+      state.contracts = {
+        ...state.contracts,
+        ...action.payload
+      }
+    },
     updateProvider: (state, action) => {
       state.provider = new ethers.providers.Web3Provider(action.payload.provider);
-      state.contracts.dai.connect(state.provider);
-      state.contracts.singlePlayerCommit.connect(state.provider)
     },
-    updateAccount: (state, action) => {
+    updateAccount: (state, action: PayloadAction<string>) => {
       state.account = action.payload;
       state.isLoggedIn = true;
     },
@@ -51,6 +54,6 @@ export const web3Slice: Slice = createSlice({
   },
 });
 
-export const { updateProvider, updateAccount, reset } = web3Slice.actions;
+export const { updateContracts, updateProvider, updateAccount, reset } = web3Slice.actions;
 
 export default web3Slice.reducer;
