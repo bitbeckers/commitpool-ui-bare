@@ -1,5 +1,4 @@
 import React, { Fragment, useState } from "react";
-import { useSelector } from "react-redux";
 import { StyleSheet, View, Image } from "react-native";
 
 import {
@@ -11,7 +10,6 @@ import {
   DialogPopUp,
   CommitmentOverview,
 } from "../../components";
-import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -48,7 +46,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
 
   const {athlete} = useStravaAthlete();
 
-  const { account, provider } = useWeb3();
+  const { account } = useWeb3();
   const { dai, singlePlayerCommit } = useContracts();
 
   console.log("Connected SPC contract: ", singlePlayerCommit);

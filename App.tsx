@@ -46,7 +46,7 @@ const App = () => {
         <PersistGate loading={null} persistor={persistor}>
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="ActivitySource"
+              initialRouteName="Landing"
               screenOptions={{
                 headerTitle: () => <Header />,
                 headerLeft: () => null,
