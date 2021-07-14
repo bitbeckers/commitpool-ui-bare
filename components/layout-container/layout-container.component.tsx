@@ -38,10 +38,10 @@ const styles = StyleSheet.create({
     height: "696px",
     justifyContent: "center",
     alignItems: "center",
-    background: "rgba(0, 0, 0, 0.4)",
+    backgroundColor: "rgba(0,0,0,0.4)",
     backdropFilter: "blur(27px)",
     borderRadius: 10,
-    top: 100
+    top: 165
   },
 });
 

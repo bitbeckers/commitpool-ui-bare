@@ -57,7 +57,7 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
           onPress={() => {
             stakeSet
               ? navigation.navigate("ActivitySource")
-              : setPopUpVisible(true);
+              : setPopUpVisible(true)
           }}
         />
         <Button

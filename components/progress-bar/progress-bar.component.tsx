@@ -32,13 +32,20 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     flexDirection: 'row',
-    width: '100%'
+    width: '100%',
+    maxHeight: 52,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    backdropFilter: "blur(27px)",
+    borderRadius: 10,
+    margin: 10,
+    top: -65
   },
   progressItem: {
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    flex: 1
+    flex: 1,
+    padding: 7
   },
   progressText: {
     color: 'white',

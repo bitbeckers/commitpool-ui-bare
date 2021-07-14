@@ -53,7 +53,6 @@ const StakeBox = ({ style }: StakeBoxProps) => {
           text={`You're staking ${stake.toString()} DAI. That's a big commitment!`}
         />
       ) : undefined}
-      ;
     </Fragment>
   );
 };
