@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { updateCommitment } from "../redux/commitpool/commitpoolSlice";
+import { updateCommitment, updateActivitySet } from "../redux/commitpool/commitpoolSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
-import { getActivityName } from "../utils/commitment";
+import { getActivityName, validActivityParameters } from "../utils/commitment";
+
 
 import useActivities from "./useActivities";
 import useContracts from "./useContracts";
@@ -22,6 +24,16 @@ const useCommitment = () => {
     const _commitment = await singlePlayerCommit.commitments(account);
     dispatch(updateCommitment({..._commitment}))
   }
+
+  useEffect(() => {
+    if(activities.length > 0) {
+      if (validActivityParameters(commitment, activities)) {
+        dispatch(updateActivitySet(true));
+      } else if (!validActivityParameters(commitment, activities)) {
+        dispatch(updateActivitySet(false));
+      }
+    }
+  }, [commitment, activities])
 
   return { commitment, activityName, refreshCommitment}
 

@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
 
 import { LayoutContainer, Footer, Text, Button } from "../../components";
@@ -8,6 +8,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 import strings from "../../resources/strings";
 import useCommitment from "../../hooks/useCommitment";
+import useContracts from "../../hooks/useContracts";
+import useWeb3 from "../../hooks/useWeb3";
+import { Contract } from "ethers";
 
 type CompletionPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -18,20 +21,46 @@ type CompletionPageProps = {
   navigation: CompletionPageNavigationProps;
 };
 
+//TODO add link to transaction on polygonscan
 const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const { commitment, activityName } = useCommitment();
+  const { singlePlayerCommit } = useContracts();
+  const { web3LoggedIn, account } = useWeb3();
   const [loading, setLoading] = useState<boolean>(true);
   const [success, setSuccess] = useState<boolean>(false);
+  const [txSent, setTxSent] = useState<boolean>(true);
 
+  //Check is commitment was met
   useEffect(() => {
     if (loading) {
-      const _success: boolean = commitment.reportedValue >= commitment.goalValue;
+      const _success: boolean =
+        commitment.reportedValue >= commitment.goalValue;
       setSuccess(_success);
       setLoading(false);
     }
-  }, [commitment]);
+  }, [commitment, loading]);
 
   const achievement: string = `You managed to ${activityName} for ${commitment.reportedValue} miles. You committed to ${commitment.goalValue} miles`;
+
+  const onProcess = async () => {
+    if (web3LoggedIn) {
+      const tx = await singlePlayerCommit.processCommitmentUser();
+      setTxSent(true);
+    }
+  };
+
+  const listenForCommitmentSettlement = (_singlePlayerCommit: Contract) => {
+    _singlePlayerCommit.on(
+      "CommitmentEnded",
+      async (committer: string, met: boolean, amountPenalized: number) => {
+        if (committer.toLowerCase() === account.toLowerCase()) {
+          navigation.navigate("ActivityGoal");
+        }
+      }
+    );
+  };
+
+  listenForCommitmentSettlement(singlePlayerCommit);
 
   return (
     <LayoutContainer>
@@ -51,6 +80,14 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
           )}
           <Text text={achievement} />
         </View>
+      )}
+      {txSent ? (
+        <Fragment>
+          <Text text="Awaiting transaction processing" />
+          <ActivityIndicator size="large" color="#ffffff" />
+        </Fragment>
+      ) : (
+        <Button text="Process commitment" onPress={() => onProcess()} />
       )}
       <Footer>
         <Button

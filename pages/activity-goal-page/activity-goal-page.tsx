@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -16,13 +16,9 @@ import {
 } from "../../components";
 
 import strings from "../../resources/strings";
-import { RootState, useAppDispatch } from "../../redux/store";
-import { updateActivitySet } from "../../redux/commitpool/commitpoolSlice";
-import { validActivityParameters } from "../../utils/commitment";
+import { RootState } from "../../redux/store";
 
 import { RootStackParamList } from "..";
-import useCommitment from "../../hooks/useCommitment";
-import useActivities from "../../hooks/useActivities";
 
 type ActivityGoalPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -35,25 +31,10 @@ type ActivityGoalPageProps = {
 
 const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
-
-  const {commitment} = useCommitment();
-
-  const {activities} = useActivities();
 
   const activitySet: boolean = useSelector(
     (state: RootState) => state.commitpool.activitySet
   );
-
-  useEffect(() => {
-    if(activities.length > 0) {
-      if (validActivityParameters(commitment, activities)) {
-        dispatch(updateActivitySet(true));
-      } else if (!validActivityParameters(commitment, activities)) {
-        dispatch(updateActivitySet(false));
-      }
-    }
-  }, [commitment, activities]);
 
   return (
     <LayoutContainer>

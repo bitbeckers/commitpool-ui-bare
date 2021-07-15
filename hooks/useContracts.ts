@@ -9,6 +9,8 @@ const useContracts = () => {
   const dai: Contract = contracts.dai;
   const singlePlayerCommit: Contract = contracts.singlePlayerCommit;
 
+  console.log("SPC: ", singlePlayerCommit)
+
   return { dai, singlePlayerCommit}
 
 }
