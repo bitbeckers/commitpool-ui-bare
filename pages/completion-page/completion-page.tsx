@@ -21,13 +21,14 @@ type CompletionPageProps = {
   navigation: CompletionPageNavigationProps;
 };
 
+//TODO add link to transaction on polygonscan
 const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const { commitment, activityName } = useCommitment();
   const { singlePlayerCommit } = useContracts();
   const { web3LoggedIn, account } = useWeb3();
   const [loading, setLoading] = useState<boolean>(true);
   const [success, setSuccess] = useState<boolean>(false);
-  const [txSent, setTxSent] = useState<boolean>(false);
+  const [txSent, setTxSent] = useState<boolean>(true);
 
   //Check is commitment was met
   useEffect(() => {
@@ -48,9 +49,7 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
     }
   };
 
-  const listenForCommitmentSettlement = (
-    _singlePlayerCommit: Contract,
-  ) => {
+  const listenForCommitmentSettlement = (_singlePlayerCommit: Contract) => {
     _singlePlayerCommit.on(
       "CommitmentEnded",
       async (committer: string, met: boolean, amountPenalized: number) => {
@@ -83,7 +82,10 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
         </View>
       )}
       {txSent ? (
-        <ActivityIndicator size="large" color="#ffffff" />
+        <Fragment>
+          <Text text="Awaiting transaction processing" />
+          <ActivityIndicator size="large" color="#ffffff" />
+        </Fragment>
       ) : (
         <Button text="Process commitment" onPress={() => onProcess()} />
       )}
