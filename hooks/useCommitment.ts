@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { updateCommitment, updateActivitySet } from "../redux/commitpool/commitpoolSlice";
 import { RootState, useAppDispatch } from "../redux/store";
+import { parseCommitmentFromContract } from "../utils/commitment";
 
 import { getActivityName, validActivityParameters } from "../utils/commitment";
 
@@ -21,7 +22,9 @@ const useCommitment = () => {
   const activityName: string = getActivityName(commitment.activityKey, activities) || "";
 
   const refreshCommitment = async () => {
-    const _commitment = await singlePlayerCommit.commitments(account);
+    const commitment = await singlePlayerCommit.commitments(account);
+    const _commitment: Commitment =
+            parseCommitmentFromContract(commitment);
     dispatch(updateCommitment({..._commitment}))
   }
 

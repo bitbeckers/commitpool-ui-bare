@@ -28,7 +28,7 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const { web3LoggedIn, account } = useWeb3();
   const [loading, setLoading] = useState<boolean>(true);
   const [success, setSuccess] = useState<boolean>(false);
-  const [txSent, setTxSent] = useState<boolean>(true);
+  const [txSent, setTxSent] = useState<boolean>(false);
 
   //Check is commitment was met
   useEffect(() => {

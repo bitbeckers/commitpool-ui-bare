@@ -127,12 +127,11 @@ const processCommitmentProgress = async (
   account: string | undefined,
   oracleAddress: string
 ) => {
-  console.log(_singlePlayerCommit, account, oracleAddress);
   _singlePlayerCommit.requestActivityDistance(
     account,
-    oracleAddress,
+    "0x0a31078cD57d23bf9e8e8F1BA78356ca2090569E",
     //to do - move to env and/or activity state
-    "2fdfac54c3574e8e861d4f8c334a4121",
+    "9ce5c4e09dda4c3687bac7a2f676268f",
     { gasLimit: 500000 }
   );
 };
