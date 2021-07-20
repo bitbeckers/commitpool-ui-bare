@@ -29,11 +29,11 @@ const ActivitySelector = ({ text }: ActivitySelectorProps) => {
 
 const styles = StyleSheet.create({
   activitySelector: {
-    flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,
+    margin: 18
   },
 });
 

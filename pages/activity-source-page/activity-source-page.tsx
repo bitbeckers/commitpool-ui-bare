@@ -12,6 +12,7 @@ import {
 } from "../../components";
 import { RootStackParamList } from "..";
 
+import globalStyles from "../../resources/styles/styles.js";
 import strings from "../../resources/strings";
 import useCommitment from "../../hooks/useCommitment";
 import useWeb3 from "../../hooks/useWeb3";
@@ -43,6 +44,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
         onTouchOutside={() => setPopUpVisible(false)}
         text={strings.activitySource.alert}
       />
+      <Text style={globalStyles.headerOne} text={strings.activitySource.notLoggedIn.text} />
       <View style={styles.intro}>
         {stravaIsLoggedIn ? (
           <Fragment>
@@ -60,7 +62,6 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
           </Fragment>
         ) : (
           <Fragment>
-            <Text text={strings.activitySource.notLoggedIn.text} />
             <Button
               text={strings.activitySource.notLoggedIn.button}
               onPress={() => handleStravaLogin()}

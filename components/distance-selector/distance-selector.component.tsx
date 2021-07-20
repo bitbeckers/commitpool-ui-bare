@@ -26,13 +26,15 @@ const DistanceSelector = ({ text }: DistanceSelector) => {
   return (
     <View style={styles.distanceSelector}>
       <Text text={text} />
-      <TextInput
-        defaultValue={goalValue.toString()}
-        keyboardType={"number-pad"}
-        style={styles.textInput}
-        onChangeText={(value) => onDistanceInput(value)}
-      />
-      <Text text="miles" />
+      <View style={styles.unitInput}>
+        <TextInput
+          defaultValue={goalValue.toString()}
+          keyboardType={"number-pad"}
+          style={styles.textInput}
+          onChangeText={(value) => onDistanceInput(value)}
+        />
+        <Text text="miles" />
+      </View>
     </View>
   );
 };
@@ -40,7 +42,7 @@ const DistanceSelector = ({ text }: DistanceSelector) => {
 const styles = StyleSheet.create({
   distanceSelector: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -50,8 +52,12 @@ const styles = StyleSheet.create({
     height: 28,
     width: 75,
     textAlign: "center",
-    borderRadius: 20,
+    borderRadius: 6,
   },
+  unitInput: {
+    margin: 15,
+    flexDirection: "row"
+  }
 });
 
 export default DistanceSelector;

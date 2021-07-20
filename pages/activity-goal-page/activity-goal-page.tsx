@@ -16,6 +16,7 @@ import {
 } from "../../components";
 
 import strings from "../../resources/strings";
+import globalStyles from "../../resources/styles/styles";
 import { RootState } from "../../redux/store";
 
 import { RootStackParamList } from "..";
@@ -45,7 +46,7 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
       />
       <ProgressBar size={1} />
       <View style={styles.setUp}>
-        <Text text={strings.activityGoal.setUp.text} />
+        <Text style={globalStyles.headerOne} text={strings.activityGoal.setUp.text} />
         <ActivitySelector text={strings.activityGoal.setUp.activitySelector} />
         <DistanceSelector text={strings.activityGoal.setUp.distanceSelector} />
         <DateFromTo />
@@ -73,6 +74,7 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
 
 const styles = StyleSheet.create({
   setUp: {
+    top: -30,
     flex: 1,
     flexDirection: "column",
     alignItems: "center",

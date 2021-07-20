@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-start",
+    margin: 15
   },
   arrowStyle: {
     marginRight: 5,

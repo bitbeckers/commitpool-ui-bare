@@ -38,14 +38,17 @@ const StakeBox = ({ style }: StakeBoxProps) => {
 
   return (
     <Fragment>
-      <View style={styles.valueInput}>
-        <TextInput
-          defaultValue={stake?.toString()}
-          keyboardType={"number-pad"}
-          style={styles.textInput}
-          onChangeText={(stake) => onStakeInput(stake)}
-        />
-        <Text text={`DAI`} />
+      <View style={styles.container}>
+        <Text text={"Your stake amount"} />
+        <View style={styles.valueInput}>
+          <TextInput
+            defaultValue={stake?.toString()}
+            keyboardType={"number-pad"}
+            style={styles.textInput}
+            onChangeText={(stake) => onStakeInput(stake)}
+          />
+          <Text text={`DAI`} />
+        </View>
       </View>
       {stake >= 100 ? (
         <Text
@@ -85,8 +88,12 @@ const styles = StyleSheet.create({
     height: 28,
     width: 75,
     textAlign: "center",
-    borderRadius: 20,
+    borderRadius: 6,
   },
+  container: {
+    justifyContent: "center",
+    alignItems: "center"
+  }
 });
 
 export default StakeBox;
