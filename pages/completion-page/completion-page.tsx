@@ -21,7 +21,6 @@ type CompletionPageProps = {
   navigation: CompletionPageNavigationProps;
 };
 
-//TODO add link to transaction on polygonscan
 const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const { commitment, activityName } = useCommitment();
   const { singlePlayerCommit } = useContracts();
@@ -29,13 +28,16 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [success, setSuccess] = useState<boolean>(false);
   const [txSent, setTxSent] = useState<boolean>(false);
-  const [tx, setTx] = useState(undefined);
+  const [tx, setTx] = useState<Transaction>();
+
+  const txUrl: string = `https://polygonscan.com/tx/${tx?.hash}`;
 
   //Check is commitment was met
   useEffect(() => {
     if (loading) {
       const _success: boolean =
-        commitment.reportedValue > 0 && commitment.reportedValue >= commitment.goalValue;
+        commitment.reportedValue > 0 &&
+        commitment.reportedValue >= commitment.goalValue;
       setSuccess(_success);
       setLoading(false);
     }
@@ -45,12 +47,12 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
 
   const onProcess = async () => {
     if (web3LoggedIn) {
-      console.log("Web3 logged in, calling processCommitmentUser()")
+      console.log("Web3 logged in, calling processCommitmentUser()");
       const tx = await singlePlayerCommit.processCommitmentUser();
       setTxSent(true);
       setTx(tx);
     } else {
-      console.log("Web3 not logged in, routing to login")
+      console.log("Web3 not logged in, routing to login");
       navigation.navigate("Login");
     }
   };
@@ -71,8 +73,8 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
   return (
     <LayoutContainer>
       {success ? (
-              <ConfettiCannon count={100} origin={{ x: 100, y: 0 }} />
-          ) : undefined}
+        <ConfettiCannon count={100} origin={{ x: 100, y: 0 }} />
+      ) : undefined}
       {loading ? (
         <View style={styles.completionPage}>
           <Text text="Loading" />
@@ -93,6 +95,13 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
         <Fragment>
           <Text text="Awaiting transaction processing" />
           <ActivityIndicator size="large" color="#ffffff" />
+          <a
+            style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
+            href={txUrl}
+            target="_blank"
+          >
+            View transaction on Polygonscan
+          </a>
         </Fragment>
       ) : (
         <Button text="Process commitment" onPress={() => onProcess()} />
