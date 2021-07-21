@@ -16,7 +16,7 @@ const Header = ({children}: Header) => {
 
 const styles = StyleSheet.create({
   header: {
-    background: "none",
+    backgroundColor: "none",
     flex: 1,
     flexDirection: "column",
     alignSelf: "stretch",
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: 'Rubik_700Bold',
     fontWeight: "bold",
-    marginTop: 90
+    marginTop: 45
   },
 });
 

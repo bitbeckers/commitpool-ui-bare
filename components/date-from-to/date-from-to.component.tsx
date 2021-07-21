@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     height: 28,
     width: 75,
     textAlign: "center",
-    borderRadius: 20,
+    borderRadius: 6,
   },
 });
 

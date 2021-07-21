@@ -15,6 +15,7 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "..";
 
+import globalStyles from "../../resources/styles/styles";
 import strings from "../../resources/strings";
 
 type StakingPageNavigationProps = StackNavigationProp<
@@ -43,7 +44,11 @@ const StakingPage = ({ navigation }: StakingPageProps) => {
       
       <ProgressBar size={2} />
       <View style={styles.text}>
-        <Text text={strings.staking.text} />
+        <Text style={globalStyles.headerOne} text={strings.staking.text} />
+        <View style={styles.content}>
+          <Text style={styles.body} text={strings.staking.body1}/>
+          <Text style={styles.body} text={strings.staking.body2}/>
+        </View>
         <StakeBox />
       </View>
 
@@ -74,12 +79,18 @@ const styles = StyleSheet.create({
   text: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
   },
   helpButton: {
     width: 50,
     maxWidth: 50,
   },
+  content: {
+    flex: 0.7,
+    justifyContent: "space-around",
+  },
+  body: {
+    textAlign: "center"
+  }
 });
 
 export default StakingPage;
