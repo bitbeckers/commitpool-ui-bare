@@ -34,7 +34,7 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
   useEffect(() => {
     if (loading) {
       const _success: boolean =
-        commitment.reportedValue >= commitment.goalValue;
+        commitment.reportedValue > 0 && commitment.reportedValue >= commitment.goalValue;
       setSuccess(_success);
       setLoading(false);
     }
@@ -44,8 +44,12 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
 
   const onProcess = async () => {
     if (web3LoggedIn) {
+      console.log("Web3 logged in, calling processCommitmentUser()")
       const tx = await singlePlayerCommit.processCommitmentUser();
       setTxSent(true);
+    } else {
+      console.log("Web3 not logged in, routing to login")
+      navigation.navigate("Login");
     }
   };
 
@@ -64,6 +68,9 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
 
   return (
     <LayoutContainer>
+      {success ? (
+              <ConfettiCannon count={100} origin={{ x: 100, y: 0 }} />
+          ) : undefined}
       {loading ? (
         <View style={styles.completionPage}>
           <Text text="Loading" />
@@ -73,7 +80,6 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
           {success ? (
             <Fragment>
               <Text text={strings.completion.success} />
-              <ConfettiCannon count={100} origin={{ x: 100, y: 0 }} />
             </Fragment>
           ) : (
             <Text text={strings.completion.fail} />
