@@ -31,7 +31,6 @@ type TrackPageProps = {
   navigation: TrackPageNavigationProps;
 };
 
-//TODO login to strava when auth/refresh-token area persisted in state
 const TrackPage = ({ navigation }: TrackPageProps) => {
   // useStravaRefresh();
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
@@ -39,7 +38,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   const { commitment, activityName, refreshCommitment } = useCommitment();
   const { singlePlayerCommit } = useContracts();
   const { account } = useWeb3();
-  const { athlete } = useStravaAthlete();
+  const { athlete, stravaIsLoggedIn } = useStravaAthlete();
   const { progress } = useStravaData();
 
   //TODO manage URL smart when 'undefined'
@@ -84,7 +83,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
           <Text text={`Progression`} />
           <ProgressCircle progress={progress} />
         </View>
-        {athlete?.id !== undefined ? (
+        {stravaIsLoggedIn && athlete?.id !== undefined ? (
           <a
             style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
             href={stravaUrl}
