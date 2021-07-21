@@ -10,7 +10,7 @@ import strings from "../../resources/strings";
 import useCommitment from "../../hooks/useCommitment";
 import useContracts from "../../hooks/useContracts";
 import useWeb3 from "../../hooks/useWeb3";
-import { Contract } from "ethers";
+import { Contract, Transaction } from "ethers";
 
 type CompletionPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -29,6 +29,7 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [success, setSuccess] = useState<boolean>(false);
   const [txSent, setTxSent] = useState<boolean>(false);
+  const [tx, setTx] = useState(undefined);
 
   //Check is commitment was met
   useEffect(() => {
@@ -47,6 +48,7 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
       console.log("Web3 logged in, calling processCommitmentUser()")
       const tx = await singlePlayerCommit.processCommitmentUser();
       setTxSent(true);
+      setTx(tx);
     } else {
       console.log("Web3 not logged in, routing to login")
       navigation.navigate("Login");

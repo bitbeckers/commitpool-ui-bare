@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { Fragment, useState } from "react";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
 
 import {
   LayoutContainer,
@@ -15,7 +15,7 @@ import strings from "../../resources/strings";
 import { parseSecondTimestampToFullString } from "../../utils/dateTime";
 
 import useActivities from "../../hooks/useActivities";
-import { BigNumber } from "ethers";
+import { BigNumber, Transaction } from "ethers";
 import useCommitment from "../../hooks/useCommitment";
 import useContracts from "../../hooks/useContracts";
 import useWeb3 from "../../hooks/useWeb3";
@@ -40,9 +40,12 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   const { account } = useWeb3();
   const { athlete, stravaIsLoggedIn } = useStravaAthlete();
   const { progress } = useStravaData();
+  const [txSent, setTxSent] = useState<boolean>(true);
+  const [tx, setTx] = useState<Transaction>();
 
   //TODO manage URL smart when 'undefined'
   const stravaUrl: string = `http://www.strava.com/athletes/${athlete?.id}`;
+  const txUrl: string = `https://polygonscan.com/tx/${tx?.hash}`;
 
   const oracleAddress: string =
     activities.find((activity) => activity.key === commitment.activityKey)
@@ -57,6 +60,16 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
     refreshCommitment
   );
 
+  const onContinue = async () => {
+    const tx: Transaction = await processCommitmentProgress(
+      singlePlayerCommit,
+      account,
+      oracleAddress
+    );
+    setTxSent(true);
+    setTx(tx);
+  };
+
   return (
     <LayoutContainer>
       <DialogPopUp
@@ -65,24 +78,42 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
         text={strings.track.alert}
       />
       <View style={styles.commitment}>
-        <Text text={strings.track.tracking.text} />
-        <View style={styles.commitmentValues}>
-          <Text text={`${activityName} for ${commitment.goalValue} miles`} />
-          <Text
-            text={`from ${parseSecondTimestampToFullString(
-              commitment.startTime
-            )} to ${parseSecondTimestampToFullString(commitment.endTime)}`}
-          />
-        </View>
-        <View style={styles.commitmentValues}>
-          <Text
-            text={`${strings.track.tracking.stake} ${commitment.stake} DAI`}
-          />
-        </View>
-        <View style={styles.commitmentValues}>
-          <Text text={`Progression`} />
-          <ProgressCircle progress={progress} />
-        </View>
+        {txSent ? (
+          <Fragment>
+            <Text text="Awaiting transaction processing" />
+            <ActivityIndicator size="large" color="#ffffff" />
+            <a
+              style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
+              href={txUrl}
+              target="_blank"
+            >
+              View transaction on Polygonscan
+            </a>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <Text text={strings.track.tracking.text} />
+            <View style={styles.commitmentValues}>
+              <Text
+                text={`${activityName} for ${commitment.goalValue} miles`}
+              />
+              <Text
+                text={`from ${parseSecondTimestampToFullString(
+                  commitment.startTime
+                )} to ${parseSecondTimestampToFullString(commitment.endTime)}`}
+              />
+            </View>
+            <View style={styles.commitmentValues}>
+              <Text
+                text={`${strings.track.tracking.stake} ${commitment.stake} DAI`}
+              />
+            </View>
+            <View style={styles.commitmentValues}>
+              <Text text={`Progression`} />
+              <ProgressCircle progress={progress} />
+            </View>
+          </Fragment>
+        )}
         {stravaIsLoggedIn && athlete?.id !== undefined ? (
           <a
             style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
@@ -101,16 +132,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
 
       <Footer>
         <Button text={"Back"} onPress={() => navigation.goBack()} />
-        <Button
-          text={"Continue"}
-          onPress={() =>
-            processCommitmentProgress(
-              singlePlayerCommit,
-              account,
-              oracleAddress
-            )
-          }
-        />
+        <Button text={"Continue"} onPress={() => onContinue()} />
         <Button
           text={strings.footer.help}
           onPress={() => navigation.navigate("Faq")}
@@ -126,13 +148,14 @@ const processCommitmentProgress = async (
   account: string | undefined,
   oracleAddress: string
 ) => {
-  _singlePlayerCommit.requestActivityDistance(
+  const tx = await _singlePlayerCommit.requestActivityDistance(
     account,
     "0x0a31078cD57d23bf9e8e8F1BA78356ca2090569E",
     //to do - move to env and/or activity state
     "9ce5c4e09dda4c3687bac7a2f676268f",
     { gasLimit: 500000 }
   );
+  return tx;
 };
 
 const listenForActivityDistanceUpdate = (
