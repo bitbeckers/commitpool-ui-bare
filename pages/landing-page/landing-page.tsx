@@ -1,9 +1,12 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react";
+import React, { Fragment, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { RootStackParamList } from "..";
 import { LayoutContainer, Text, Button } from "../../components";
 import strings from "../../resources/strings";
+import { useWeb3ModalLogin } from "./hooks";
+import { useTorusLogin } from "./hooks";
 
 type LandingPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -15,20 +18,38 @@ type LandingPageProps = {
 };
 
 const LandingPage = ({ navigation }: LandingPageProps) => {
+  const [isLoggedIn, handleLogin] = useWeb3ModalLogin();
+  const [popUpVisible, setPopUpVisible] = useState(false);
+
+  const account: string | undefined = useSelector(
+    (state: RootState) => state.web3?.account);
+
   return (
     <LayoutContainer>
-      <View style={styles.landingPage}>
-        <Text text={strings.landing.intro} />
-          <Button
-            text={strings.landing.new.button}
-            onPress={() => navigation.navigate("Intro")}
-          />
-          <Button
-            text={strings.landing.reconnect.button}
-            onPress={() => navigation.navigate("Login")}
-          />
-        </View>
+    {console.log("Act: " + account)}
+    {account ?
+            <View style={styles.landingPage}>
+              <Text text={strings.landing.intro} />
+              <Button
+                text={strings.landing.loggedIn.button}
+                onPress={() => navigation.navigate("Intro")}
+              />
+              </View>
+              :
+              <View style={styles.landingPage}>
+                <Text text={strings.landing.intro} />
+                  <Button
+                    text={strings.landing.new.button}
+                    onPress={() => navigation.navigate("Intro")}
+                  />
+                  <Button
+                    text={strings.landing.reconnect.button}
+                    onPress={() => handleLogin()}
+                  />
+                </View>
+        }
     </LayoutContainer>
+
   );
 };
 

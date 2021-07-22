@@ -11,7 +11,9 @@ import {
   DialogPopUp,
 } from "../../components";
 
-import { useTorusLogin } from "./login-hooks";
+import getEnvVars from "../../environment";
+import { useWeb3ModalLogin } from "./hooks";
+import { useTorusLogin } from "./hooks";
 import strings from "../../resources/strings";
 import { RootState, useAppDispatch } from "../../redux/store";
 import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
@@ -19,6 +21,7 @@ import { parseCommitmentFromContract } from "../../utils/commitment";
 import useContracts from "../../hooks/useContracts";
 import useWeb3 from "../../hooks/useWeb3";
 import { ethers } from "ethers";
+import Web3Modal from "web3modal";
 import useStravaAthlete from "../../hooks/useStravaAthlete";
 
 type LoginPageNavigationProps = StackNavigationProp<
@@ -31,7 +34,7 @@ type LoginPageProps = {
 };
 
 const LoginPage = ({ navigation }: LoginPageProps) => {
-  const [isLoggedIn, handleLogin] = useTorusLogin();
+  const [isLoggedIn, handleLogin] = useWeb3ModalLogin();
   const [popUpVisible, setPopUpVisible] = useState(false);
   const dispatch = useAppDispatch();
 
