@@ -16,6 +16,7 @@ import { Rubik_700Bold } from "@expo-google-fonts/rubik";
 
 import { Header } from "./components/";
 import {
+  TestPage,
   LandingPage,
   IntroPage,
   LoginPage,
@@ -46,17 +47,14 @@ const App = () => {
         <PersistGate loading={null} persistor={persistor}>
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="Landing"
+              initialRouteName="Test"
               screenOptions={{
                 headerTitle: () => <Header />,
                 headerLeft: () => null,
+                headerShown: true,
+                headerTransparent: true,
               }}
             >
-              <Stack.Screen
-                name="Landing"
-                component={LandingPage}
-                options={{ headerShown: false }}
-              />
               <Stack.Screen name="Login" component={LoginPage} />
               <Stack.Screen name="Intro" component={IntroPage} />
               <Stack.Screen name="ActivityGoal" component={ActivityGoalPage} />
@@ -69,6 +67,7 @@ const App = () => {
               <Stack.Screen name="Track" component={TrackPage} />
               <Stack.Screen name="Completion" component={CompletionPage} />
               <Stack.Screen name="Faq" component={FaqPage} />
+              <Stack.Screen name="Test" component={TestPage} />
             </Stack.Navigator>
           </NavigationContainer>
         </PersistGate>

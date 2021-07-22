@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -16,10 +16,8 @@ import {
 } from "../../components";
 
 import strings from "../../resources/strings";
-import { RootState, useAppDispatch } from "../../redux/store";
-import {
-  updateActivitySet,
-} from "../../redux/commitment/commitmentSlice";
+import globalStyles from "../../resources/styles/styles";
+import { RootState } from "../../redux/store";
 
 import { RootStackParamList } from "..";
 
@@ -34,17 +32,10 @@ type ActivityGoalPageProps = {
 
 const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
 
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
+  const activitySet: boolean = useSelector(
+    (state: RootState) => state.commitpool.activitySet
   );
-
-  useEffect(() => {
-    if (validActivity(commitment) && !commitment.activitySet) {
-      dispatch(updateActivitySet(true));
-    }
-  }, [commitment]);
 
   return (
     <LayoutContainer>
@@ -53,9 +44,9 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         onTouchOutside={() => setAlertVisible(false)}
         text={strings.activityGoal.alert}
       />
-      <ProgressBar size={1 / 6} />
+      <ProgressBar size={1} />
       <View style={styles.setUp}>
-        <Text text={strings.activityGoal.setUp.text} />
+        <Text style={globalStyles.headerOne} text={strings.activityGoal.setUp.text} />
         <ActivitySelector text={strings.activityGoal.setUp.activitySelector} />
         <DistanceSelector text={strings.activityGoal.setUp.distanceSelector} />
         <DateFromTo />
@@ -68,9 +59,7 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
         <Button
           text={strings.footer.next}
           onPress={() =>
-            commitment.activitySet
-              ? navigation.navigate("Staking")
-              : setAlertVisible(true)
+            activitySet ? navigation.navigate("Staking") : setAlertVisible(true)
           }
         />
         <Button
@@ -83,19 +72,9 @@ const ActivityGoalPage = ({ navigation }: ActivityGoalPageProps) => {
   );
 };
 
-const validActivity = (commitment: Commitment) => {
-  const nowInSeconds = new Date().getTime() / 1000;
-
-  return (
-    commitment?.activity &&
-    commitment.distance > 0 &&
-    commitment.endDate > commitment.startDate &&
-    commitment.endDate > nowInSeconds
-  );
-};
-
 const styles = StyleSheet.create({
   setUp: {
+    top: -30,
     flex: 1,
     flexDirection: "column",
     alignItems: "center",

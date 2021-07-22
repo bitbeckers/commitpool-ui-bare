@@ -1,39 +1,29 @@
-import React, { Fragment, useState } from "react";
-import { StyleSheet, Platform } from "react-native";
+import React, { Fragment } from "react";
+import { StyleSheet } from "react-native";
 import { View } from "react-native";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { DateTime } from "luxon";
 
 import {
-  LayoutContainer,
-  Footer,
   Text,
-  Button,
-  ProgressBar,
-  DialogPopUp,
   ActivitySelector,
   DistanceSelector,
   DateFromTo,
 } from "../../components";
 
 import strings from "../../resources/strings";
-import StakeBox from "../stake-selector/stake-selector.component";
+import StakeBox from "../stake-box/stake-box.component";
+import { parseSecondTimestampToFullString} from "../../utils/dateTime"
+import useCommitment from "../../hooks/useCommitment";
 
 interface CommitmentOverviewProps {
   editing: boolean;
 }
 
 const CommitmentOverview = ({ editing }: CommitmentOverviewProps) => {
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
-  );
-
+  const { commitment, activityName } = useCommitment();
   return (
     <View style={styles.commitment}>
       {editing ? (
         <Fragment>
-          <Text text="EDITING" />
           <ActivitySelector
             text={strings.activityGoal.setUp.activitySelector}
           />
@@ -48,26 +38,20 @@ const CommitmentOverview = ({ editing }: CommitmentOverviewProps) => {
           <Text text={strings.confirmation.commitment.text} />
           <View style={styles.commitmentValues}>
             <Text
-              text={`${
-                strings.confirmation.commitment.activity
-              } ${commitment?.activity?.name.toLowerCase()}`}
+              text={`${strings.confirmation.commitment.activity} ${activityName}`}
             />
             <Text
-              text={`${strings.confirmation.commitment.distance} ${commitment.distance} ${commitment.unit}`}
+              text={`${strings.confirmation.commitment.distance} ${commitment.goalValue} miles`}
             />
             <Text
               text={`${
                 strings.confirmation.commitment.startDate
-              } ${DateTime.fromSeconds(commitment.startDate).toFormat(
-                "yyyy MMMM dd"
-              )}`}
+              } ${parseSecondTimestampToFullString(commitment.startTime)}`}
             />
             <Text
               text={`${
                 strings.confirmation.commitment.endDate
-              } ${DateTime.fromSeconds(commitment.endDate).toFormat(
-                "yyyy MMMM dd"
-              )}`}
+              } ${parseSecondTimestampToFullString(commitment.endTime)}`}
             />
           </View>
           <View style={styles.commitmentValues}>

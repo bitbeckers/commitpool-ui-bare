@@ -1,13 +1,16 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { StyleSheet, View } from "react-native";
+import React, { Fragment, useEffect, useState } from "react";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 import { LayoutContainer, Footer, Text, Button } from "../../components";
-import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import strings from "../../resources/strings"
+import strings from "../../resources/strings";
+import useCommitment from "../../hooks/useCommitment";
+import useContracts from "../../hooks/useContracts";
+import useWeb3 from "../../hooks/useWeb3";
+import { Contract, Transaction } from "ethers";
 
 type CompletionPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -19,26 +22,100 @@ type CompletionPageProps = {
 };
 
 const CompletionPage = ({ navigation }: CompletionPageProps) => {
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
-  );
+  const { commitment, activityName } = useCommitment();
+  const { singlePlayerCommit } = useContracts();
+  const { web3LoggedIn, account } = useWeb3();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [txSent, setTxSent] = useState<boolean>(false);
+  const [tx, setTx] = useState<Transaction>();
+
+  const txUrl: string = `https://polygonscan.com/tx/${tx?.hash}`;
+
+  //Check is commitment was met
+  useEffect(() => {
+    if (loading) {
+      const _success: boolean =
+        commitment.reportedValue > 0 &&
+        commitment.reportedValue >= commitment.goalValue;
+      setSuccess(_success);
+      setLoading(false);
+    }
+  }, [commitment, loading]);
+
+  const achievement: string = `You managed to ${activityName} for ${commitment.reportedValue} miles. You committed to ${commitment.goalValue} miles`;
+
+  const onProcess = async () => {
+    if (web3LoggedIn) {
+      console.log("Web3 logged in, calling processCommitmentUser()");
+      const tx = await singlePlayerCommit.processCommitmentUser();
+      setTxSent(true);
+      setTx(tx);
+    } else {
+      console.log("Web3 not logged in, routing to login");
+      navigation.navigate("Login");
+    }
+  };
+
+  const listenForCommitmentSettlement = (_singlePlayerCommit: Contract) => {
+    _singlePlayerCommit.on(
+      "CommitmentEnded",
+      async (committer: string, met: boolean, amountPenalized: number) => {
+        if (committer.toLowerCase() === account.toLowerCase()) {
+          navigation.navigate("ActivityGoal");
+        }
+      }
+    );
+  };
+
+  listenForCommitmentSettlement(singlePlayerCommit);
 
   return (
     <LayoutContainer>
-      <View style={styles.completionPage}>
-        {commitment.complete ? (
-          <Text text={strings.completion.success} />
-        ) : (
-          <Text text={strings.completion.fail} />
-        )}
-      </View>
+      {success ? (
+        <ConfettiCannon count={100} origin={{ x: 100, y: 0 }} />
+      ) : undefined}
+      {loading ? (
+        <View style={styles.completionPage}>
+          <Text text="Loading" />
+        </View>
+      ) : (
+        <View style={styles.completionPage}>
+          {success ? (
+            <Fragment>
+              <Text text={strings.completion.success} />
+            </Fragment>
+          ) : (
+            <Text text={strings.completion.fail} />
+          )}
+          <Text text={achievement} />
+        </View>
+      )}
+      {txSent ? (
+        <Fragment>
+          <Text text="Awaiting transaction processing" />
+          <ActivityIndicator size="large" color="#ffffff" />
+          <a
+            style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
+            href={txUrl}
+            target="_blank"
+          >
+            View transaction on Polygonscan
+          </a>
+        </Fragment>
+      ) : (
+        <Button text="Process commitment" onPress={() => onProcess()} />
+      )}
       <Footer>
-        <Button text={strings.footer.back} onPress={() => navigation.goBack()} />
+        <Button
+          text={strings.footer.back}
+          onPress={() => navigation.goBack()}
+        />
         <Button
           text={strings.footer.restart}
           onPress={() => navigation.navigate("ActivityGoal")}
         />
-                <Button
+        <Button
           text={strings.footer.help}
           onPress={() => navigation.navigate("Faq")}
           style={styles.helpButton}
@@ -58,7 +135,7 @@ const styles = StyleSheet.create({
   helpButton: {
     width: 50,
     maxWidth: 50,
-  }
+  },
 });
 
 export default CompletionPage;

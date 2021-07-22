@@ -4,7 +4,7 @@ import { RootState, useAppDispatch } from "../../redux/store";
 import Torus from "@toruslabs/torus-embed";
 import getEnvVars from '../../environment';
 
-const { host, chainId, networkName, debug } = getEnvVars();
+const { rpcUrl, chainId, networkName, debug } = getEnvVars();
 
 import {
   updateProvider,
@@ -43,7 +43,7 @@ export const useTorusLogin = () => {
           buildEnv: "production",
           enableLogging: debug,
           network: {
-            host: host,
+            host: rpcUrl,
             chainId: chainId,
             networkName: networkName,
           },

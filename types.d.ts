@@ -1,14 +1,13 @@
 interface Commitment {
-  activity?: Activity;
-  complete: boolean;
-  distance: number;
-  startDate: number;
-  endDate: number;
-  progress: number;
+  activityKey: string;
+  exists: boolean;
+  met: boolean;
+  goalValue: number;
+  startTime: number;
+  endTime: number;
+  reportedValue: number;
   stake: number;
   unit: string;
-  activitySet: boolean;
-  stakeSet: boolean;
 }
 
 interface Athlete {
@@ -24,4 +23,9 @@ interface Activity {
   oracle: string;
   allowed: boolean;
   exists: boolean;
+}
+
+interface DropdownItem {
+  label: string,
+  value: string
 }

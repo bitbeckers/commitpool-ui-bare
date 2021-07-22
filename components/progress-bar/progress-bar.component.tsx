@@ -1,33 +1,59 @@
 import React from "react";
 import ProgressBar from "react-native-progress/Bar";
-import { StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 interface CustomProgressBar {
   size: number
 }
 
 const CustomProgressBar = ({ size }: CustomProgressBar) => {
+  const steps = [
+    'Activity & Goal',
+    'Set Stake',
+    'Connect Data Source',
+    'Deposit Funds',
+    'Review & Commit',
+    'Commited!'
+  ]
   return (
-    <ProgressBar
-      progress={size}
-      width={200}
-      height={100}
-      borderRadius={15}
-      color={"#ABE9A6"}
-      unfilledColor={"white"}
-      style={styles.progressBar}
-    />
+    <View style={styles.progressBar}>
+      {steps.map((item, index) => {
+        return (
+          <View key={index} style={styles.progressItem}>
+            <Text style={[styles.progressText, size === (index + 1) ? styles.active : null]}>{item}</Text>
+          </View>
+        )
+      })}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
-    marginTop: 20,
-    maxHeight: 32,
-    alignItems: "stretch",
-    justifyContent: "center",
+    flexDirection: 'row',
+    width: '100%',
+    maxHeight: 52,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    backdropFilter: "blur(27px)",
+    borderRadius: 10,
+    margin: 10,
+    top: -65
   },
+  progressItem: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    flex: 1,
+    padding: 7
+  },
+  progressText: {
+    color: 'white',
+    fontSize: 16
+  },
+  active: {
+    textDecorationLine: 'underline'
+  }
 });
 
 export default CustomProgressBar;

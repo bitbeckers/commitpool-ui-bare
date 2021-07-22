@@ -7,6 +7,7 @@ import StakingPage from "./staking-page/staking-page";
 import ConfirmationPage from "./confirmation-page/confirmation-page";
 import TrackPage from './track-page/track-page';
 import CompletionPage from './completion-page/completion-page';
+import TestPage from "./test-page/test-page";
 import FaqPage from './faq-page/faq-page';
 
 
@@ -20,6 +21,7 @@ export type RootStackParamList = {
   Staking: undefined;
   Track: undefined;
   Completion: undefined;
+  Test: undefined;
   Faq: undefined;
 };
 
@@ -33,5 +35,6 @@ export {
   ConfirmationPage,
   TrackPage,
   CompletionPage,
+  TestPage,
   FaqPage
 };
