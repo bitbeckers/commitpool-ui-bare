@@ -12,8 +12,7 @@ import {
 } from "../../components";
 
 import getEnvVars from "../../environment";
-import { useWeb3ModalLogin } from "./hooks";
-import { useTorusLogin } from "./hooks";
+import { useWeb3ModalLogin } from "../landing-page/hooks";
 import strings from "../../resources/strings";
 import { RootState, useAppDispatch } from "../../redux/store";
 import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
