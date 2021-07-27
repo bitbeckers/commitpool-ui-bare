@@ -57,6 +57,9 @@ const strings = {
     reconnect: {
       button: "Connect wallet",
     },
+    loggedIn: {
+        button: "Continue!"
+      },
   },
   login: {
     alert: "Mmmmm... It appears you are not yet connected to a wallet",
