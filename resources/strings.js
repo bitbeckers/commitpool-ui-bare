@@ -57,7 +57,6 @@ const strings = {
     reconnect: {
       button: "Connect wallet",
     },
-    
     loggedIn: {
       button: "Continue!"
     },

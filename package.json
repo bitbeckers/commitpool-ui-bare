@@ -24,6 +24,7 @@
     "@types/luxon": "^1.26.5",
     "@walletconnect/web3-provider": "^1.4.1",
     "axios": "^0.21.1",
+    "@walletconnect/web3-provider": "^1.4.1",
     "ethers": "^5.1.4",
     "expo": "~40.0.0",
     "expo-app-loading": "^1.0.3",

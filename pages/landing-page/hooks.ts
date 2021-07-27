@@ -64,7 +64,6 @@ export const useWeb3ModalLogin = () => {
 
   const logOut = () => {
     if(provider?.provider?.isTorus){
-
       if(provider?.provider){
         console.log(provider)
         provider.cleanUp();
@@ -83,9 +82,8 @@ export const useWeb3ModalLogin = () => {
     if (triggerLogin) {
       const web3ModalLogin = async () => {
 
+        //const provider = await web3Modal.connect().then((account) => {
         await web3Modal.connect().then((provider) => {
-          //wait(7000);
-
           console.log("Provider:");
           console.log(provider);
 

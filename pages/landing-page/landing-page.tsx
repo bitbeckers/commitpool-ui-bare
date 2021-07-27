@@ -27,27 +27,27 @@ const LandingPage = ({ navigation }: LandingPageProps) => {
   return (
     <LayoutContainer>
     {console.log("Act: " + account)}
-    {account ?
+  {account ?
+          <View style={styles.landingPage}>
+            <Text text={strings.landing.intro} />
+            <Button
+              text={strings.landing.loggedIn.button}
+              onPress={() => navigation.navigate("Intro")}
+            />
+            </View>
+            :
             <View style={styles.landingPage}>
               <Text text={strings.landing.intro} />
-              <Button
-                text={strings.landing.loggedIn.button}
-                onPress={() => navigation.navigate("Intro")}
-              />
+                <Button
+                  text={strings.landing.new.button}
+                  onPress={() => navigation.navigate("Intro")}
+                />
+                <Button
+                  text={strings.landing.reconnect.button}
+                  onPress={() => handleLogin()}
+                />
               </View>
-              :
-              <View style={styles.landingPage}>
-                <Text text={strings.landing.intro} />
-                  <Button
-                    text={strings.landing.new.button}
-                    onPress={() => navigation.navigate("Intro")}
-                  />
-                  <Button
-                    text={strings.landing.reconnect.button}
-                    onPress={() => handleLogin()}
-                  />
-                </View>
-        }
+      }
     </LayoutContainer>
 
   );
