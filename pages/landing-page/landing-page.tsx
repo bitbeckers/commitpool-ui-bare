@@ -49,6 +49,7 @@ const LandingPage = ({ navigation }: LandingPageProps) => {
               </View>
       }
     </LayoutContainer>
+
   );
 };
 

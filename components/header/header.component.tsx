@@ -16,6 +16,7 @@ const Header = ({children}: Header) => {
 
 const styles = StyleSheet.create({
   header: {
+    backgroundColor: "none",
     flex: 1,
     flexDirection: "column",
     alignSelf: "stretch",
@@ -24,11 +25,12 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: "rgba(212, 84, 84, 1)",
-    fontSize: 42,
+    fontSize: 57,
     letterSpacing: 0,
     textAlign: "center",
     fontFamily: 'Rubik_700Bold',
     fontWeight: "bold",
+    marginTop: 45
   },
 });
 

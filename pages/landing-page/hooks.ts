@@ -53,7 +53,6 @@ export const useWeb3ModalLogin = () => {
   const web3Modal = new Web3Modal({
   //network: "mainnet", // optional
   //cacheProvider: true, // optional
-  //providerOptions // required
   providerOptions, // required
   theme: "dark"
 });
@@ -62,6 +61,7 @@ export const useWeb3ModalLogin = () => {
     isLoggedIn ? logOut() : setTriggerLogin(true);
   };
 
+
   const logOut = () => {
     if(provider?.provider?.isTorus){
       if(provider?.provider){
@@ -69,6 +69,10 @@ export const useWeb3ModalLogin = () => {
         provider.cleanUp();
       }
     }
+
+    //const clear = await web3Modal.clearCachedProvider();
+
+
     dispatch(reset({}))
   }
 

@@ -1,5 +1,4 @@
 import React, { Fragment, useState } from "react";
-import { useSelector } from "react-redux";
 import { StyleSheet, View, Image } from "react-native";
 
 import {
@@ -11,13 +10,21 @@ import {
   DialogPopUp,
   CommitmentOverview,
 } from "../../components";
-import { RootState } from "../../redux/store";
 import { RootStackParamList } from "..";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import strings from "../../resources/strings";
 
-import { ethers, utils } from "ethers";
+import {
+  validCommitmentRequest,
+  getCommitmentRequestParameters,
+} from "../../utils/commitment";
+import useCommitment from "../../hooks/useCommitment";
+import useActivities from "../../hooks/useActivities";
+import useContracts from "../../hooks/useContracts";
+import useWeb3 from "../../hooks/useWeb3";
+import useStravaAthlete from "../../hooks/useStravaAthlete";
+
 type ConfirmationPageNavigationProps = StackNavigationProp<
   RootStackParamList,
   "Confirmation"
@@ -32,74 +39,63 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [txSent, setTxSent] = useState<boolean>(false);
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
-  );
-  const athlete: Athlete = useSelector(
-    (state: RootState) => state.strava.athlete
-  );
 
-  const provider = useSelector((state: RootState) => state.web3.provider);
-  const account = useSelector((state: RootState) => state.web3.account);
-  let { dai, singlePlayerCommit } = useSelector(
-    (state: RootState) => state.web3.contracts
-  );
+  const { commitment } = useCommitment();
+  const { activities } = useActivities();
 
-  let _dai = dai.connect(provider.getSigner());
-  let _singlePlayerCommit = singlePlayerCommit.connect(provider.getSigner());
 
-  const validCommitment = (commitment: Commitment) => {
-    const nowInSeconds = new Date().getTime() / 1000;
+  const {athlete} = useStravaAthlete();
 
-    return (
-      commitment.activity?.key !== "" &&
-      commitment.activity?.name !== "" &&
-      commitment.distance > 0 &&
-      commitment.endDate > commitment.startDate &&
-      commitment.endDate > nowInSeconds &&
-      commitment.stake > 0 &&
-      commitment.progress === 0 &&
-      commitment.complete === false
-    );
-  };
+  const { account } = useWeb3();
+  const { dai, singlePlayerCommit } = useContracts();
+
+  console.log("Connected SPC contract: ", singlePlayerCommit);
 
   const createCommitment = async () => {
     let tx;
-    if (validCommitment(commitment)) {
-      const distanceInMiles: number = Math.floor(commitment.distance);
-      const startTimestamp: number = Math.ceil(commitment.startDate);
-      const endTimestamp: number = Math.ceil(commitment.endDate);
-      const stakeAmount = utils.parseEther(commitment.stake.toString());
+    if (validCommitmentRequest(commitment, activities)) {
       setLoading(true);
 
       const allowance = await dai.allowance(
         account,
-        "0xDb28e5521718Cf746a9900DE3Aff12644F699B98"
+        singlePlayerCommit.address
       );
-      if (allowance.gte(stakeAmount)) {
-        tx = await _singlePlayerCommit.depositAndCommit(
-          commitment.activity?.key,
-          distanceInMiles * 100,
-          startTimestamp,
-          endTimestamp,
-          stakeAmount,
-          stakeAmount,
-          String(athlete.id),
+
+      const _commitmentParameters = getCommitmentRequestParameters(commitment);
+      const _commitmentParametersWithUserId = {
+        ..._commitmentParameters,
+        _userId: String(athlete.id),
+      };
+
+      console.log(
+        "Commitment request with user ID: ",
+        _commitmentParametersWithUserId
+      );
+
+      if (allowance.gte(_commitmentParameters._stake)) {
+        tx = await singlePlayerCommit.depositAndCommit(
+          _commitmentParametersWithUserId._activityKey,
+          _commitmentParametersWithUserId._goalValue,
+          _commitmentParametersWithUserId._startTime,
+          _commitmentParametersWithUserId._endTime,
+          _commitmentParametersWithUserId._stake,
+          _commitmentParametersWithUserId._depositAmount,
+          _commitmentParametersWithUserId._userId,
           { gasLimit: 5000000 }
         );
       } else {
-        await _dai.approve(
-          "0xDb28e5521718Cf746a9900DE3Aff12644F699B98",
-          stakeAmount
+        await dai.approve(
+          singlePlayerCommit.address,
+          _commitmentParametersWithUserId._stake
         );
-        tx = await _singlePlayerCommit.depositAndCommit(
-          commitment.activity?.key,
-          distanceInMiles * 100,
-          startTimestamp,
-          endTimestamp,
-          stakeAmount,
-          stakeAmount,
-          String(athlete.id),
+        tx = await singlePlayerCommit.depositAndCommit(
+          _commitmentParametersWithUserId._activityKey,
+          _commitmentParametersWithUserId._goalValue,
+          _commitmentParametersWithUserId._startTime,
+          _commitmentParametersWithUserId._endTime,
+          _commitmentParametersWithUserId._stake,
+          _commitmentParametersWithUserId._depositAmount,
+          _commitmentParametersWithUserId._userId,
           { gasLimit: 5000000 }
         );
       }

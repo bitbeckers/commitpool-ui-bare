@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import DropDownPicker from "react-native-dropdown-picker";
 
-import { Text } from "../../components";
-
 interface Picker {
-  itemsToSelect: Item[];
+  itemsToSelect: DropdownItem[];
   onSelect: any;
   children?: React.ReactNode;
 }
 
-interface Item {
-  label: string;
-  value: string;
-}
-
+//TODO set value of picker based on commitment in state
 const Picker = ({ itemsToSelect , onSelect, children }: Picker) => {
-
   return (
     <View style={styles.container}>
       <DropDownPicker
         items={itemsToSelect}
-        defaultValue={"Loading"}
         placeholder={"Click to select"}
         arrowStyle={styles.arrowStyle}
         containerStyle={styles.containerStyle}
@@ -41,6 +33,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-start",
+    margin: 15
   },
   arrowStyle: {
     marginRight: 5,

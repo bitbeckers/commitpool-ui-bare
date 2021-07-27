@@ -12,13 +12,17 @@ import {
 } from "../../components";
 
 import getEnvVars from "../../environment";
-
 import { useWeb3ModalLogin } from "./hooks";
 import { useTorusLogin } from "./hooks";
 import strings from "../../resources/strings";
-import { RootState } from "../../redux/store";
+import { RootState, useAppDispatch } from "../../redux/store";
+import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
+import { parseCommitmentFromContract } from "../../utils/commitment";
+import useContracts from "../../hooks/useContracts";
+import useWeb3 from "../../hooks/useWeb3";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
+import useStravaAthlete from "../../hooks/useStravaAthlete";
 
 type LoginPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -29,38 +33,48 @@ type LoginPageProps = {
   navigation: LoginPageNavigationProps;
 };
 
-//TODO check for open commitments to determine redirect
 const LoginPage = ({ navigation }: LoginPageProps) => {
   const [isLoggedIn, handleLogin] = useWeb3ModalLogin();
   const [popUpVisible, setPopUpVisible] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const account: string | undefined = useSelector(
-    (state: RootState) => state.web3?.account
+  const { account } = useWeb3();
+  const { stravaIsLoggedIn} = useStravaAthlete();
+  const { singlePlayerCommit } = useContracts();
+
+  const { activitySet, stakeSet } = useSelector(
+    (state: RootState) => state.commitpool
   );
 
-  const commitment: Commitment = useSelector(
-    (state: RootState) => state.commitment
-  );
-
-  const singlePlayerCommit = useSelector(
-    (state: RootState) => state.web3.contracts.singlePlayerCommit
-  );
-
-  //When account has active commitment, navigate to Track page
+  //When account has an commitment, write to state
   useEffect(() => {
-    if (account && isAddress(account)) {
-      console.log("ACCOUNT IS ADDRESS");
+    console.log("Account: ", account);
+    if (ethers.utils.isAddress(account)) {
       const getCommitmentAndRoute = async () => {
-        console.log("CHECKING FOR COMMITMENT");
+        console.log(`Checking for commitment for account ${account}`);
         const commitment = await singlePlayerCommit.commitments(account);
+        console.log("Commitment from contract: ", commitment);
         if (commitment.exists) {
+          const _commitment: Commitment =
+            parseCommitmentFromContract(commitment);
+          dispatch(updateCommitment({ ..._commitment }));
           navigation.navigate("Track");
         }
       };
 
       getCommitmentAndRoute();
     }
-  }, [account]);
+  }, [account, singlePlayerCommit]);
+
+  const onNext = () => {
+    if (isLoggedIn && activitySet && stakeSet && stravaIsLoggedIn) {
+      navigation.navigate("Confirmation");
+    } else if (isLoggedIn && !activitySet && !stakeSet && !stravaIsLoggedIn) {
+      navigation.navigate("ActivityGoal");
+    } else {
+      setPopUpVisible(true);
+    }
+  };
 
   return (
     <LayoutContainer>
@@ -94,22 +108,7 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
           text={strings.footer.back}
           onPress={() => navigation.goBack()}
         />
-        <Button
-          text={strings.footer.next}
-          onPress={() => {
-            if (isLoggedIn && commitment.activitySet && commitment.stakeSet) {
-              navigation.navigate("Confirmation");
-            } else if (
-              isLoggedIn &&
-              !commitment.activitySet &&
-              !commitment.stakeSet
-            ) {
-              navigation.navigate("ActivityGoal");
-            } else {
-              setPopUpVisible(true);
-            }
-          }}
-        />
+        <Button text={strings.footer.next} onPress={() => onNext()} />
         <Button
           text={strings.footer.help}
           onPress={() => navigation.navigate("Faq")}
@@ -118,15 +117,6 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
       </Footer>
     </LayoutContainer>
   );
-};
-
-const isAddress = (account: string) => {
-  try {
-    ethers.utils.getAddress(account);
-  } catch (e) {
-    return false;
-  }
-  return true;
 };
 
 const styles = StyleSheet.create({

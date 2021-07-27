@@ -1,18 +1,15 @@
 import React, { Fragment, useEffect, useState } from "react";
 
-import { Platform } from "react-native";
 import { StyleSheet, View, TextInput } from "react-native";
 
-import { Text, Button } from "..";
+import { Text } from "..";
 
 import { DateTime } from "luxon";
-import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../../redux/store";
+import { useAppDispatch } from "../../redux/store";
 
-import {
-  updateStartDate,
-  updateEndDate,
-} from "../../redux/commitment/commitmentSlice";
+import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
+import useCommitment from "../../hooks/useCommitment";
+import { parseSecondTimestampToFullString } from "../../utils/dateTime";
 
 interface DateFromTo {
   children?: React.ReactNode;
@@ -22,21 +19,15 @@ const DateFromTo = ({ children }: DateFromTo) => {
   const [startIn, setStartIn] = useState("0");
   const [endIn, setEndIn] = useState("7");
 
-  const startDate: any = useSelector(
-    (state: RootState) => state.commitment.startDate
-  );
-  const endDate: number = useSelector(
-    (state: RootState) => state.commitment.endDate
-  );
+  const { commitment } = useCommitment();
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const updateDates = () => {
-      const startDay = calculateStartDay(startIn);
-      const endDay = calculateEndDay(startDay, endIn);
-      dispatch(updateStartDate(startDay));
-      dispatch(updateEndDate(endDay));
+      const startTime = calculateStartDay(startIn);
+      const endTime = calculateEndDay(startTime, endIn);
+      dispatch(updateCommitment({ startTime, endTime }));
     };
 
     updateDates();
@@ -52,7 +43,7 @@ const DateFromTo = ({ children }: DateFromTo) => {
         .set({ hour: 0, minute: 0 })
         .toSeconds();
     } else {
-      return startDate;
+      return commitment.startTime;
     }
   };
 
@@ -67,7 +58,7 @@ const DateFromTo = ({ children }: DateFromTo) => {
         .set({ hour: 23, minute: 59 })
         .toSeconds();
     } else {
-      return endDate;
+      return commitment.endTime;
     }
   };
 
@@ -92,26 +83,16 @@ const DateFromTo = ({ children }: DateFromTo) => {
       </View>
       <View>
         <Text
-          text={`Starts on: ${parseToString(startDate)} `}
+          text={`Starts on: ${parseSecondTimestampToFullString(commitment.startTime)} `}
           style={styles.dateView}
         />
         <Text
-          text={`Ends on:  ${parseToString(endDate)}`}
+          text={`Ends on:  ${parseSecondTimestampToFullString(commitment.endTime)}`}
           style={styles.dateView}
         />
       </View>
     </Fragment>
   );
-};
-
-const parseToString = (dateInSeconds: number) => {
-  return DateTime.fromSeconds(dateInSeconds).toLocaleString({
-    weekday: "long",
-    month: "long",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 };
 
 const styles = StyleSheet.create({
@@ -133,7 +114,7 @@ const styles = StyleSheet.create({
     height: 28,
     width: 75,
     textAlign: "center",
-    borderRadius: 20,
+    borderRadius: 6,
   },
 });
 

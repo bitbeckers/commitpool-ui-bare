@@ -8,7 +8,6 @@ interface DialogPopUp {
   onTouchOutside: () => void;
 }
 
-//TODO does this need a button?
 const DialogPopUp = ({ visible, text, onTouchOutside }: DialogPopUp) => {
   return (
     <Dialog visible={visible} onTouchOutside={onTouchOutside}>

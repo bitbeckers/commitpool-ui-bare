@@ -1,55 +1,40 @@
-import React, { useState, useEffect } from "react";
-import { RootState, useAppDispatch } from "../../redux/store";
-import {
-  updateDistance,
-  updateUnit,
-} from "../../redux/commitment/commitmentSlice";
+import React from "react";
+import { useAppDispatch } from "../../redux/store";
+import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
 
 import { StyleSheet, View, TextInput } from "react-native";
-import { Text, ValueToggle } from "..";
-import { useSelector } from "react-redux";
+import { Text } from "..";
+import useCommitment from "../../hooks/useCommitment";
 
 interface DistanceSelector {
   text: string;
 }
 
 const DistanceSelector = ({ text }: DistanceSelector) => {
-  const [isEnabled, setIsEnabled] = useState(true);
-  const distance: number = useSelector(
-    (state: RootState) => state.commitment.distance
-  );
+  const { commitment } = useCommitment();
+  const { goalValue }: { goalValue: number} = commitment
 
   const dispatch = useAppDispatch();
 
-  const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
-  };
-  const toggleOptions: string[] = ["km", "mi"];
-
-  useEffect(() => {
-    isEnabled ? dispatch(updateUnit("mi")) : dispatch(updateUnit("km"));
-  }, [isEnabled]);
-
-  const checkAndUpdateDistance = (value: string) => {
-    const number = Number(value);
-    if (number > 0) {
-      dispatch(updateDistance(Number(value)));
-    } else {
-      dispatch(updateDistance(null));
+  const onDistanceInput = (value: string) => {
+    const distance: number = Number.parseFloat(value);
+    if (!isNaN(distance) && distance > 0) {
+      dispatch(updateCommitment({ goalValue: distance }));
     }
   };
 
   return (
     <View style={styles.distanceSelector}>
       <Text text={text} />
-      <TextInput
-        defaultValue={distance.toString()}
-        keyboardType={"number-pad"}
-        style={styles.textInput}
-        onChangeText={(value) => checkAndUpdateDistance(value)}
-      />
-      <Text text="miles" />
-      {/* <ValueToggle toggleOptions={toggleOptions} onToggle={toggleSwitch} /> */}
+      <View style={styles.unitInput}>
+        <TextInput
+          defaultValue={goalValue.toString()}
+          keyboardType={"number-pad"}
+          style={styles.textInput}
+          onChangeText={(value) => onDistanceInput(value)}
+        />
+        <Text text="miles" />
+      </View>
     </View>
   );
 };
@@ -57,7 +42,7 @@ const DistanceSelector = ({ text }: DistanceSelector) => {
 const styles = StyleSheet.create({
   distanceSelector: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -67,8 +52,12 @@ const styles = StyleSheet.create({
     height: 28,
     width: 75,
     textAlign: "center",
-    borderRadius: 20,
+    borderRadius: 6,
   },
+  unitInput: {
+    margin: 15,
+    flexDirection: "row"
+  }
 });
 
 export default DistanceSelector;
