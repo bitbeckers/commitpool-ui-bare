@@ -8,6 +8,7 @@ import { Contract } from "ethers";
 import { updateActivities } from "../redux/commitpool/commitpoolSlice";
 
 const useActivities = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const activities: Activity[] = useSelector(
     (state: RootState) => state.commitpool.activities
   );
@@ -26,34 +27,35 @@ const useActivities = () => {
 
   // Get activities from contract
   useEffect(() => {
-    if (spcContract) {
-      const buildActivityArray = async () => {
-        const _activities: Activity[] = [];
-        let loading: boolean = true;
-        let index: number = 0;
+    const buildActivityArray = async () => {
+      const _activities: Activity[] = [];
+      let loading: boolean = true;
+      let index: number = 0;
 
-        while (loading) {
-          try {
-            const key = await spcContract.activityKeyList(index);
-            const activity = await spcContract.activities(key);
-            if (activity.exists && activity.allowed) {
-              const clone = Object.assign({}, activity);
-              clone.key = key;
-              clone.name = activity.name;
-              _activities.push(clone as Activity);
-            }
-            index++;
-          } catch (error) {
-            loading = false;
+      while (loading) {
+        try {
+          const key = await spcContract.activityKeyList(index);
+          const activity = await spcContract.activities(key);
+          if (activity.exists && activity.allowed) {
+            const clone = Object.assign({}, activity);
+            clone.key = key;
+            clone.name = activity.name;
+            _activities.push(clone as Activity);
           }
+          index++;
+        } catch (error) {
+          loading = false;
         }
+      }
 
-        return _activities;
-      };
+      return _activities;
+    };
 
+    if (spcContract && loading) {
       buildActivityArray().then((array) => {
         console.log("ActivityArray: ", array);
         dispatch(updateActivities(array));
+        setLoading(false);
       });
     }
   }, [spcContract]);
