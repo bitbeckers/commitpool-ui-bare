@@ -45,18 +45,27 @@ export const web3Slice: Slice = createSlice({
       };
     },
     updateProvider: (state, action) => {
-      state.provider = new ethers.providers.Web3Provider(action.payload);
+      console.log('updating provider: ', action.payload)
+      state.provider = action.payload;
     },
     updateAccount: (state, action: PayloadAction<string>) => {
+      console.log('updating account: ', action.payload)
+
       state.account = action.payload;
     },
     setLoggedIn: (state, action: PayloadAction<boolean>) => {
+      console.log('updating logged in: ', action.payload)
+
       state.isLoggedIn = action.payload;
     },
     updateChain: (state, action: PayloadAction<Network>) => {
+      console.log('updating chain: ', action.payload)
+
       state.chain = action.payload;
     },
     updateWeb3Modal: (state, action: PayloadAction<Web3Modal>) => {
+      console.log('updating web3modal: ', action.payload)
+
       state.web3Modal = action.payload;
     },
     reset: () => initialState,

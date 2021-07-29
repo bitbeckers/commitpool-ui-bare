@@ -102,6 +102,7 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
 
       setLoading(false);
       setTxSent(true);
+      console.log("TX: ", tx)
       navigation.navigate("Track");
     } else {
       setPopUpVisible(true);

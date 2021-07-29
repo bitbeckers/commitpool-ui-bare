@@ -49,6 +49,7 @@ export const getProviderOptions = () =>
   addNetworkProviders(attemptInjectedChainData());
 
 export const deriveChainId = (provider: any) => {
+  console.log("Deriving chain ID from: ", provider)
   if (provider.isMetaMask || provider.torus) {
     return provider.chainId;
   }

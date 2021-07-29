@@ -40,7 +40,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   const { account } = useWeb3();
   const { athlete, stravaIsLoggedIn } = useStravaAthlete();
   const { progress } = useStravaData();
-  const [txSent, setTxSent] = useState<boolean>(true);
+  const [txSent, setTxSent] = useState<boolean>(false);
   const [tx, setTx] = useState<Transaction>();
 
   //TODO manage URL smart when 'undefined'
@@ -68,6 +68,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
     );
     setTxSent(true);
     setTx(tx);
+    console.log("processCommitmentProgressTX: ", tx)
   };
 
   return (
@@ -114,6 +115,9 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
             </View>
           </Fragment>
         )}
+      </View>
+      
+      <View>
         {stravaIsLoggedIn && athlete?.id !== undefined ? (
           <a
             style={{ color: "white", fontFamily: "OpenSans_400Regular" }}

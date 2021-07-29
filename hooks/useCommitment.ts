@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { updateCommitment, updateActivitySet } from "../redux/commitpool/commitpoolSlice";
+import {
+  updateCommitment,
+  updateActivitySet,
+} from "../redux/commitpool/commitpoolSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 import { parseCommitmentFromContract } from "../utils/commitment";
 
 import { getActivityName, validActivityParameters } from "../utils/commitment";
-
 
 import useActivities from "./useActivities";
 import useContracts from "./useContracts";
@@ -17,29 +19,39 @@ const useCommitment = () => {
   const { singlePlayerCommit } = useContracts();
   const { account } = useWeb3();
 
-  const commitment: Commitment = useSelector((state: RootState) => state.commitpool.commitment)
+  const commitment: Commitment = useSelector(
+    (state: RootState) => state.commitpool.commitment
+  );
 
-  const activityName: string = getActivityName(commitment.activityKey, activities) || "";
+  const activitySet: boolean = useSelector(
+    (state: RootState) => state.commitpool.activitySet
+  );
+
+  const activityName: string =
+    getActivityName(commitment.activityKey, activities) || "";
 
   const refreshCommitment = async () => {
-    const commitment = await singlePlayerCommit.commitments(account);
-    const _commitment: Commitment =
-            parseCommitmentFromContract(commitment);
-    dispatch(updateCommitment({..._commitment}))
-  }
+    if (account) {
+      const commitment = await singlePlayerCommit.commitments(account);
+      const _commitment: Commitment = parseCommitmentFromContract(commitment);
+      dispatch(updateCommitment({ ..._commitment }));
+    }
+  };
 
   useEffect(() => {
-    if(activities.length > 0) {
-      if (validActivityParameters(commitment, activities)) {
+    if (activities.length > 0) {
+      if (validActivityParameters(commitment, activities) && !activitySet) {
         dispatch(updateActivitySet(true));
-      } else if (!validActivityParameters(commitment, activities)) {
+      } else if (
+        !validActivityParameters(commitment, activities) &&
+        activitySet
+      ) {
         dispatch(updateActivitySet(false));
       }
     }
-  }, [commitment, activities])
+  }, [commitment]);
 
-  return { commitment, activityName, refreshCommitment}
-
-}
+  return { commitment, activityName, refreshCommitment };
+};
 
 export default useCommitment;

@@ -7,7 +7,6 @@ const getActivityName = (activityKey: string, activities: Activity[]): string =>
 
 const formatActivities = (activities: Activity[]): DropdownItem[] => {
   const formattedActivities = activities.map((act: Activity) => {
-      console.log("formatting ", act);
       if (act.name === "Run") {
         return {
           label: "Run 🏃‍♂️",
