@@ -65,10 +65,16 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
 
   const onNext = () => {
     if (isLoggedIn && activitySet && stakeSet && stravaIsLoggedIn) {
+      //All parameters set, go to commitment confirmation screen
       navigation.navigate("Confirmation");
-    } else if (isLoggedIn && stravaIsLoggedIn) {
+    } else if (isLoggedIn && activitySet && stakeSet && !stravaIsLoggedIn) {
+      //All parameters set, but need strava account data
+      navigation.navigate("ActivitySource");
+    } else if (isLoggedIn) {
+      //Wallet connected, go to commitment creation flow
       navigation.navigate("ActivityGoal");
     } else if (!isLoggedIn) {
+      //Wallet not yet connected
       setPopUpVisible(true);
     }
   };
