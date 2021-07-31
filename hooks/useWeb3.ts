@@ -9,6 +9,7 @@ import {
   updateContracts,
   updateProvider,
   updateWeb3Modal,
+  updateTransactions,
   Web3State,
 } from "../redux/web3/web3Slice";
 import { Contract, ethers } from "ethers";
@@ -23,7 +24,7 @@ import {
 const Web3Instance = () => {
   const dispatch = useAppDispatch();
   const web3: Web3State = useSelector((state: RootState) => state.web3);
-  const { account, provider, isLoggedIn } = web3;
+  const { account, provider, isLoggedIn, transactions } = web3;
   const { dai, singlePlayerCommit } = web3.contracts;
 
   const hasListeners: any = useRef(null);
@@ -39,7 +40,6 @@ const Web3Instance = () => {
     });
 
     console.log("defaultModal: ", defaultModal);
-
     console.log("providerOption: ", providerOptions);
 
     //Provideroptions will be false when e.g. MetaMask is connected to an unsupported network
@@ -60,9 +60,14 @@ const Web3Instance = () => {
         theme: "dark",
       });
 
-      const provider = await localWeb3Modal.connect();
-      provider.selectedAddress = deriveSelectedAddress(provider);
-      const chainId = deriveChainId(provider);
+      const provider = await localWeb3Modal.connect().then((provider) => {
+        console.log("Provider after localWeb3Modal promise: ", provider);
+        // console.log("Provider.selectedAddress after localWeb3Modal promise: ", provider.selectedAddress);
+
+        return provider;
+      });
+      provider.selectedAddress = await deriveSelectedAddress(provider);
+      const chainId = await deriveChainId(provider);
       console.log("Provider: ", provider);
       console.log("ChainId: ", chainId);
 
@@ -94,6 +99,10 @@ const Web3Instance = () => {
       }
     }
   };
+
+  useEffect(() => {
+    console.log("Provider selecteddAddress: ", provider?.selectedAddress);
+  }, [provider]);
 
   useEffect(() => {
     if (window.localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")) {
@@ -137,13 +146,17 @@ const Web3Instance = () => {
     connectProvider();
   };
 
-  return { account, provider, requestWallet, isLoggedIn };
+  const storeTransactionToState = (txDetails: TransactionDetails) => {
+    dispatch(updateTransactions(txDetails));
+  }
+
+  return { account, provider, requestWallet, transactions, isLoggedIn, storeTransactionToState };
 };
 
 const useWeb3 = () => {
-  const { account, provider, isLoggedIn, requestWallet } = Web3Instance();
+  const { account, provider, isLoggedIn, transactions, requestWallet, storeTransactionToState } = Web3Instance();
 
-  return { account, provider, isLoggedIn, requestWallet };
+  return { account, provider, isLoggedIn, transactions, requestWallet, storeTransactionToState };
 };
 
 export default useWeb3;

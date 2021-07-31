@@ -24,7 +24,7 @@ type CompletionPageProps = {
 const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const { commitment, activityName } = useCommitment();
   const { singlePlayerCommit } = useContracts();
-  const { web3LoggedIn, account } = useWeb3();
+  const { isLoggedIn, account } = useWeb3();
   const [loading, setLoading] = useState<boolean>(true);
   const [success, setSuccess] = useState<boolean>(false);
   const [txSent, setTxSent] = useState<boolean>(false);
@@ -46,7 +46,7 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const achievement: string = `You managed to ${activityName} for ${commitment.reportedValue} miles. You committed to ${commitment.goalValue} miles`;
 
   const onProcess = async () => {
-    if (web3LoggedIn) {
+    if (isLoggedIn) {
       console.log("Web3 logged in, calling processCommitmentUser()");
       const tx = await singlePlayerCommit.processCommitmentUser();
       setTxSent(true);
@@ -61,7 +61,7 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
     _singlePlayerCommit.on(
       "CommitmentEnded",
       async (committer: string, met: boolean, amountPenalized: number) => {
-        if (committer.toLowerCase() === account.toLowerCase()) {
+        if (committer.toLowerCase() === account?.toLowerCase()) {
           navigation.navigate("ActivityGoal");
         }
       }

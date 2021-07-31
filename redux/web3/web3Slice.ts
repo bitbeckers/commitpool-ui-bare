@@ -11,6 +11,7 @@ export interface Web3State {
     dai: Contract;
     singlePlayerCommit: Contract;
   };
+  transactions: Record<TransactionHash, TransactionDetails>;
   provider: any;
   wallet?: Wallet;
   isLoggedIn: boolean;
@@ -30,6 +31,7 @@ const initialState: Web3State = {
       defaultProvider
     ),
   },
+  transactions: {},
   provider: defaultProvider,
   isLoggedIn: false,
 };
@@ -45,28 +47,35 @@ export const web3Slice: Slice = createSlice({
       };
     },
     updateProvider: (state, action) => {
-      console.log('updating provider: ', action.payload)
+      console.log("updating provider: ", action.payload);
       state.provider = action.payload;
     },
     updateAccount: (state, action: PayloadAction<string>) => {
-      console.log('updating account: ', action.payload)
+      console.log("updating account: ", action.payload);
 
       state.account = action.payload;
     },
     setLoggedIn: (state, action: PayloadAction<boolean>) => {
-      console.log('updating logged in: ', action.payload)
+      console.log("updating logged in: ", action.payload);
 
       state.isLoggedIn = action.payload;
     },
     updateChain: (state, action: PayloadAction<Network>) => {
-      console.log('updating chain: ', action.payload)
+      console.log("updating chain: ", action.payload);
 
       state.chain = action.payload;
     },
     updateWeb3Modal: (state, action: PayloadAction<Web3Modal>) => {
-      console.log('updating web3modal: ', action.payload)
+      console.log("updating web3modal: ", action.payload);
 
       state.web3Modal = action.payload;
+    },
+    updateTransactions: (state, action: PayloadAction<TransactionDetails>) => {
+      const { hash } = action.payload.txReceipt;
+      if (hash) {
+        console.log("updating transactionRecords: ", action.payload);
+        state.transactions[hash] = action.payload;
+      }
     },
     reset: () => initialState,
   },
@@ -78,6 +87,7 @@ export const {
   updateAccount,
   updateChain,
   updateWeb3Modal,
+  updateTransactions,
   setLoggedIn,
   reset,
 } = web3Slice.actions;

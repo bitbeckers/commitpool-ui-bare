@@ -24,6 +24,7 @@ import useActivities from "../../hooks/useActivities";
 import useContracts from "../../hooks/useContracts";
 import useWeb3 from "../../hooks/useWeb3";
 import useStravaAthlete from "../../hooks/useStravaAthlete";
+import { Transaction } from "ethers";
 
 type ConfirmationPageNavigationProps = StackNavigationProp<
   RootStackParamList,
@@ -37,25 +38,18 @@ type ConfirmationPageProps = {
 const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
   const [popUpVisible, setPopUpVisible] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [txSent, setTxSent] = useState<boolean>(false);
-
   const { commitment } = useCommitment();
   const { activities } = useActivities();
 
+  const { athlete } = useStravaAthlete();
 
-  const {athlete} = useStravaAthlete();
-
-  const { account } = useWeb3();
+  const { account, storeTransactionToState } = useWeb3();
   const { dai, singlePlayerCommit } = useContracts();
 
   console.log("Connected SPC contract: ", singlePlayerCommit);
 
   const createCommitment = async () => {
-    let tx;
     if (validCommitmentRequest(commitment, activities)) {
-      setLoading(true);
-
       const allowance = await dai.allowance(
         account,
         singlePlayerCommit.address
@@ -73,37 +67,56 @@ const ConfirmationPage = ({ navigation }: ConfirmationPageProps) => {
       );
 
       if (allowance.gte(_commitmentParameters._stake)) {
-        tx = await singlePlayerCommit.depositAndCommit(
-          _commitmentParametersWithUserId._activityKey,
-          _commitmentParametersWithUserId._goalValue,
-          _commitmentParametersWithUserId._startTime,
-          _commitmentParametersWithUserId._endTime,
-          _commitmentParametersWithUserId._stake,
-          _commitmentParametersWithUserId._depositAmount,
-          _commitmentParametersWithUserId._userId,
-          { gasLimit: 5000000 }
-        );
+        await singlePlayerCommit
+          .depositAndCommit(
+            _commitmentParametersWithUserId._activityKey,
+            _commitmentParametersWithUserId._goalValue,
+            _commitmentParametersWithUserId._startTime,
+            _commitmentParametersWithUserId._endTime,
+            _commitmentParametersWithUserId._stake,
+            _commitmentParametersWithUserId._depositAmount,
+            _commitmentParametersWithUserId._userId,
+            { gasLimit: 5000000 }
+          )
+          .then((receipt: Transaction) =>
+            storeTransactionToState({
+              methodCall: "depositAndCommit",
+              txReceipt: receipt,
+            })
+          );
       } else {
-        await dai.approve(
-          singlePlayerCommit.address,
-          _commitmentParametersWithUserId._stake
-        );
-        tx = await singlePlayerCommit.depositAndCommit(
-          _commitmentParametersWithUserId._activityKey,
-          _commitmentParametersWithUserId._goalValue,
-          _commitmentParametersWithUserId._startTime,
-          _commitmentParametersWithUserId._endTime,
-          _commitmentParametersWithUserId._stake,
-          _commitmentParametersWithUserId._depositAmount,
-          _commitmentParametersWithUserId._userId,
-          { gasLimit: 5000000 }
-        );
+        await dai
+          .approve(
+            singlePlayerCommit.address,
+            _commitmentParametersWithUserId._stake
+          )
+          .then((receipt: Transaction) =>
+            storeTransactionToState({
+              methodCall: "approve",
+              txReceipt: receipt,
+            })
+          );
+        await singlePlayerCommit
+          .depositAndCommit(
+            _commitmentParametersWithUserId._activityKey,
+            _commitmentParametersWithUserId._goalValue,
+            _commitmentParametersWithUserId._startTime,
+            _commitmentParametersWithUserId._endTime,
+            _commitmentParametersWithUserId._stake,
+            _commitmentParametersWithUserId._depositAmount,
+            _commitmentParametersWithUserId._userId,
+            { gasLimit: 5000000 }
+          )
+          .then((receipt: Transaction) =>
+            storeTransactionToState({
+              methodCall: "depositAndCommit",
+              txReceipt: receipt,
+            })
+          )
+          .then(() => {
+            navigation.navigate("Track");
+          });
       }
-
-      setLoading(false);
-      setTxSent(true);
-      console.log("TX: ", tx)
-      navigation.navigate("Track");
     } else {
       setPopUpVisible(true);
     }
