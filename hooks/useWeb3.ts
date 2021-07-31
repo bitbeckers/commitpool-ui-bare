@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useAppDispatch } from "../redux/store";
@@ -9,10 +9,10 @@ import {
   updateContracts,
   updateProvider,
   updateWeb3Modal,
-  updateTransactions,
   Web3State,
 } from "../redux/web3/web3Slice";
-import { Contract, ethers } from "ethers";
+import { updateTransactions, TransactionState } from "../redux/transactions/transactionSlice";
+import { Contract, ethers, Transaction } from "ethers";
 import Web3Modal from "web3modal";
 import { supportedChains } from "../utils/chain";
 import {
@@ -24,7 +24,8 @@ import {
 const Web3Instance = () => {
   const dispatch = useAppDispatch();
   const web3: Web3State = useSelector((state: RootState) => state.web3);
-  const { account, provider, isLoggedIn, transactions } = web3;
+  const transactions: TransactionState = useSelector((state: RootState) => state.transactions);
+  const { account, provider, isLoggedIn } = web3;
   const { dai, singlePlayerCommit } = web3.contracts;
 
   const hasListeners: any = useRef(null);
@@ -56,13 +57,12 @@ const Web3Instance = () => {
     if (!isLoggedIn) {
       const localWeb3Modal = new Web3Modal({
         providerOptions,
-        // cacheProvider: true,
+        cacheProvider: true,
         theme: "dark",
       });
 
       const provider = await localWeb3Modal.connect().then((provider) => {
         console.log("Provider after localWeb3Modal promise: ", provider);
-        // console.log("Provider.selectedAddress after localWeb3Modal promise: ", provider.selectedAddress);
 
         return provider;
       });
@@ -85,7 +85,7 @@ const Web3Instance = () => {
         const _singlePlayerCommit: Contract = singlePlayerCommit.connect(
           web3.getSigner()
         );
-        dispatch(updateProvider(web3));
+        dispatch(updateProvider(provider));
         dispatch(updateAccount(provider.selectedAddress));
         dispatch(updateChain(chain));
         dispatch(updateWeb3Modal(localWeb3Modal));
@@ -99,10 +99,6 @@ const Web3Instance = () => {
       }
     }
   };
-
-  useEffect(() => {
-    console.log("Provider selecteddAddress: ", provider?.selectedAddress);
-  }, [provider]);
 
   useEffect(() => {
     if (window.localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")) {
@@ -148,15 +144,45 @@ const Web3Instance = () => {
 
   const storeTransactionToState = (txDetails: TransactionDetails) => {
     dispatch(updateTransactions(txDetails));
-  }
+  };
 
-  return { account, provider, requestWallet, transactions, isLoggedIn, storeTransactionToState };
+  const getTransaction = (
+    methodCall: TransactionTypes
+  ): Transaction | undefined => {
+    return transactions[methodCall]?.txReceipt || undefined;
+  };
+
+  return {
+    account,
+    provider,
+    requestWallet,
+    transactions,
+    isLoggedIn,
+    getTransaction,
+    storeTransactionToState,
+  };
 };
 
 const useWeb3 = () => {
-  const { account, provider, isLoggedIn, transactions, requestWallet, storeTransactionToState } = Web3Instance();
+  const {
+    account,
+    provider,
+    isLoggedIn,
+    transactions,
+    requestWallet,
+    getTransaction,
+    storeTransactionToState,
+  } = Web3Instance();
 
-  return { account, provider, isLoggedIn, transactions, requestWallet, storeTransactionToState };
+  return {
+    account,
+    provider,
+    isLoggedIn,
+    transactions,
+    requestWallet,
+    getTransaction,
+    storeTransactionToState,
+  };
 };
 
 export default useWeb3;

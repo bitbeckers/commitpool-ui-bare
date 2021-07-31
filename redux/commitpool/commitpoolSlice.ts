@@ -2,10 +2,10 @@ import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 import { DateTime } from "luxon";
 
 interface CommitpoolState {
-  commitment: Commitment,
-  activities: Activity[],
-  activitySet: boolean,
-  stakeSet: boolean
+  commitment: Commitment;
+  activities: Activity[];
+  activitySet: boolean;
+  stakeSet: boolean;
 }
 
 const initialState: CommitpoolState = {
@@ -33,16 +33,16 @@ export const commitpoolSlice: Slice = createSlice({
       state.commitment = {
         ...state.commitment,
         ...action.payload,
-      }
+      };
     },
     updateActivities: (state, action: PayloadAction<Activity[]>) => {
-      state.activities = action.payload
+      state.activities = action.payload;
     },
     updateActivitySet: (state, action: PayloadAction<boolean>) => {
-      state.activitySet = action.payload
+      state.activitySet = action.payload;
     },
     updateStakeSet: (state, action: PayloadAction<boolean>) => {
-      state.stakeSet = action.payload
+      state.stakeSet = action.payload;
     },
   },
 });
@@ -52,7 +52,7 @@ export const {
   updateCommitment,
   updateActivities,
   updateActivitySet,
-  updateStakeSet
+  updateStakeSet,
 } = commitpoolSlice.actions;
 
 export default commitpoolSlice.reducer;

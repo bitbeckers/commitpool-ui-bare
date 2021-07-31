@@ -43,12 +43,12 @@ interface Network {
   hub_sort_order?: number;
 }
 
-type TransactionHash = string;
 type TransactionTypes =
   | "approve"
   | "depositAndCommit"
   | "requestActivityDistance"
   | "processCommitmentUser";
+
 type TransactionDetails = {
   methodCall: TransactionTypes;
   txReceipt: Transaction;

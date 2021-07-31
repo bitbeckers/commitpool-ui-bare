@@ -4,7 +4,6 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 import { useDispatch } from "react-redux";
-
 import rootReducer from "./reducer";
 
 const persistConfig = {

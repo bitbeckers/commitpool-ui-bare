@@ -37,12 +37,13 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   const { activities } = useActivities();
   const { commitment, activityName, refreshCommitment } = useCommitment();
   const { singlePlayerCommit } = useContracts();
-  const { account, transactions, storeTransactionToState } = useWeb3();
+  const { account, storeTransactionToState, getTransaction } =
+    useWeb3();
   const { athlete, stravaIsLoggedIn } = useStravaAthlete();
   const { progress } = useStravaData();
-  const [loading, setLoading] = useState<boolean>(false);
-  const tx: Transaction =
-    transactions["requestActivityDistance"]?.txReceipt || undefined;
+
+  const methodCall: TransactionTypes = "requestActivityDistance";
+  const tx: Transaction | undefined = getTransaction(methodCall);
 
   //TODO manage URL smart when 'undefined'
   const stravaUrl: string = athlete?.id
@@ -64,13 +65,12 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
           "9ce5c4e09dda4c3687bac7a2f676268f",
           { gasLimit: 500000 }
         )
-        .then((receipt: Transaction) => {
-          console.log("requestActivityDistanceTX receipt: ", receipt);
+        .then((txReceipt: Transaction) => {
+          console.log("requestActivityDistanceTX receipt: ", txReceipt);
           storeTransactionToState({
-            methodCall: "requestActivityDistance",
-            txReceipt: receipt,
+            methodCall,
+            txReceipt,
           });
-          setLoading(true);
         });
     }
   };
