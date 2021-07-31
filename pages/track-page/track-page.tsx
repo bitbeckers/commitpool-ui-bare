@@ -37,13 +37,13 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   const { activities } = useActivities();
   const { commitment, activityName, refreshCommitment } = useCommitment();
   const { singlePlayerCommit } = useContracts();
-  const { account, storeTransactionToState, getTransaction } =
-    useWeb3();
+  const { account, storeTransactionToState, getTransaction } = useWeb3();
   const { athlete, stravaIsLoggedIn } = useStravaAthlete();
   const { progress } = useStravaData();
 
   const methodCall: TransactionTypes = "requestActivityDistance";
   const tx: Transaction | undefined = getTransaction(methodCall);
+  console.log("TX: ", tx)
 
   //TODO manage URL smart when 'undefined'
   const stravaUrl: string = athlete?.id
@@ -99,7 +99,9 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   listenForActivityDistanceUpdate(singlePlayerCommit, commitment);
 
   const onContinue = async () => {
-    await processCommitmentProgress();
+    if (!tx) {
+      await processCommitmentProgress();
+    }
   };
 
   return (

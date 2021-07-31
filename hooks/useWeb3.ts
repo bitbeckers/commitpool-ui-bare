@@ -149,7 +149,7 @@ const Web3Instance = () => {
   const getTransaction = (
     methodCall: TransactionTypes
   ): Transaction | undefined => {
-    return transactions[methodCall]?.txReceipt || undefined;
+    return transactions.transactions[methodCall]?.txReceipt || undefined;
   };
 
   return {
