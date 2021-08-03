@@ -67,17 +67,11 @@ export const deriveChainId = async (provider: any) => {
   if (provider.wc) {
     return chainByNetworkId(provider.chainId).chain_id;
   }
-
 };
 
-export const deriveSelectedAddress = async (provider: any) => {
-  console.log("Provider for address: ", provider);
-  if (provider.isMetaMask) {
-    return await provider.selectedAddress;
-  }
-
-  if (provider.isTorus) {
-    return await provider.selectedAddress;
+export const deriveSelectedAddress = (provider: any) => {
+  if (provider.isMetaMask || provider.isTorus) {
+    return provider.selectedAddress;
   }
 
   if (provider.wc) {
