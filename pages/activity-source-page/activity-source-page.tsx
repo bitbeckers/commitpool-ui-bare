@@ -32,7 +32,7 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
 
   const { athlete, stravaIsLoggedIn, handleStravaLogin} = useStravaAthlete();
 
-  const { web3LoggedIn } = useWeb3();
+  const { isLoggedIn } = useWeb3();
 
   const { commitment } = useCommitment();
 
@@ -77,11 +77,11 @@ const ActivitySourcePage = ({ navigation }: ActivitySourcePageProps) => {
         <Button
           text={strings.footer.next}
           onPress={() => {
-            if(commitment.exists && stravaIsLoggedIn && web3LoggedIn) {
+            if(commitment.exists && stravaIsLoggedIn && isLoggedIn) {
               navigation.navigate("Track");
-            } else if (stravaIsLoggedIn && web3LoggedIn) {
+            } else if (stravaIsLoggedIn && isLoggedIn) {
               navigation.navigate("Confirmation");
-            } else if (stravaIsLoggedIn && !web3LoggedIn) {
+            } else if (stravaIsLoggedIn && !isLoggedIn) {
               navigation.navigate("Login");
             } else {
               setPopUpVisible(true);

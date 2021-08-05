@@ -18,7 +18,7 @@ interface Athlete {
 }
 
 interface Activity {
-  key: string
+  key: string;
   name: string;
   oracle: string;
   allowed: boolean;
@@ -26,6 +26,30 @@ interface Activity {
 }
 
 interface DropdownItem {
-  label: string,
-  value: string
+  label: string;
+  value: string;
 }
+
+interface Network {
+  name: string;
+  short_name: string;
+  chain: string;
+  network: string;
+  network_id: number;
+  chain_id: string;
+  providers: string[];
+  rpc_url: string;
+  block_explorer: string;
+  hub_sort_order?: number;
+}
+
+type TransactionTypes =
+  | "approve"
+  | "depositAndCommit"
+  | "requestActivityDistance"
+  | "processCommitmentUser";
+
+type TransactionDetails = {
+  methodCall: TransactionTypes;
+  txReceipt: Transaction;
+};

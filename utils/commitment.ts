@@ -7,7 +7,6 @@ const getActivityName = (activityKey: string, activities: Activity[]): string =>
 
 const formatActivities = (activities: Activity[]): DropdownItem[] => {
   const formattedActivities = activities.map((act: Activity) => {
-      console.log("formatting ", act);
       if (act.name === "Run") {
         return {
           label: "Run 🏃‍♂️",
@@ -29,13 +28,9 @@ const formatActivities = (activities: Activity[]): DropdownItem[] => {
   return formattedActivities;
 };
 
-const parseCommitmentFromContract = (commitment): Commitment => {
-  let _commitment: Partial<Commitment> = {
-    exists: false,
-  };
-
+const parseCommitmentFromContract = (commitment: any): Commitment | undefined => {
   try {
-    _commitment = {
+    const _commitment: Commitment = {
       activityKey: commitment.activityKey,
       goalValue: Number.parseFloat(commitment.goalValue) / 100,
       reportedValue: Number.parseFloat(commitment.reportedValue) / 100,
@@ -47,11 +42,11 @@ const parseCommitmentFromContract = (commitment): Commitment => {
       unit: "mi",
     };
     console.log("Parsed commitment: ", _commitment);
+    return _commitment
   } catch (e) {
     console.log(e);
+    return undefined;
   }
-
-  return _commitment as Commitment;
 };
 
 const validActivityKey = (

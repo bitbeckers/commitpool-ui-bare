@@ -24,13 +24,15 @@ type CompletionPageProps = {
 const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const { commitment, activityName } = useCommitment();
   const { singlePlayerCommit } = useContracts();
-  const { web3LoggedIn, account } = useWeb3();
+  const { isLoggedIn, account, getTransaction, storeTransactionToState } =
+    useWeb3();
   const [loading, setLoading] = useState<boolean>(true);
   const [success, setSuccess] = useState<boolean>(false);
   const [txSent, setTxSent] = useState<boolean>(false);
-  const [tx, setTx] = useState<Transaction>();
 
-  const txUrl: string = `https://polygonscan.com/tx/${tx?.hash}`;
+  const methodCall: TransactionTypes = "processCommitmentUser";
+  const tx: Transaction | undefined = getTransaction(methodCall);
+  const txUrl: string = tx?.hash ? `https://polygonscan.com/tx/${tx.hash}` : ``;
 
   //Check is commitment was met
   useEffect(() => {
@@ -46,29 +48,36 @@ const CompletionPage = ({ navigation }: CompletionPageProps) => {
   const achievement: string = `You managed to ${activityName} for ${commitment.reportedValue} miles. You committed to ${commitment.goalValue} miles`;
 
   const onProcess = async () => {
-    if (web3LoggedIn) {
+    if (isLoggedIn) {
       console.log("Web3 logged in, calling processCommitmentUser()");
-      const tx = await singlePlayerCommit.processCommitmentUser();
-      setTxSent(true);
-      setTx(tx);
+      await singlePlayerCommit
+        .processCommitmentUser()
+        .then((txReceipt: Transaction) => {
+          console.log("processCommitmentUserTX receipt: ", txReceipt);
+          storeTransactionToState({
+            methodCall,
+            txReceipt,
+          });
+          setTxSent(true);
+        });
     } else {
       console.log("Web3 not logged in, routing to login");
       navigation.navigate("Login");
     }
   };
 
-  const listenForCommitmentSettlement = (_singlePlayerCommit: Contract) => {
-    _singlePlayerCommit.on(
+  const listenForCommitmentSettlement = () => {
+    singlePlayerCommit.on(
       "CommitmentEnded",
       async (committer: string, met: boolean, amountPenalized: number) => {
-        if (committer.toLowerCase() === account.toLowerCase()) {
+        if (committer.toLowerCase() === account?.toLowerCase()) {
           navigation.navigate("ActivityGoal");
         }
       }
     );
   };
 
-  listenForCommitmentSettlement(singlePlayerCommit);
+  listenForCommitmentSettlement();
 
   return (
     <LayoutContainer>

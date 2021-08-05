@@ -11,8 +11,6 @@ import {
   DialogPopUp,
 } from "../../components";
 
-import getEnvVars from "../../environment";
-import { useWeb3ModalLogin } from "../landing-page/hooks";
 import strings from "../../resources/strings";
 import { RootState, useAppDispatch } from "../../redux/store";
 import { updateCommitment } from "../../redux/commitpool/commitpoolSlice";
@@ -20,7 +18,6 @@ import { parseCommitmentFromContract } from "../../utils/commitment";
 import useContracts from "../../hooks/useContracts";
 import useWeb3 from "../../hooks/useWeb3";
 import { ethers } from "ethers";
-import Web3Modal from "web3modal";
 import useStravaAthlete from "../../hooks/useStravaAthlete";
 
 type LoginPageNavigationProps = StackNavigationProp<
@@ -33,12 +30,12 @@ type LoginPageProps = {
 };
 
 const LoginPage = ({ navigation }: LoginPageProps) => {
-  const [isLoggedIn, handleLogin] = useWeb3ModalLogin();
-  const [popUpVisible, setPopUpVisible] = useState(false);
   const dispatch = useAppDispatch();
 
-  const { account } = useWeb3();
-  const { stravaIsLoggedIn} = useStravaAthlete();
+  const { account, isLoggedIn, requestWallet } = useWeb3();
+  const [popUpVisible, setPopUpVisible] = useState(false);
+
+  const { stravaIsLoggedIn } = useStravaAthlete();
   const { singlePlayerCommit } = useContracts();
 
   const { activitySet, stakeSet } = useSelector(
@@ -47,30 +44,36 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
 
   //When account has an commitment, write to state
   useEffect(() => {
-    console.log("Account: ", account);
-    if (ethers.utils.isAddress(account)) {
-      const getCommitmentAndRoute = async () => {
-        console.log(`Checking for commitment for account ${account}`);
-        const commitment = await singlePlayerCommit.commitments(account);
-        console.log("Commitment from contract: ", commitment);
-        if (commitment.exists) {
-          const _commitment: Commitment =
-            parseCommitmentFromContract(commitment);
+    const getCommitmentAndRoute = async () => {
+      console.log(`Checking for commitment for account ${account}`);
+      const commitment = await singlePlayerCommit.commitments(account);
+      console.log("Commitment from contract: ", commitment);
+      if (commitment.exists) {
+        const _commitment: Commitment | undefined = parseCommitmentFromContract(commitment);
+        if(_commitment){
           dispatch(updateCommitment({ ..._commitment }));
           navigation.navigate("Track");
         }
-      };
+      }
+    };
 
+    if (account && ethers.utils.isAddress(account) && singlePlayerCommit) {
       getCommitmentAndRoute();
     }
   }, [account, singlePlayerCommit]);
 
   const onNext = () => {
     if (isLoggedIn && activitySet && stakeSet && stravaIsLoggedIn) {
+      //All parameters set, go to commitment confirmation screen
       navigation.navigate("Confirmation");
-    } else if (isLoggedIn && !activitySet && !stakeSet && !stravaIsLoggedIn) {
+    } else if (isLoggedIn && activitySet && stakeSet && !stravaIsLoggedIn) {
+      //All parameters set, but need strava account data
+      navigation.navigate("ActivitySource");
+    } else if (isLoggedIn) {
+      //Wallet connected, go to commitment creation flow
       navigation.navigate("ActivityGoal");
-    } else {
+    } else if (!isLoggedIn) {
+      //Wallet not yet connected
       setPopUpVisible(true);
     }
   };
@@ -86,19 +89,11 @@ const LoginPage = ({ navigation }: LoginPageProps) => {
         {isLoggedIn ? (
           <View>
             <Text text={`You're logged in to ${account}`} />
-            <Button text="Log out" onPress={() => handleLogin()} />
           </View>
         ) : (
           <Fragment>
             <Text text={strings.login.text} />
-            <Button
-              text={strings.login.select.torus}
-              onPress={() => handleLogin()}
-            />
-            <Button
-              text={strings.login.select.metamask}
-              onPress={() => console.log("Log in using MetaMask")}
-            />
+            <Button text={"Click to connect"} onPress={() => requestWallet()} />
           </Fragment>
         )}
       </View>

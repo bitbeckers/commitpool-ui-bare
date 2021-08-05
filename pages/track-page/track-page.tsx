@@ -15,7 +15,7 @@ import strings from "../../resources/strings";
 import { parseSecondTimestampToFullString } from "../../utils/dateTime";
 
 import useActivities from "../../hooks/useActivities";
-import { BigNumber, Transaction } from "ethers";
+import { BigNumber, Contract, Transaction } from "ethers";
 import useCommitment from "../../hooks/useCommitment";
 import useContracts from "../../hooks/useContracts";
 import useWeb3 from "../../hooks/useWeb3";
@@ -37,37 +37,71 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
   const { activities } = useActivities();
   const { commitment, activityName, refreshCommitment } = useCommitment();
   const { singlePlayerCommit } = useContracts();
-  const { account } = useWeb3();
+  const { account, storeTransactionToState, getTransaction } = useWeb3();
   const { athlete, stravaIsLoggedIn } = useStravaAthlete();
   const { progress } = useStravaData();
-  const [txSent, setTxSent] = useState<boolean>(true);
-  const [tx, setTx] = useState<Transaction>();
+
+  const methodCall: TransactionTypes = "requestActivityDistance";
+  const tx: Transaction | undefined = getTransaction(methodCall);
+  console.log("TX: ", tx)
 
   //TODO manage URL smart when 'undefined'
-  const stravaUrl: string = `http://www.strava.com/athletes/${athlete?.id}`;
-  const txUrl: string = `https://polygonscan.com/tx/${tx?.hash}`;
+  const stravaUrl: string = athlete?.id
+    ? `http://www.strava.com/athletes/${athlete.id}`
+    : ``;
+  const txUrl: string = tx?.hash ? `https://polygonscan.com/tx/${tx.hash}` : ``;
 
-  const oracleAddress: string =
-    activities.find((activity) => activity.key === commitment.activityKey)
-      ?.oracle || "";
+  const oracleAddress: string | undefined = activities.find(
+    (activity) => activity.key === commitment.activityKey
+  )?.oracle;
 
-  listenForActivityDistanceUpdate(
-    singlePlayerCommit,
-    account,
-    commitment,
-    navigation,
-    setPopUpVisible,
-    refreshCommitment
-  );
+  const processCommitmentProgress = async () => {
+    if (singlePlayerCommit && account && oracleAddress) {
+      await singlePlayerCommit
+        .requestActivityDistance(
+          account,
+          oracleAddress,
+          //to do - move to env and/or activity state
+          "9ce5c4e09dda4c3687bac7a2f676268f",
+          { gasLimit: 500000 }
+        )
+        .then((txReceipt: Transaction) => {
+          console.log("requestActivityDistanceTX receipt: ", txReceipt);
+          storeTransactionToState({
+            methodCall,
+            txReceipt,
+          });
+        });
+    }
+  };
+
+  const listenForActivityDistanceUpdate = (
+    _singlePlayerCommit: Contract,
+    commitment: Commitment
+  ) => {
+    _singlePlayerCommit.on(
+      "RequestActivityDistanceFulfilled",
+      async (id: string, distance: BigNumber, committer: string) => {
+        const now = new Date().getTime() / 1000;
+
+        if (committer.toLowerCase() === account?.toLowerCase()) {
+          if (now > commitment.endTime) {
+            refreshCommitment();
+            navigation.navigate("Completion");
+          } else {
+            setPopUpVisible(true);
+          }
+        }
+      }
+    );
+  };
+
+  listenForActivityDistanceUpdate(singlePlayerCommit, commitment);
 
   const onContinue = async () => {
-    const tx: Transaction = await processCommitmentProgress(
-      singlePlayerCommit,
-      account,
-      oracleAddress
-    );
-    setTxSent(true);
-    setTx(tx);
+    if (!tx) {
+      await processCommitmentProgress();
+    }
   };
 
   return (
@@ -78,7 +112,7 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
         text={strings.track.alert}
       />
       <View style={styles.commitment}>
-        {txSent ? (
+        {tx ? (
           <Fragment>
             <Text text="Awaiting transaction processing" />
             <ActivityIndicator size="large" color="#ffffff" />
@@ -114,6 +148,9 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
             </View>
           </Fragment>
         )}
+      </View>
+
+      <View>
         {stravaIsLoggedIn && athlete?.id !== undefined ? (
           <a
             style={{ color: "white", fontFamily: "OpenSans_400Regular" }}
@@ -140,46 +177,6 @@ const TrackPage = ({ navigation }: TrackPageProps) => {
         />
       </Footer>
     </LayoutContainer>
-  );
-};
-
-const processCommitmentProgress = async (
-  _singlePlayerCommit: any,
-  account: string | undefined,
-  oracleAddress: string
-) => {
-  const tx = await _singlePlayerCommit.requestActivityDistance(
-    account,
-    "0x0a31078cD57d23bf9e8e8F1BA78356ca2090569E",
-    //to do - move to env and/or activity state
-    "9ce5c4e09dda4c3687bac7a2f676268f",
-    { gasLimit: 500000 }
-  );
-  return tx;
-};
-
-const listenForActivityDistanceUpdate = (
-  _singlePlayerCommit: any,
-  account: string | undefined,
-  commitment: Commitment,
-  navigation: any,
-  setPopUpVisible: any,
-  refreshCommitment: any
-) => {
-  _singlePlayerCommit.on(
-    "RequestActivityDistanceFulfilled",
-    async (id: string, distance: BigNumber, committer: string) => {
-      const now = new Date().getTime() / 1000;
-
-      if (committer.toLowerCase() === account?.toLowerCase()) {
-        if (now > commitment.endTime) {
-          refreshCommitment();
-          navigation.navigate("Completion");
-        } else {
-          setPopUpVisible(true);
-        }
-      }
-    }
   );
 };
 
